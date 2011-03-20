@@ -1,2 +1,6 @@
-Synergy will be an awesome operating system for the x86.
-It will feature lots of cool stuff.
+Synergy will be a stand-alone Scheme interpreter running on bare metal x86 hardware.
+
+It will have the following system requirements:
+  * Intel x86-based CPU with FPU
+  * 8MiB RAM minimum, 4GiB maximum
+  * CD-ROM drive
