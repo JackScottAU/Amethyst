@@ -1,17 +1,15 @@
 /*
-	BasicIO.h - Basic port handling.
-	Part of the Jane Microkernel.
+	basicIO.h - Basic port handling.
+	Part of the Synergy Operating System
 	
-	Author:		Jack Scott (yayyak@yayyak.net).
-	Last Modified:	2006-11-28.
-	License:	3-clause BSD License.
-	Notes:		None.
+	Author:		Jack Scott (jack@jackscott.id.au).
+	Last Modified:	2011-09-28.
 */
 
-#ifndef BASICIO_H
-#define BASICIO_H
+#ifndef __BASICIO_H
+#define __BASICIO_H
 
 	unsigned char ReadByte(unsigned short int PortNumber);
 	void WriteByte(unsigned short int PortNumber, unsigned char Value);
 
-#endif /* BASICIO_H */
+#endif /* __BASICIO_H */
