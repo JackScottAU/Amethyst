@@ -1,0 +1,9 @@
+timeout	5
+default	0
+
+# Boot into The Synergy Operating System
+title		Synergy OS
+root		(cd)
+kernel		(cd)/boot/kernel32
+boot
+

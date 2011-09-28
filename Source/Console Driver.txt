@@ -1,0 +1,5 @@
+My console driver is fairly simple. it will have video specific functions in Video.c and Video.h, with prefix Vid
+Keyboard functions will be in Keyboard.c and the respective Header file, with prefix Key
+Serial functions (you guessed it) will be in Serial.c and Serial.h, with prefix Ser
+
+Then my wrapper functions will be in Console.c, with a system-wide include file in the includes directory. They will have no prefix. They will choose what other functions to run depending on the current chosen device(s).
