@@ -6,9 +6,11 @@
 	Last Modified:	2007-01-05.
 	License:	3-clause BSD License.
 	Notes:		None.
+ * 
+ *	Basically it uses the RTC to load initial data, and then the PIT (or HP-clock) to update that.
 */
 
-#include <port.h>
+#include "Includes/portIO.h"
 #include <Clock.h>
 
 //Holds uptime (Secs*CLOCK_HERTZ)
@@ -26,16 +28,19 @@ void Clock_SetHertz(unsigned int Hertz)
 	
 	int Divisor;
 	Divisor = 1193180 / Hertz;
-	writeIO(0x43, 0x36);			//Set command byte.
-	writeIO(0x40, Divisor & 0xFF);	//LSB
-	writeIO(0x40, Divisor >> 8);		//MSB
+	writeByte(0x43, 0x36);			//Set command byte.
+	writeByte(0x40, Divisor & 0xFF);	//LSB
+	writeByte(0x40, Divisor >> 8);		//MSB
 }
 
-
-
-void Clock_Handler()
+/**
+ * \brief Handles the clock-tick message produced by the programmable interrupt timer (PIT).
+ */
+void clock_handler_PIC()
 {
 	Clock_Ticks++;
+	
+	//There are a list of things that need to be notified on clockticks... visit them here.
 }
 
 unsigned long Clock_Uptime()
@@ -43,8 +48,14 @@ unsigned long Clock_Uptime()
 	return (Clock_Ticks / CLOCK_HERTZ);
 }
 
-void Clock_Init()
+void clock_startup()
 {
 	Clock_SetHertz(CLOCK_HERTZ);
 	Clock_Ticks = 0;
+	//Get time from RTC here.
+}
+
+void clock_shutdown()
+{
+	//Give back time to the RTC for next time.
 }

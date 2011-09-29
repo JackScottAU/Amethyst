@@ -6,10 +6,10 @@
 	Last Modified:	2011-09-28.
 */
 
-#ifndef __BASICIO_H
-#define __BASICIO_H
+#ifndef __PORTIO_H
+#define __PORTIO_H
 
-	unsigned char ReadByte(unsigned short int PortNumber);
-	void WriteByte(unsigned short int PortNumber, unsigned char Value);
+	unsigned char readByte(unsigned short int PortNumber);
+	void writeByte(unsigned short int PortNumber, unsigned char Value);
 
-#endif /* __BASICIO_H */
+#endif /* __PORTIO_H */
