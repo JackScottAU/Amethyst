@@ -23,6 +23,7 @@ struct IDT_Pointer_S
 	unsigned int Base;
 } __attribute__((packed));
 
+//Random comment.
 
 struct IDT_Entry_S IDT_Table[256];
 struct IDT_Pointer_S IDT_Pointer;
