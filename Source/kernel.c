@@ -1,16 +1,33 @@
-// YakOS -  Main()
+// Synergy OS
 
 // INCLUDES
-#include <video.h>
-#include <data_io.h>
-#include "version.h"
-#include "interrupts/ints.h"
-#include "multiboot.h"
+//#include <video.h>
+//#include <data_io.h>
+//#include "version.h"
+//#include "interrupts/ints.h"
+//#include "multiboot.h"
 
 // KERNEL MAIN FUNCTION
-void k_main()
+void k_main(void* mbd, unsigned int magic)
 {
-	clear_screen(WHITE_TXT);
+	if ( magic != 0x2BADB002 )
+   {
+      /* Something went not according to specs. Print an error */
+      /* message and halt, but do *not* rely on the multiboot */
+      /* data structure. */
+   }
+ 
+   /* You could either use multiboot.h */
+   /* (http://www.gnu.org/software/grub/manual/multiboot/multiboot.html#multiboot_002eh) */
+   /* or do your offsets yourself. The following is merely an example. */ 
+   //char * boot_loader_name =(char*) ((long*)mbd)[16];
+ 
+   /* Print a letter to screen to see everything is working: */
+   unsigned char *videoram = (unsigned char *) 0xb8000;
+   videoram[0] = 65; /* character 'A' */
+   videoram[1] = 0x07; /* light grey (7) on black (0). */
+	
+	/*	clear_screen(WHITE_TXT);
 	k_printf("Welcome to YakOS v0.01", 0, WHITE_TXT);	//Welcome Screen
 	k_printf("----------------------", 1, WHITE_TXT);
 	update_cursor(1,21);
@@ -32,12 +49,24 @@ void k_main()
 	
 	k_printf("Masking all IRQs",7,WHITE_TXT);
 	unmaskIRQ(0xFD);
+ * 
+ * 	//Init kernel core.
+	gdtInstall();
+	IDT_Init();
+	ISRs_Install();		//} These two could be done in any order.
+	PIC_Remap();		//}
+	
+	//Init subsystems.
+	Clock_Init();
+	
+	//The moment of truth.
+	IDT_EnableInts();
 	
 	k_printf("Enabling Interrupts...",8,WHITE_TXT);
 	if(INTS(1))
 		k_printf("INTS enabled",9,WHITE_TXT);
 	
-	k_printf("Now try pressing something on the keyboard...",10,WHITE_TXT);
+	k_printf("Now try pressing something on the keyboard...",10,WHITE_TXT); */
 	
 	while(1)
 	{
