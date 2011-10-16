@@ -1,6 +1,9 @@
 Synergy will be a stand-alone Scheme interpreter running on bare metal x86 hardware.
 
-It will have the following system requirements:
+Minimum System Requirements:
+============================
   * Intel x86-based CPU with FPU
-  * 8MiB RAM minimum, 4GiB maximum
+  * 8MiB RAM
   * CD-ROM drive
+  * Keyboard
+  * VGA-compatible Video card and Monitor
