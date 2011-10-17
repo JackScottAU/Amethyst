@@ -16,6 +16,7 @@ void k_main(void* mbd, unsigned int magic)
       /* message and halt, but do *not* rely on the multiboot */
       /* data structure. */
    }
+	
  
    /* You could either use multiboot.h */
    /* (http://www.gnu.org/software/grub/manual/multiboot/multiboot.html#multiboot_002eh) */
