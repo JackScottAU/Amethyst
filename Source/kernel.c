@@ -9,7 +9,7 @@
 #include <Types.h>
 
 // KERNEL MAIN FUNCTION
-void kernel_initialise(unsigned int magicNumber, void* multibootData)
+void kernel_initialise(uint32 magicNumber, void* multibootData)
 {
 	if(magicNumber != 0x2BADB002)
 	{

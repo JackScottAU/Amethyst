@@ -16,14 +16,18 @@
 .set STACKSIZE, 0x4000                  # that is, 16k.
 .comm stack, STACKSIZE, 32              # reserve 16k stack on a quadword boundary
 
+#Our Multiboot loader will start execution at this point.
 loader:
-    mov   $(stack + STACKSIZE), %esp    # set up the stack
-    push  %ebx                          # Multiboot data structure
-    push  %eax                          # Multiboot magic number
+	#Set up the kernel's stack.
+	mov $(stack + STACKSIZE), %esp		#Move the address of the top of the stack into ESP.
 
-    call kernel_initialise                         # call kernel proper
-
-    cli
+	#Start the main kernel.
+	push %ebx				#Push the Multiboot data structure.
+	push %eax				#Push the Multiboot magic number.
+	call kernel_initialise			#Call the main kernel initialisation function.
+	
 hang:
-    hlt                                 # halt machine should kernel return
-    jmp   hang
+	#The kernel should not reach this point. If it does, hang the machine.
+	cli					#Disable interrupts.
+	hlt					#Halt CPU.
+	jmp hang				#We *definitely* shouldn't get here, but if we do, go back to trying to hang again.
