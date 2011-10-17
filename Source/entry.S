@@ -18,10 +18,10 @@
 
 loader:
     mov   $(stack + STACKSIZE), %esp    # set up the stack
-    push  %eax                          # Multiboot magic number
     push  %ebx                          # Multiboot data structure
+    push  %eax                          # Multiboot magic number
 
-    call k_main                         # call kernel proper
+    call kernel_initialise                         # call kernel proper
 
     cli
 hang:

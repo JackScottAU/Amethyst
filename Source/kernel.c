@@ -6,27 +6,27 @@
 //#include "version.h"
 //#include "interrupts/ints.h"
 //#include "multiboot.h"
+#include <Types.h>
 
 // KERNEL MAIN FUNCTION
-void k_main(void* mbd, unsigned int magic)
+void kernel_initialise(unsigned int magicNumber, void* multibootData)
 {
-	if ( magic != 0x2BADB002 )
-   {
-      /* Something went not according to specs. Print an error */
-      /* message and halt, but do *not* rely on the multiboot */
-      /* data structure. */
-   }
+	if(magicNumber != 0x2BADB002)
+	{
+		//Print error message.
+		//CLI/HLT.
+	}
 	
  
-   /* You could either use multiboot.h */
-   /* (http://www.gnu.org/software/grub/manual/multiboot/multiboot.html#multiboot_002eh) */
-   /* or do your offsets yourself. The following is merely an example. */ 
-   //char * boot_loader_name =(char*) ((long*)mbd)[16];
+	/* You could either use multiboot.h */
+	/* (http://www.gnu.org/software/grub/manual/multiboot/multiboot.html#multiboot_002eh) */
+	/* or do your offsets yourself. The following is merely an example. */ 
+	//char * boot_loader_name =(char*) ((long*)mbd)[16];
  
-   /* Print a letter to screen to see everything is working: */
-   unsigned char *videoram = (unsigned char *) 0xb8000;
-   videoram[0] = 65; /* character 'A' */
-   videoram[1] = 0x07; /* light grey (7) on black (0). */
+	/* Print a letter to screen to see everything is working: */
+	unsigned char *videoram = (unsigned char *) 0xb8000;
+	videoram[0] = 65; /* character 'A' */
+	videoram[1] = 0x07; /* light grey (7) on black (0). */
 	
 	/*	clear_screen(WHITE_TXT);
 	k_printf("Welcome to YakOS v0.01", 0, WHITE_TXT);	//Welcome Screen
