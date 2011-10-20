@@ -4,6 +4,7 @@
 //#include "interrupts/ints.h"
 //#include "multiboot.h"
 #include <Types.h>
+#include <GDT.h>
 #include <vgaConsole.h>
 
 //To shut GCC up.
@@ -20,7 +21,12 @@ void kernel_initialise(uint32 magicNumber, void* multibootData)
  
 	vgaConsole_clearScreen();
 	
-	vgaConsole_putString("Synergy OS!\n");
+	vgaConsole_putString("Synergy is booting...\n\n");
+	
+	vgaConsole_printf("Loading GDT...\t\t\t\t\t\t\t\t");
+	gdt_install();
+	vgaConsole_printf("%s",1);
+	
 	vgaConsole_printf("Hex: %h\n",0xCAFEBABE);
 	vgaConsole_printf("Status 1: %s\n",1);
 	vgaConsole_printf("Status 2: %s\n",0);

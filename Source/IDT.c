@@ -8,6 +8,9 @@
 	Notes:		None.
 */
 
+#include <portIO.h>
+#include <Types.h>
+
 struct IDT_Entry_S
 {
 	unsigned short Address_Low;
@@ -66,4 +69,25 @@ void IDT_Init()
 	
 	//Do the install.
 	__asm__ __volatile__("lidt %0"::"m"(IDT_Pointer));
+}
+
+#define IDT_PIC1_BASEADDRESS 0x20
+#define IDT_PIC2_BASEADDRESS 0xA0
+
+void idt_remapPICs(uint8 baseIRQ)
+{
+	writeByte(IDT_PIC1_BASEADDRESS, 0x11);
+	writeByte(IDT_PIC2_BASEADDRESS, 0x11);
+	
+	writeByte(IDT_PIC1_BASEADDRESS+1, baseIRQ);
+	writeByte(IDT_PIC2_BASEADDRESS+1, baseIRQ+0x08);
+	
+	writeByte(IDT_PIC1_BASEADDRESS+1, 0x04);
+	writeByte(IDT_PIC2_BASEADDRESS+1, 0x02);
+	
+	writeByte(IDT_PIC1_BASEADDRESS+1, 0x01);
+	writeByte(IDT_PIC2_BASEADDRESS+1, 0x01);
+	
+	writeByte(IDT_PIC1_BASEADDRESS+1, 0x0);
+	writeByte(IDT_PIC2_BASEADDRESS+1, 0x0);
 }

@@ -11,6 +11,6 @@
 #ifndef GDT_H
 #define GDT_H
 
-	void GDT_Init();
+	void gdt_install();
 
 #endif /* GDT_H */
