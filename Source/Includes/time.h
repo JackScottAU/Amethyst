@@ -15,8 +15,8 @@ extern "C" {
 #endif
 
 	typedef struct {
-		sint64 seconds:54;
-		uint16 milliseconds:10; //Values 1000 to 1023 are invalid.
+		sint64 seconds;
+		uint16 partseconds; //65536ths of a second
 	} time_t;
 
 
@@ -25,4 +25,3 @@ extern "C" {
 #endif
 
 #endif	/* TIME_H */
-
