@@ -1,32 +1,36 @@
 /*
-	Console.h - Video Driver Declaration File.
-	Last updated: 2006-6-14.
+	vgaConsole.h - Video Driver Declaration File.
+	Last updated: 2011-10-20.
 */
 
 
-#ifndef __CONSOLE_H
-#define __CONSOLE_H
+#ifndef __VGACONSOLE_H
+#define __VGACONSOLE_H
+
+#include <Types.h>
+
+void vgaConsole_clearScreen(void);
+void vgaConsole_putChar(unsigned char c);
+void vgaConsole_putString(const char *Text);
+void vgaConsole_setColour(uint8 foreColour, uint8 backColour);
+void vgaConsole_updateCursor(void);
 
 	//VGA Text Palette, in easy to use form :P.
-	#define VID_BLACK		0x00
-	#define VID_BLUE		0x01
-	#define VID_GREEN		0x02
-	#define VID_CYAN		0x03
-	#define VID_RED			0x04
-	#define VID_MAGENTA		0x05
-	#define VID_BROWN		0x06
-	#define VID_LIGHT_GREY		0x07
-	#define VID_DARK_GREY		0x08
-	#define VID_LIGHT_BLUE		0x09
-	#define VID_LIGHT_GREEN		0x0A
-	#define VID_LIGHT_CYAN		0x0B
-	#define VID_LIGHT_RED		0x0C
-	#define VID_LIGHT_MAGENTA	0x0D
-	#define VID_LIGHT_BROWN		0x0E
-	#define VID_WHITE		0x0F
-	
-	
-	#define VID_HEIGHT		25
-	#define VID_WIDTH		80
+	#define VID_BLACK		0x0
+	#define VID_BLUE		0x1
+	#define VID_GREEN		0x2
+	#define VID_CYAN		0x3
+	#define VID_RED			0x4
+	#define VID_MAGENTA		0x5
+	#define VID_BROWN		0x6
+	#define VID_LIGHT_GREY		0x7
+	#define VID_DARK_GREY		0x8
+	#define VID_LIGHT_BLUE		0x9
+	#define VID_LIGHT_GREEN		0xA
+	#define VID_LIGHT_CYAN		0xB
+	#define VID_LIGHT_RED		0xC
+	#define VID_LIGHT_MAGENTA	0xD
+	#define VID_LIGHT_BROWN		0xE
+	#define VID_WHITE		0xF
 
-#endif // __CONSOLE_H
+#endif // __VGACONSOLE_H

@@ -7,7 +7,7 @@
 //#include "interrupts/ints.h"
 //#include "multiboot.h"
 #include <Types.h>
-#include "Video.c"
+#include <Console.h>
 
 // KERNEL MAIN FUNCTION
 void kernel_initialise(uint32 magicNumber, void* multibootData)
@@ -23,8 +23,8 @@ void kernel_initialise(uint32 magicNumber, void* multibootData)
 	videoram[0] = 'B'; /* character 'A' */
 	videoram[1] = 0x07; /* light grey (7) on black (0). */
 	
-	//Vid_ClearScreen();
-	PutString("Synergy OS!");
+	vgaConsole_clearScreen();
+	vgaConsole_putString("Synergy OS!");
 	
 	/*	clear_screen(WHITE_TXT);
 	k_printf("Welcome to YakOS v0.01", 0, WHITE_TXT);	//Welcome Screen

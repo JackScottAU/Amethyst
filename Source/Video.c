@@ -1,67 +1,42 @@
-// Jack's Video Driver.
-// Yayyak@gmail.com, December 2005
-
+/**
+ * Text console driver used by the kernel at boot-up, before VESA (or other video) drivers are loaded.
+ * Also includes a basic kernel printf()-style function.
+ */
 
 #include <portIO.h>
+#include <Types.h>
+#include <Console.h>
 
-	// SYNOPSIS:	Holds all needed information for Video driver. Packed as tightly as possible.
-	
-	unsigned char *VideoMemory	= (unsigned char *) 0xB8000;
-	unsigned char CursorX		= 0;
-	unsigned char CursorY		= 0;
-	unsigned char Colour		= 0x07;
+//These are defined here and not in .h because they are only relevant to implementation.
+#define VGACONSOLE_HEIGHT	25	//Defines the height of the screen in characters.
+#define VGACONSOLE_WIDTH	80	//Defines the width of the screen in characters.
+#define VGACONSOLE_BASEADDRESS	0xB8000
+
+//SYNOPSIS: Holds all needed information for Video driver. Packed as tightly as possible.	
+	uint16* vgaConsole_videoMemory	= (uint16*) VGACONSOLE_BASEADDRESS;
+	uint8 vgaConsole_cursorX	= 0;
+	uint8 vgaConsole_cursorY	= 0;
+	uint8 vgaConsole_colour		= VID_LIGHT_GREY;
 
 
-/*
-void Vid_Scroll() //UNFINISHED
-{
-	// SYNOPSIS:	Moves everything on screen up one line.
-	// INPUT:	None
-	// OUTPUT:	None
-	// REQUIRES:	memcpy(), memsetw(), VideoInfo
-	
-	unsigned short int Blank;
-	unsigned short int Lines;
-	
-	//Create blank word (Space, Colour)
-	Blank = 0x20 | (Colour << 8);
-	
-	// Row 25 is the end, this means we need to scroll up *
-	if(CursorY >= 25)
-	{
-		//How many lines to move back.
-		Lines = CursorY - 24;
-		
-		//Copy the screen memory back one line.
-		memcpy(VideoMemory, VideoMemory+(Lines*80), (25-Lines)*160);
-		
-		//Set the last line to blank.
-		memsetw(VideoMemory+((25-Lines)*80), Blank, 80);
-		
-		//Set the cursor back one line.
-		CursorY = 24;
-	};
-}
-*/
-
-void Vid_UpdateCursor()
+void vgaConsole_updateCursor(void)
 {
 	// SYNOPSIS:	Moves Blinking Cursor to current X and Y positions by setting CRT Control Register indices 14 and 15.
 	// INPUT:	None
 	// OUTPUT:	None
 	// REQUIRES:	VideoInfo, WriteByte()
 	
-	unsigned short int Offset;
+	unsigned short int offset;
 	
-	Offset = (CursorY * 80) + CursorX;
+	offset = (vgaConsole_cursorY * 80) + vgaConsole_cursorX;
 	
 	writeByte(0x3D4, 14);
-	writeByte(0x3D5, Offset >> 8);
+	writeByte(0x3D5, offset >> 8);
 	writeByte(0x3D4, 15);
-	writeByte(0x3D5, Offset);
+	writeByte(0x3D5, offset);
 }
-	
-void Vid_ClearScreen()
+
+void vgaConsole_clearScreen(void)
 {
 	// SYNOPSIS:	X.
 	// INPUT:	None
@@ -70,40 +45,40 @@ void Vid_ClearScreen()
 	
 	unsigned short int Blank;
 	unsigned short int i;
-
+	
 	//Create blank word (Space, Colour)
-	Blank = 0x20 | (Colour << 8);
+	Blank = 0x20 | (vgaConsole_colour << 8);
 
 	//Copy byte to Video Memory
 	for(i = 0; i < 25*80; i++)
 	{
-		*(VideoMemory + i) = Blank;
+		*(vgaConsole_videoMemory + i) = Blank;
 		
 		//memsetw(VideoMemory + i * 80, Blank, 80);
 	};
 
 	//Update cursor
-	CursorX = 0;
-	CursorY = 0;
-	Vid_UpdateCursor();
+	vgaConsole_cursorX = 0;
+	vgaConsole_cursorY = 0;
+	vgaConsole_updateCursor();
 }
 
-void Vid_SetColour(unsigned char ForeColour, unsigned char BackColour)
+void vgaConsole_setColour(unsigned char foreColour, unsigned char backColour)
 {
 	// SYNOPSIS:	Changes current colour by setting attribute byte in VideoInfo structure.
 	// INPUT:	Foreground Colour (0-15), Background Colour (0-15)
 	// OUTPUT:	None
 	// REUIRES:	VideoInfo
 	
-	if((ForeColour < 16) && (BackColour < 16))
+	if((foreColour < 16) && (backColour < 16))
 	{
-		Colour = (BackColour << 4) | (ForeColour);
+		vgaConsole_colour = (backColour << 4) | (foreColour);
 	} else {
 		/* INVALID COLOUR ARRANGEMENT */
 	};
 }
 
-void Vid_PutChar(unsigned char c)
+void vgaConsole_putChar(unsigned char c)
 {
 	// SYNOPSIS:	Puts a single character on the screen, obeying all ASCII rules.
 	// INPUT:	Single character
@@ -115,48 +90,48 @@ void Vid_PutChar(unsigned char c)
 	switch(c)
 	{
 		case 0x08:	//Backspace
-			if(CursorX != 0)
+			if(vgaConsole_cursorX != 0)
 			{
-				CursorX --;
+				vgaConsole_cursorX --;
 			};
 			break;
 		
 		case 0x09:	//Tab
-			CursorX = (CursorX + 8) & ~(8 - 1);
+			vgaConsole_cursorX = (vgaConsole_cursorX + 8) & ~(8 - 1);
 			break;
 			
 		case 0x0A:	//New Line
-			CursorX = 0;
-			CursorY ++;
+			vgaConsole_cursorX = 0;
+			vgaConsole_cursorY ++;
 			break;
 			
 		case 0x0D:	//Carriage Return
-			CursorX = 0;
+			vgaConsole_cursorX = 0;
 			break;
 		
 		default:	//All other characters
 			if(c >= 0x20)	//If it smaller than a space, then it is a control char, and should be ignored.
 			{
-				Position = (unsigned short *) VideoMemory + (CursorY * 80 + CursorX);
-				*Position = c | (Colour << 8);
-				CursorX ++;
+				Position = (unsigned short *) vgaConsole_videoMemory + (vgaConsole_cursorY * 80 + vgaConsole_cursorX);
+				*Position = c | (vgaConsole_colour << 8);
+				vgaConsole_cursorX ++;
 			};
 			break;
 	};
 	
 	//New Line if edge reached
-	if(CursorX >= 80)
+	if(vgaConsole_cursorX >= 80)
 	{
-		CursorX = 0;
-		CursorY ++;
+		vgaConsole_cursorX = 0;
+		vgaConsole_cursorY ++;
 	};
 	
 	//Scroll if needed, and update cursor.
 	//Vid_Scroll();
-	Vid_UpdateCursor();
+	vgaConsole_updateCursor();
 }
 
-void PutString(const char *Text)
+void vgaConsole_putString(const char *Text)
 {
 	// SYNOPSIS:	Uses PutChar to print a string to screen.
 	// INPUT:	Text to output (Variable length)
@@ -167,6 +142,6 @@ void PutString(const char *Text)
 	
 	for(i=0;Text[i]!=0;i++)
 	{
-		Vid_PutChar(Text[i]);
+		vgaConsole_putChar(Text[i]);
 	};
 }
