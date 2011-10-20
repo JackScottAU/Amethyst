@@ -11,6 +11,8 @@ CFLAGS		:= -nostdlib -fno-builtin -nostartfiles -nodefaultlibs -I Source/Include
 #Top-level targets:
 .PHONY: all clean cd-image hdd-image floppy-image
 
+all: clean cd-image
+
 clean:
 	-@rm -r Build
 	-@rm -r Source/*.o
@@ -31,7 +33,7 @@ Source/entry.o: Source/entry.S
 	@$(AS) -o Source/entry.o Source/entry.S
 	
 Source/gdt.o: Source/gdt.asm
-	nasm -f elf -o Source/gdt.o Source/gdt.asm
+	@nasm -f elf -o Source/gdt.o Source/gdt.asm
 
 # Object-file compilation rules:
 %.o: %.c
