@@ -7,7 +7,7 @@
 //#include "interrupts/ints.h"
 //#include "multiboot.h"
 #include <Types.h>
-#include <Console.h>
+#include <vgaConsole.h>
 
 // KERNEL MAIN FUNCTION
 void kernel_initialise(uint32 magicNumber, void* multibootData)

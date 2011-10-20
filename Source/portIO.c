@@ -1,3 +1,5 @@
+#include <portIO.h>
+
 unsigned char readByte(unsigned short int portNumber)
 {
 	/*

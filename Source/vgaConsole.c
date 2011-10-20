@@ -5,7 +5,7 @@
 
 #include <portIO.h>
 #include <Types.h>
-#include <Console.h>
+#include <vgaConsole.h>
 
 //These are defined here and not in .h because they are only relevant to implementation.
 #define VGACONSOLE_HEIGHT	25	//Defines the height of the screen in characters.
