@@ -71,4 +71,4 @@ void kernel_initialise(uint32 magicNumber, void* multibootData)
 	{
 		//Do Nothing here
 	};
-};
+}

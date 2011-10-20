@@ -156,7 +156,7 @@ void Vid_PutChar(unsigned char c)
 	Vid_UpdateCursor();
 }
 
-void PutString(char *Text)
+void PutString(const char *Text)
 {
 	// SYNOPSIS:	Uses PutChar to print a string to screen.
 	// INPUT:	Text to output (Variable length)
