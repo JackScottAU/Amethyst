@@ -3,17 +3,19 @@
 	Last updated: 2011-10-20.
 */
 
+#include <Types.h>
 
 #ifndef __VGACONSOLE_H
 #define __VGACONSOLE_H
 
-#include <Types.h>
-
-void vgaConsole_clearScreen(void);
-void vgaConsole_putChar(unsigned char c);
-void vgaConsole_putString(const char *Text);
-void vgaConsole_setColour(uint8 foreColour, uint8 backColour);
-void vgaConsole_updateCursor(void);
+	void vgaConsole_clearScreen(void);
+	void vgaConsole_printf(const char* formatString, ...);
+	void vgaConsole_putChar(unsigned char c);
+	void vgaConsole_putHexadecimal(uint32 arg);
+	void vgaConsole_putString(const char *Text);
+	void vgaConsole_scroll(void);
+	void vgaConsole_setColour(uint8 foreColour, uint8 backColour);
+	void vgaConsole_updateCursor(void);
 
 	//VGA Text Palette, in easy to use form :P.
 	#define VID_BLACK		0x0

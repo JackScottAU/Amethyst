@@ -1,22 +1,22 @@
 // Synergy OS
 
 // INCLUDES
-//#include <video.h>
-//#include <data_io.h>
-//#include "version.h"
 //#include "interrupts/ints.h"
 //#include "multiboot.h"
 #include <Types.h>
 #include <vgaConsole.h>
 
+//To shut GCC up.
+void kernel_initialise(uint32 magicNumber, void* multibootData);
+
 // KERNEL MAIN FUNCTION
 void kernel_initialise(uint32 magicNumber, void* multibootData)
 {
-	//if(magicNumber != 0x2BADB002)
-	//{
+	if(magicNumber != (uint32) multibootData)
+	{
 		//Print error message.
 		//CLI/HLT.
-	//}
+	}
  
 	/* Print a letter to screen to see everything is working: */
 	unsigned char *videoram = (unsigned char *) 0xB8000;
@@ -24,7 +24,9 @@ void kernel_initialise(uint32 magicNumber, void* multibootData)
 	videoram[1] = 0x07; /* light grey (7) on black (0). */
 	
 	vgaConsole_clearScreen();
-	vgaConsole_putString("Synergy OS!");
+	
+	vgaConsole_putString("Synergy OS!\n");
+	vgaConsole_printf("Hex: %h\nFoo!",0xCAFEBABE);
 	
 	/*	clear_screen(WHITE_TXT);
 	k_printf("Welcome to YakOS v0.01", 0, WHITE_TXT);	//Welcome Screen
