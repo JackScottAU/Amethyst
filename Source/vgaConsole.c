@@ -66,6 +66,36 @@ void vgaConsole_printf(const char* formatString, ...)
 			i++;
 			arg = va_arg(args,int);
 			
+			if(formatString[i]=='s')
+			{
+				//Print a status in a pretty way.
+				if(arg)
+				{
+					//true,ok.
+					uint8 storedColour = vgaConsole_colour;
+					
+					vgaConsole_setColour(VID_WHITE,VID_BLACK);
+					vgaConsole_putString("[ ");
+					vgaConsole_setColour(VID_GREEN,VID_BLACK);
+					vgaConsole_putString("PASS");
+					vgaConsole_setColour(VID_WHITE,VID_BLACK);
+					vgaConsole_putString(" ]");
+					
+					vgaConsole_colour = storedColour;
+				} else {
+					//false,fail.
+					uint8 storedColour = vgaConsole_colour;
+					
+					vgaConsole_setColour(VID_WHITE,VID_BLACK);
+					vgaConsole_putString("[ ");
+					vgaConsole_setColour(VID_RED,VID_BLACK);
+					vgaConsole_putString("FAIL");
+					vgaConsole_setColour(VID_WHITE,VID_BLACK);
+					vgaConsole_putString(" ]");
+					
+					vgaConsole_colour = storedColour;
+				}
+			}
 			if(formatString[i]=='d')
 			{
 				//vgaConsole_putDecimal(arg);

@@ -12,22 +12,18 @@ void kernel_initialise(uint32 magicNumber, void* multibootData);
 // KERNEL MAIN FUNCTION
 void kernel_initialise(uint32 magicNumber, void* multibootData)
 {
-	if(magicNumber != (uint32) multibootData)
+	if(magicNumber != 0x2BADB002)
 	{
 		//Print error message.
 		//CLI/HLT.
 	}
  
-	/* Print a letter to screen to see everything is working: */
-	unsigned char *videoram = (unsigned char *) 0xB8000;
-	videoram[0] = 'B'; /* character 'A' */
-	videoram[1] = 0x07; /* light grey (7) on black (0). */
-	
 	vgaConsole_clearScreen();
 	
 	vgaConsole_putString("Synergy OS!\n");
-	vgaConsole_printf("Hex: %h\nFoo!",0xCAFEBABE);
-	
+	vgaConsole_printf("Hex: %h\n",0xCAFEBABE);
+	vgaConsole_printf("Status 1: %s\n",1);
+	vgaConsole_printf("Status 2: %s\n",0);
 	/*	clear_screen(WHITE_TXT);
 	k_printf("Welcome to YakOS v0.01", 0, WHITE_TXT);	//Welcome Screen
 	k_printf("----------------------", 1, WHITE_TXT);
