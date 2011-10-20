@@ -19,7 +19,6 @@ extern "C" {
 		uint16 partseconds; //65536ths of a second
 	} time_t;
 
-
 #ifdef	__cplusplus
 }
 #endif

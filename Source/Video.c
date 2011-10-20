@@ -1,16 +1,15 @@
 // Jack's Video Driver.
 // Yayyak@gmail.com, December 2005
 
-#include <Video.h>
-#include <BasicIO.h>
 
+#include <portIO.h>
 
 	// SYNOPSIS:	Holds all needed information for Video driver. Packed as tightly as possible.
 	
-	unsigned char *VideoMemory	= (unsigned char *) VIDEO_MEM;
+	unsigned char *VideoMemory	= (unsigned char *) 0xB8000;
 	unsigned char CursorX		= 0;
 	unsigned char CursorY		= 0;
-	unsigned char Colour		= 0;
+	unsigned char Colour		= 0x07;
 
 
 /*
@@ -45,6 +44,23 @@ void Vid_Scroll() //UNFINISHED
 }
 */
 
+void Vid_UpdateCursor()
+{
+	// SYNOPSIS:	Moves Blinking Cursor to current X and Y positions by setting CRT Control Register indices 14 and 15.
+	// INPUT:	None
+	// OUTPUT:	None
+	// REQUIRES:	VideoInfo, WriteByte()
+	
+	unsigned short int Offset;
+	
+	Offset = (CursorY * 80) + CursorX;
+	
+	writeByte(0x3D4, 14);
+	writeByte(0x3D5, Offset >> 8);
+	writeByte(0x3D4, 15);
+	writeByte(0x3D5, Offset);
+}
+	
 void Vid_ClearScreen()
 {
 	// SYNOPSIS:	X.
@@ -70,23 +86,6 @@ void Vid_ClearScreen()
 	CursorX = 0;
 	CursorY = 0;
 	Vid_UpdateCursor();
-}
-
-void Vid_UpdateCursor()
-{
-	// SYNOPSIS:	Moves Blinking Cursor to current X and Y positions by setting CRT Control Register indices 14 and 15.
-	// INPUT:	None
-	// OUTPUT:	None
-	// REQUIRES:	VideoInfo, WriteByte()
-	
-	unsigned short int Offset;
-	
-	Offset = (CursorY * 80) + CursorX;
-	
-	WriteByte(0x3D4, 14);
-	WriteByte(0x3D5, Offset >> 8);
-	WriteByte(0x3D4, 15);
-	WriteByte(0x3D5, Offset);
 }
 
 void Vid_SetColour(unsigned char ForeColour, unsigned char BackColour)
@@ -155,4 +154,19 @@ void Vid_PutChar(unsigned char c)
 	//Scroll if needed, and update cursor.
 	//Vid_Scroll();
 	Vid_UpdateCursor();
+}
+
+void PutString(char *Text)
+{
+	// SYNOPSIS:	Uses PutChar to print a string to screen.
+	// INPUT:	Text to output (Variable length)
+	// OUTPUT:	None
+	// REQUIRES:	PutChar(), strlen()
+	
+	int i;
+	
+	for(i=0;Text[i]!=0;i++)
+	{
+		Vid_PutChar(Text[i]);
+	};
 }

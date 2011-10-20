@@ -7,26 +7,24 @@
 //#include "interrupts/ints.h"
 //#include "multiboot.h"
 #include <Types.h>
+#include "Video.c"
 
 // KERNEL MAIN FUNCTION
 void kernel_initialise(uint32 magicNumber, void* multibootData)
 {
-	if(magicNumber != 0x2BADB002)
-	{
+	//if(magicNumber != 0x2BADB002)
+	//{
 		//Print error message.
 		//CLI/HLT.
-	}
-	
- 
-	/* You could either use multiboot.h */
-	/* (http://www.gnu.org/software/grub/manual/multiboot/multiboot.html#multiboot_002eh) */
-	/* or do your offsets yourself. The following is merely an example. */ 
-	//char * boot_loader_name =(char*) ((long*)mbd)[16];
+	//}
  
 	/* Print a letter to screen to see everything is working: */
-	unsigned char *videoram = (unsigned char *) 0xb8000;
-	videoram[0] = 65; /* character 'A' */
+	unsigned char *videoram = (unsigned char *) 0xB8000;
+	videoram[0] = 'B'; /* character 'A' */
 	videoram[1] = 0x07; /* light grey (7) on black (0). */
+	
+	//Vid_ClearScreen();
+	PutString("Synergy OS!");
 	
 	/*	clear_screen(WHITE_TXT);
 	k_printf("Welcome to YakOS v0.01", 0, WHITE_TXT);	//Welcome Screen

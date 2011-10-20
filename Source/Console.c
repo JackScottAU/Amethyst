@@ -16,20 +16,7 @@ struct ConsoleInfoStruct{
 
 
 
-void PutString(unsigned char *Text)
-{
-	// SYNOPSIS:	Uses PutChar to print a string to screen.
-	// INPUT:	Text to output (Variable length)
-	// OUTPUT:	None
-	// REQUIRES:	PutChar(), strlen()
-	
-	int i;
-	
-	for (i = 0; i < strlen(Text); i++)
-	{
-		PutChar(Text[i]);
-	};
-};
+
 
 void PutChar(unsigned char C) //UNFINISHED
 {

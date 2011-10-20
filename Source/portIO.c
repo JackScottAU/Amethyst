@@ -1,4 +1,4 @@
-unsigned char ReadByte(unsigned short int PortNumber)
+unsigned char readByte(unsigned short int portNumber)
 {
 	/*
 	SYNOPSIS:	Reads a byte from the specified port.
@@ -7,18 +7,18 @@ unsigned char ReadByte(unsigned short int PortNumber)
 	NOTES:		None.
 	*/
 	
-	unsigned char Value;
+	unsigned char value;
 
 	__asm__ __volatile__(
 		"inb %w1,%b0"
-		:"=a"(Value)
-		:"d"(PortNumber)
+		:"=a"(value)
+		:"d"(portNumber)
 	);
 	
-	return Value;
+	return value;
 }
 
-void WriteByte(unsigned short int PortNumber, unsigned char Value)
+void writeByte(unsigned short int portNumber, unsigned char value)
 {
 	/*
 	SYNOPSIS:	Writes a byte to the specified port.
@@ -30,6 +30,6 @@ void WriteByte(unsigned short int PortNumber, unsigned char Value)
 	__asm__ __volatile__(
 		"outb %b0,%w1"
 		:
-		:"a"(Value), "d"(PortNumber)
+		:"a"(value), "d"(portNumber)
 	);
 }
