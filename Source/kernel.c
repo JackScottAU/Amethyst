@@ -7,9 +7,6 @@
 #include <GDT.h>
 #include <vgaConsole.h>
 
-//To shut GCC up.
-void kernel_initialise(uint32 magicNumber, void* multibootData);
-
 // KERNEL MAIN FUNCTION
 void kernel_initialise(uint32 magicNumber, void* multibootData)
 {
@@ -31,17 +28,7 @@ void kernel_initialise(uint32 magicNumber, void* multibootData)
 	vgaConsole_printf("Status 1: %s\n",1);
 	vgaConsole_printf("Status 2: %s\n",0);
 
-	/*INTS(0);
-	
-	remap_pics(0x20,0x28);
-	
-	maskIRQ(0xFF);
-	
-	CreateInterrupts();
-	
-	loadIDTR();
-	
-	unmaskIRQ(0xFD);
+	/*
 
 	//Init kernel core.
 	gdtInstall();
