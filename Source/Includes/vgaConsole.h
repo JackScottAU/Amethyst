@@ -18,21 +18,21 @@
 	void vgaConsole_updateCursor(void);
 
 	//VGA Text Palette, in easy to use form :P.
-	#define VID_BLACK		0x0
-	#define VID_BLUE		0x1
-	#define VID_GREEN		0x2
-	#define VID_CYAN		0x3
-	#define VID_RED			0x4
-	#define VID_MAGENTA		0x5
-	#define VID_BROWN		0x6
-	#define VID_LIGHT_GREY		0x7
-	#define VID_DARK_GREY		0x8
-	#define VID_LIGHT_BLUE		0x9
-	#define VID_LIGHT_GREEN		0xA
-	#define VID_LIGHT_CYAN		0xB
-	#define VID_LIGHT_RED		0xC
-	#define VID_LIGHT_MAGENTA	0xD
-	#define VID_LIGHT_BROWN		0xE
-	#define VID_WHITE		0xF
+	#define VGACONSOLE_BLACK		0x0
+	#define VGACONSOLE_BLUE			0x1
+	#define VGACONSOLE_GREEN		0x2
+	#define VGACONSOLE_CYAN			0x3
+	#define VGACONSOLE_RED			0x4
+	#define VGACONSOLE_MAGENTA		0x5
+	#define VGACONSOLE_BROWN		0x6
+	#define VGACONSOLE_LIGHT_GREY		0x7
+	#define VGACONSOLE_DARK_GREY		0x8
+	#define VGACONSOLE_LIGHT_BLUE		0x9
+	#define VGACONSOLE_LIGHT_GREEN		0xA
+	#define VGACONSOLE_LIGHT_CYAN		0xB
+	#define VGACONSOLE_LIGHT_RED		0xC
+	#define VGACONSOLE_LIGHT_MAGENTA	0xD
+	#define VGACONSOLE_LIGHT_BROWN		0xE
+	#define VGACONSOLE_WHITE		0xF
 
 #endif // __VGACONSOLE_H

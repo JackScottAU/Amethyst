@@ -12,13 +12,13 @@ void kernel_initialise(uint32 magicNumber, void* multibootData)
 {
 	if(magicNumber != 0x2BADB002)
 	{
-		//Print error message.
+		vgaConsole_printf("Multiboot error found. Halting...");
 		//CLI/HLT.
 	}
  
 	vgaConsole_clearScreen();
 	
-	vgaConsole_putString("Synergy is booting...\n\n");
+	vgaConsole_printf("Synergy is booting...\n\n");
 	
 	vgaConsole_printf("Loading GDT...\t\t\t\t\t\t\t\t");
 	gdt_install();
@@ -31,7 +31,6 @@ void kernel_initialise(uint32 magicNumber, void* multibootData)
 	/*
 
 	//Init kernel core.
-	gdtInstall();
 	IDT_Init();
 	ISRs_Install();		//} These two could be done in any order.
 	PIC_Remap();		//}

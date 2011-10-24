@@ -23,7 +23,7 @@ uint8 vgaConsole_cursorX	= 0;
 uint8 vgaConsole_cursorY	= 0;
 
 /** Holds the current value of the VGA attribute byte (which controls the colour of the displayed text). */
-uint8 vgaConsole_colour		= VID_LIGHT_GREY;
+uint8 vgaConsole_colour		= VGACONSOLE_LIGHT_GREY;
 
 
 void vgaConsole_clearScreen(void)
@@ -74,11 +74,11 @@ void vgaConsole_printf(const char* formatString, ...)
 					//true,ok.
 					uint8 storedColour = vgaConsole_colour;
 					
-					vgaConsole_setColour(VID_WHITE,VID_BLACK);
+					vgaConsole_setColour(VGACONSOLE_WHITE,VGACONSOLE_BLACK);
 					vgaConsole_putString("[ ");
-					vgaConsole_setColour(VID_GREEN,VID_BLACK);
+					vgaConsole_setColour(VGACONSOLE_GREEN,VGACONSOLE_BLACK);
 					vgaConsole_putString("PASS");
-					vgaConsole_setColour(VID_WHITE,VID_BLACK);
+					vgaConsole_setColour(VGACONSOLE_WHITE,VGACONSOLE_BLACK);
 					vgaConsole_putString(" ]");
 					
 					vgaConsole_colour = storedColour;
@@ -86,11 +86,11 @@ void vgaConsole_printf(const char* formatString, ...)
 					//false,fail.
 					uint8 storedColour = vgaConsole_colour;
 					
-					vgaConsole_setColour(VID_WHITE,VID_BLACK);
+					vgaConsole_setColour(VGACONSOLE_WHITE,VGACONSOLE_BLACK);
 					vgaConsole_putString("[ ");
-					vgaConsole_setColour(VID_RED,VID_BLACK);
+					vgaConsole_setColour(VGACONSOLE_RED,VGACONSOLE_BLACK);
 					vgaConsole_putString("FAIL");
-					vgaConsole_setColour(VID_WHITE,VID_BLACK);
+					vgaConsole_setColour(VGACONSOLE_WHITE,VGACONSOLE_BLACK);
 					vgaConsole_putString(" ]");
 					
 					vgaConsole_colour = storedColour;
