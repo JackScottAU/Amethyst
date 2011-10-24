@@ -12,5 +12,7 @@
 #define GDT_H
 
 	void gdt_install();
+	void* gdt_table;
+	void* gdt_pointer;
 
 #endif /* GDT_H */
