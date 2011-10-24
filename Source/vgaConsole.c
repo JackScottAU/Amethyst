@@ -183,24 +183,12 @@ void vgaConsole_putHexadecimal(uint32 arg)
 	for(int i=28;i>=0;i-=4)
 	{
 		j = (arg & (0xF<<i))>>i;
-		switch(j)
+		
+		if(j<10)
 		{
-			case 0: vgaConsole_putChar('0'); break;
-			case 1: vgaConsole_putChar('1'); break;
-			case 2: vgaConsole_putChar('2'); break;
-			case 3: vgaConsole_putChar('3'); break;
-			case 4: vgaConsole_putChar('4'); break;
-			case 5: vgaConsole_putChar('5'); break;
-			case 6: vgaConsole_putChar('6'); break;
-			case 7: vgaConsole_putChar('7'); break;
-			case 8: vgaConsole_putChar('8'); break;
-			case 9: vgaConsole_putChar('9'); break;
-			case 10: vgaConsole_putChar('A'); break;
-			case 11: vgaConsole_putChar('B'); break;
-			case 12: vgaConsole_putChar('C'); break;
-			case 13: vgaConsole_putChar('D'); break;
-			case 14: vgaConsole_putChar('E'); break;
-			case 15: vgaConsole_putChar('F'); break;
+			vgaConsole_putChar('0'+j);
+		} else {
+			vgaConsole_putChar('A'+(j-10));
 		}
 	}
 	
