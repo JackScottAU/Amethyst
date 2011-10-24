@@ -2,13 +2,16 @@
 
 // INCLUDES
 //#include "interrupts/ints.h"
-//#include "multiboot.h"
+#include <multiboot.h>
 #include <Types.h>
 #include <GDT.h>
 #include <vgaConsole.h>
 
+//To shut GCC up.
+void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData);
+
 // KERNEL MAIN FUNCTION
-void kernel_initialise(uint32 magicNumber, void* multibootData)
+void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 {
 	if(magicNumber != 0x2BADB002)
 	{
@@ -19,6 +22,8 @@ void kernel_initialise(uint32 magicNumber, void* multibootData)
 	vgaConsole_clearScreen();
 	
 	vgaConsole_printf("Synergy is booting...\n\n");
+	
+	vgaConsole_printf("Multiboot Flags: \t%h\n",multibootData->flags);
 	
 	vgaConsole_printf("Loading GDT...\t\t\t\t\t\t\t\t");
 	gdt_install();

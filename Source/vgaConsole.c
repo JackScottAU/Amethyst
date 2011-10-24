@@ -13,13 +13,14 @@
 //These are defined here and not in .h because they are only relevant to implementation.
 #define VGACONSOLE_HEIGHT	25	//Defines the height of the screen in characters.
 #define VGACONSOLE_WIDTH	80	//Defines the width of the screen in characters.
-#define VGACONSOLE_BASEADDRESS	0xB8000
 
-//SYNOPSIS: Holds all needed information for Video driver. Packed as tightly as possible.	
-uint16* vgaConsole_videoMemory	= (uint16*) VGACONSOLE_BASEADDRESS;
+/** Holds the base address of the text area for the VGA controller. */
+uint16* vgaConsole_videoMemory	= (uint16*) 0xB8000;
 
+/** Holds the horizontal offset in characters from the left of the screen. */
 uint8 vgaConsole_cursorX	= 0;
 
+/** Holds the vertical offset in lines from the top of the screen. */
 uint8 vgaConsole_cursorY	= 0;
 
 /** Holds the current value of the VGA attribute byte (which controls the colour of the displayed text). */
