@@ -14,7 +14,7 @@
 #include <IDT.h>
 
 
-void ISR_Handler(struct Registers_S *Registers)
+void interrupts_handler(struct Registers_S *Registers)
 {
 	/*
 	SYNOPSIS:	Takes control of the interrupt and delegates the task.

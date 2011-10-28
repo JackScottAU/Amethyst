@@ -367,7 +367,7 @@ interrupts_ISR_2F:
 
 ; We call a C function in here. We need to let the assembler know
 ; that '_fault_handler' exists in another file
-extern ISR_Handler
+extern interrupts_handler
 
 ; This is our common ISR stub. It saves the processor state, sets
 ; up for kernel mode segments, calls the C-level fault handler,
@@ -385,7 +385,7 @@ interrupts_ISR_Stub:
     mov gs, ax
     mov eax, esp
     push eax
-    mov eax, ISR_Handler
+    mov eax, interrupts_handler
     call eax
     pop eax
     pop gs

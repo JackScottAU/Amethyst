@@ -4,16 +4,17 @@
 #ifndef _IDT_H
 #define _IDT_H
 
+	//Public Interface
+	void interrupts_initialise(void);
+
 	void interrupts_installEmptyIDT(void);
 	void interrupts_setGate(uint8 Number, uint32 Address, uint16 GDTSelector, uint8 Flags);
 	void interrupts_installISRs(void);
-
-	void interrupts_initialise(void);
 	
 	void interrupts_disableInterrupts(void);
 	void interrupts_enableInterrupts(void);
 	
-	void ISR_Handler(struct Registers_S *Registers);
+	void interrupts_handler(struct Registers_S *Registers);
 
 	void interrupts_remap8259s(uint8 baseIRQ);
 
