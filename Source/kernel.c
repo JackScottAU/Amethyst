@@ -32,18 +32,7 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	vgaConsole_printf("%s",1);
 	
 	vgaConsole_printf("Setting up Interrupts...\t\t\t\t\t\t");
-	IDT_Init();
-	ISRs_Install();		//} These two could be done in any order.
-	idt_remapPICs(0x20);		//}
-	vgaConsole_printf("%s",1);
-	
-	vgaConsole_printf("Setting up the clock...\t\t\t\t\t\t\t");
-	clock_init();
-	vgaConsole_printf("%s",1);
-	
-	vgaConsole_printf("Enabling interrupts...\t\t\t\t\t\t\t");
-	//The moment of truth.
-	idt_enableInts();
+	interrupts_initialise();
 	vgaConsole_printf("%s",1);
 	
 	while(1)

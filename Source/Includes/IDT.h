@@ -8,9 +8,11 @@
 	void IDT_SetGate(uint8 Number, uint32 Address, uint16 GDTSelector, uint8 Flags);
 	void ISRs_Install(void);
 
-	#define idt_disableInts()	__asm__ volatile("cli")
-	#define idt_enableInts()	__asm__ volatile("sti")
-
+	void interrupts_initialise(void);
+	
+	void interrupts_disableInterrupts(void);
+	void interrupts_enableInterrupts(void);
+	
 	void ISR_Handler(struct Registers_S *Registers);
 
 	void idt_remapPICs(uint8 baseIRQ);

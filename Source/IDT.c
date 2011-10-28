@@ -11,6 +11,7 @@
 #include <portIO.h>
 #include <Types.h>
 #include <IDT.h>
+#include <Clock.h>
 
 struct IDT_Entry_S
 {
@@ -91,4 +92,25 @@ void idt_remapPICs(uint8 baseIRQ)
 	
 	writeByte(IDT_PIC1_BASEADDRESS+1, 0x0);
 	writeByte(IDT_PIC2_BASEADDRESS+1, 0x0);
+}
+
+void interrupts_disableInterrupts(void)
+{
+	__asm__ volatile("cli");
+}
+
+void interrupts_enableInterrupts(void)
+{
+	__asm__ volatile("sti");
+}
+
+void interrupts_initialise(void)
+{
+	IDT_Init();
+	ISRs_Install();		//} These two could be done in any order.
+	idt_remapPICs(0x20);		//}
+	
+	clock_init();
+	
+	interrupts_enableInterrupts();
 }
