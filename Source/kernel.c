@@ -1,12 +1,11 @@
 // Synergy OS
 
 // INCLUDES
-//#include "interrupts/ints.h"
 #include <multiboot.h>
 #include <Types.h>
 #include <GDT.h>
 #include <vgaConsole.h>
-#include <IDT.h>
+#include <interrupts.h>
 #include <Clock.h>
 
 //To shut GCC up.

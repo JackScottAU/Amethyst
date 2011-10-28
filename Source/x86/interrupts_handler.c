@@ -11,7 +11,7 @@
 #include <portIO.h>
 #include <Clock.h>
 #include <Registers.h>
-#include <IDT.h>
+#include <interrupts.h>
 
 
 void interrupts_handler(struct Registers_S *Registers)

@@ -10,7 +10,7 @@
 
 #include <portIO.h>
 #include <Types.h>
-#include <IDT.h>
+#include <interrupts.h>
 
 struct IDT_Entry_S
 {
