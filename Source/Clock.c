@@ -1,16 +1,10 @@
 /*
 	Clock.c - Time/Date and Timer Functions.
-	Part of the Jane Microkernel.
-	
-	Maintainer:	Jack Scott (yayyak@yayyak.net).
-	Last Modified:	2007-01-05.
-	License:	3-clause BSD License.
-	Notes:		None.
  * 
  *	Basically it uses the RTC to load initial data, and then the PIT (or HP-clock) to update that.
 */
 
-#include "Includes/portIO.h"
+#include <portIO.h>
 #include <Clock.h>
 #include <vgaConsole.h>
 
@@ -43,7 +37,7 @@ void clock_handler_PIC()
 	
 	if(Clock_Ticks%1000==0)
 	{
-		vgaConsole_printf("Clock: %h\n",Clock_Ticks);
+		vgaConsole_printf("Clock: %h\n",Clock_Ticks/1000);
 	}
 	
 	//There are a list of things that need to be notified on clockticks... visit them here.

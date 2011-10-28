@@ -31,25 +31,20 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	gdt_install();
 	vgaConsole_printf("%s",1);
 	
-	
-	
-	
-
-	
-
-	//Init kernel core.
+	vgaConsole_printf("Setting up Interrupts...\t\t\t\t\t\t");
 	IDT_Init();
 	ISRs_Install();		//} These two could be done in any order.
 	idt_remapPICs(0x20);		//}
-	vgaConsole_printf("Status 1: %s\n",1);
+	vgaConsole_printf("%s",1);
 	
-	//Init subsystems.
+	vgaConsole_printf("Setting up the clock...\t\t\t\t\t\t\t");
 	clock_init();
-	vgaConsole_printf("Status 2: %s\n",0);
+	vgaConsole_printf("%s",1);
 	
+	vgaConsole_printf("Enabling interrupts...\t\t\t\t\t\t\t");
 	//The moment of truth.
 	idt_enableInts();
-	vgaConsole_printf("Hex: %h\n",0xCAFEBABE);
+	vgaConsole_printf("%s",1);
 	
 	while(1)
 	{
