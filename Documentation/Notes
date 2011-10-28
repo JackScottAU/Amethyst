@@ -1,8 +1,8 @@
 Single address space - everything runs as a bytecode on top of kernel mode.
-So just need a simple GDT. Physical memory manager and virtual memory manager need to be very good and very fast. Virtual memory manager ne
+So just need a simple GDT. Physical memory manager and virtual memory manager need to be very good and very fast.
 
 Physical Memory Manager --> Virtual Memory Manager --> Object Memory Manager (GC) --> Runtime Interpreter <-- GUI Shell <-- Video/Console/etc Drivers
-				^							^	^
+				^					^			^
 			Paging Memory Manager			Class/Object Loader & Saver	^
 				^					^		^	^
 			Disk/FS Drivers		----->		VFS Drivers		Network Drivers

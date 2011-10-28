@@ -16,8 +16,8 @@ extern "C" {
 
 	struct multiboot_info {
 		uint32 flags;
-		uint32 memLower;
-		uint32 memUpper;
+		uint32 memoryLower;
+		uint32 memoryUpper;
 		uint32 bootDevice;
 		char* commandLine;
 		uint32 modsCount;
@@ -26,11 +26,19 @@ extern "C" {
 		uint32 syms2;
 		uint32 syms3;
 		uint32 syms4;
-		uint32 mmapLength; //44
-		uint32 mmapAddr; //48
+		uint32 memoryMapLength; //44
+		struct multiboot_memoryMapNode* memoryMapAddress; //48
 		//More here.
 	};
-
+	
+	struct multiboot_memoryMapNode {
+		uint32 size;
+		uint64 addr;
+		uint64 len;
+		#define MULTIBOOT_MEMORY_AVAILABLE	1
+		#define MULTIBOOT_MEMORY_RESERVED	2
+		uint32 type;
+	};
 
 #ifdef	__cplusplus
 }
