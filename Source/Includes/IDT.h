@@ -4,9 +4,9 @@
 #ifndef _IDT_H
 #define _IDT_H
 
-	void IDT_Init(void);
+	void interrupts_installEmptyIDT(void);
 	void IDT_SetGate(uint8 Number, uint32 Address, uint16 GDTSelector, uint8 Flags);
-	void ISRs_Install(void);
+	void interrupts_installISRs(void);
 
 	void interrupts_initialise(void);
 	
@@ -15,7 +15,7 @@
 	
 	void ISR_Handler(struct Registers_S *Registers);
 
-	void idt_remapPICs(uint8 baseIRQ);
+	void interrupts_remap8259s(uint8 baseIRQ);
 
 	//Defines whether the interrupt table entry is valid.
 	#define IDT_FLAG_PRESENT	0x80

@@ -44,7 +44,7 @@ void IDT_SetGate(unsigned char Number, unsigned long Address, unsigned short Sel
 	IDT_Table[Number].Flags = Flags;
 }
 
-void IDT_Init()
+void interrupts_installEmptyIDT()
 {
 	/*
 	SYNOPSIS:	Clears the IDT, and installs it ready to use.
@@ -76,7 +76,7 @@ void IDT_Init()
 #define IDT_PIC1_BASEADDRESS 0x20
 #define IDT_PIC2_BASEADDRESS 0xA0
 
-void idt_remapPICs(uint8 baseIRQ)
+void interrupts_remap8259s(uint8 baseIRQ)
 {
 	writeByte(IDT_PIC1_BASEADDRESS, 0x11);
 	writeByte(IDT_PIC2_BASEADDRESS, 0x11);
@@ -106,9 +106,9 @@ void interrupts_enableInterrupts(void)
 
 void interrupts_initialise(void)
 {
-	IDT_Init();
-	ISRs_Install();		//} These two could be done in any order.
-	idt_remapPICs(0x20);		//}
+	interrupts_installEmptyIDT();
+	interrupts_installISRs();		//} These two could be done in any order.
+	interrupts_remap8259s(0x20);		//}
 	
 	clock_init();
 	

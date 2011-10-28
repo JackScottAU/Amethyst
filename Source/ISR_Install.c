@@ -51,7 +51,7 @@ void ISR_2D();
 void ISR_2E();
 void ISR_2F();
 
-void ISRs_Install()
+void interrupts_installISRs()
 {
 	IDT_SetGate(0x00, (unsigned)ISR_00, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_INTGATE32);
 	IDT_SetGate(0x01, (unsigned)ISR_01, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_INTGATE32);
