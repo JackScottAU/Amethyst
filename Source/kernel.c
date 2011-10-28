@@ -35,6 +35,8 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	interrupts_initialise();
 	vgaConsole_printf("%s",1);
 	
+	clock_init();
+	
 	while(1)
 	{
 		//Do Nothing here
