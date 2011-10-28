@@ -10,6 +10,7 @@
 
 #include <portIO.h>
 #include <Types.h>
+#include <IDT.h>
 
 struct IDT_Entry_S
 {
@@ -58,7 +59,7 @@ void IDT_Init()
 	IDT_Pointer.Limit = (sizeof (struct IDT_Entry_S) * 256) - 1;
 	IDT_Pointer.Base = (unsigned int) &IDT_Table;
 	
-	//Empty the IDT.
+	//Empty the IDT. THis is a hack of a code.
 	Temp = (void*) &IDT_Table;
 	while(Count < (sizeof(struct IDT_Entry_S) * 256))
 	{

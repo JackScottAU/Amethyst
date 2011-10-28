@@ -8,9 +8,10 @@
 	Notes:		None.
 */
 
-#include <port.h>
+#include <portIO.h>
 #include <Clock.h>
 #include <Registers.h>
+#include <IDT.h>
 
 
 void ISR_Handler(struct Registers_S *Registers)
@@ -27,10 +28,10 @@ void ISR_Handler(struct Registers_S *Registers)
 	*/
 	
 	//Variable Declarations.
-	unsigned char temp = 0;
+	//unsigned char temp = 0;
 	
 	//If it is an exception.
-	if((Registers->IntNum >= 0x00) && (Registers->IntNum <= 0x1F))
+	if(Registers->IntNum <= 0x1F)
 	{		
 		__asm__("cli");
 		__asm__("hlt");
@@ -42,11 +43,11 @@ void ISR_Handler(struct Registers_S *Registers)
 		switch(Registers->IntNum)
 		{
 		case 0x20:	//Programmable Interval Timer
-			Clock_Handler();
+			clock_handler_PIC();
 			break;
 		
 		case 0x21:	//Keyboard
-			readIO(0x60,temp);
+			//temp = readByte(0x60);
 			break;
 		
 		case 0x24:	//COM1
@@ -60,11 +61,11 @@ void ISR_Handler(struct Registers_S *Registers)
 		if(Registers->IntNum >= 0x28)
 		{
 			//If it is the slave, send it to that.
-			writeIO(0xA0, 0x20);
+			writeByte(0xA0, 0x20);
 		}
 		
 		//But send it to the master no matter what.
-		writeIO(0x20, 0x20);
+		writeByte(0x20, 0x20);
 	}
 	
 	//Kernel Service Interrupt.

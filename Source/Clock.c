@@ -12,6 +12,7 @@
 
 #include "Includes/portIO.h"
 #include <Clock.h>
+#include <vgaConsole.h>
 
 //Holds uptime (Secs*CLOCK_HERTZ)
 unsigned long Clock_Ticks;
@@ -40,6 +41,11 @@ void clock_handler_PIC()
 {
 	Clock_Ticks++;
 	
+	if(Clock_Ticks%1000==0)
+	{
+		vgaConsole_printf("Clock: %h\n",Clock_Ticks);
+	}
+	
 	//There are a list of things that need to be notified on clockticks... visit them here.
 }
 
@@ -48,7 +54,7 @@ unsigned long Clock_Uptime()
 	return (Clock_Ticks / CLOCK_HERTZ);
 }
 
-void clock_startup()
+void clock_init()
 {
 	Clock_SetHertz(CLOCK_HERTZ);
 	Clock_Ticks = 0;

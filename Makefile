@@ -25,7 +25,7 @@ cd-image: Build/kernel32
 	@$(MKISOFS) -quiet -R -b boot/grub/stage2_eltorito -no-emul-boot -boot-load-size 4 -boot-info-table -o Synergy-OS.iso Build
 
 #Custom file build targets:
-Build/kernel32: Source/kernel.o Source/entry.o Source/portIO.o Source/vgaConsole.o Source/gdt.o
+Build/kernel32: Source/kernel.o Source/entry.o Source/portIO.o Source/vgaConsole.o Source/gdt.o Source/IDT.o Source/Handler.o Source/Stubs.o Source/Clock.o Source/ISR_Install.o
 	-@mkdir Build
 	@$(LD) -T Resources/Linker-Script.ld -o $@ $^
 
@@ -34,6 +34,9 @@ Source/entry.o: Source/entry.S
 	
 Source/gdt.o: Source/gdt.asm
 	@nasm -f elf -o Source/gdt.o Source/gdt.asm
+	
+Source/Stubs.o: Source/Stubs.asm
+	@nasm -f elf -o Source/Stubs.o Source/Stubs.asm
 
 # Object-file compilation rules:
 %.o: %.c

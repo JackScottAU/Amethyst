@@ -6,6 +6,8 @@
 #include <Types.h>
 #include <GDT.h>
 #include <vgaConsole.h>
+#include <IDT.h>
+#include <Clock.h>
 
 //To shut GCC up.
 void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData);
@@ -29,24 +31,25 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	gdt_install();
 	vgaConsole_printf("%s",1);
 	
-	vgaConsole_printf("Hex: %h\n",0xCAFEBABE);
-	vgaConsole_printf("Status 1: %s\n",1);
-	vgaConsole_printf("Status 2: %s\n",0);
+	
+	
+	
 
-	/*
+	
 
 	//Init kernel core.
 	IDT_Init();
 	ISRs_Install();		//} These two could be done in any order.
-	PIC_Remap();		//}
+	idt_remapPICs(0x20);		//}
+	vgaConsole_printf("Status 1: %s\n",1);
 	
 	//Init subsystems.
-	Clock_Init();
+	clock_init();
+	vgaConsole_printf("Status 2: %s\n",0);
 	
 	//The moment of truth.
-	IDT_EnableInts();
-	
-	INTS(1);*/
+	idt_enableInts();
+	vgaConsole_printf("Hex: %h\n",0xCAFEBABE);
 	
 	while(1)
 	{
