@@ -50,6 +50,87 @@ global interrupts_ISR_2D
 global interrupts_ISR_2E
 global interrupts_ISR_2F
 
+	global interrupts_ISR_30
+	global interrupts_ISR_31
+	global interrupts_ISR_32
+	global interrupts_ISR_33
+	global interrupts_ISR_34
+	global interrupts_ISR_35
+	global interrupts_ISR_36
+	global interrupts_ISR_37
+	global interrupts_ISR_38
+	global interrupts_ISR_39
+	global interrupts_ISR_3A
+	global interrupts_ISR_3B
+	global interrupts_ISR_3C
+	global interrupts_ISR_3D
+	global interrupts_ISR_3E
+	global interrupts_ISR_3F
+	global interrupts_ISR_40
+	global interrupts_ISR_41
+	global interrupts_ISR_42
+	global interrupts_ISR_43
+	global interrupts_ISR_44
+	global interrupts_ISR_45
+	global interrupts_ISR_46
+	global interrupts_ISR_47
+	global interrupts_ISR_48
+	global interrupts_ISR_49
+	global interrupts_ISR_4A
+	global interrupts_ISR_4B
+	global interrupts_ISR_4C
+	global interrupts_ISR_4D
+	global interrupts_ISR_4E
+	global interrupts_ISR_4F
+	global interrupts_ISR_50
+	global interrupts_ISR_51
+	global interrupts_ISR_52
+	global interrupts_ISR_53
+	global interrupts_ISR_54
+	global interrupts_ISR_55
+	global interrupts_ISR_56
+	global interrupts_ISR_57
+	global interrupts_ISR_58
+	global interrupts_ISR_59
+	global interrupts_ISR_5A
+	global interrupts_ISR_5B
+	global interrupts_ISR_5C
+	global interrupts_ISR_5D
+	global interrupts_ISR_5E
+	global interrupts_ISR_5F
+	global interrupts_ISR_60
+	global interrupts_ISR_61
+	global interrupts_ISR_62
+	global interrupts_ISR_63
+	global interrupts_ISR_64
+	global interrupts_ISR_65
+	global interrupts_ISR_66
+	global interrupts_ISR_67
+	global interrupts_ISR_68
+	global interrupts_ISR_69
+	global interrupts_ISR_6A
+	global interrupts_ISR_6B
+	global interrupts_ISR_6C
+	global interrupts_ISR_6D
+	global interrupts_ISR_6E
+	global interrupts_ISR_6F
+	global interrupts_ISR_70
+	global interrupts_ISR_71
+	global interrupts_ISR_72
+	global interrupts_ISR_73
+	global interrupts_ISR_74
+	global interrupts_ISR_75
+	global interrupts_ISR_76
+	global interrupts_ISR_77
+	global interrupts_ISR_78
+	global interrupts_ISR_79
+	global interrupts_ISR_7A
+	global interrupts_ISR_7B
+	global interrupts_ISR_7C
+	global interrupts_ISR_7D
+	global interrupts_ISR_7E
+	global interrupts_ISR_7F
+
 ;  0: Divide By Zero Exception
 interrupts_ISR_00:
     cli
@@ -364,6 +445,487 @@ interrupts_ISR_2F:
     push byte 0
     push byte 0x2F
     jmp interrupts_ISR_Stub
+
+interrupts_ISR_30:
+	cli
+	push byte 0
+	push byte 0x30
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_31:
+	cli
+	push byte 0
+	push byte 0x31
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_32:
+	cli
+	push byte 0
+	push byte 0x32
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_33:
+	cli
+	push byte 0
+	push byte 0x33
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_34:
+	cli
+	push byte 0
+	push byte 0x34
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_35:
+	cli
+	push byte 0
+	push byte 0x35
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_36:
+	cli
+	push byte 0
+	push byte 0x36
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_37:
+	cli
+	push byte 0
+	push byte 0x37
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_38:
+	cli
+	push byte 0
+	push byte 0x38
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_39:
+	cli
+	push byte 0
+	push byte 0x39
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_3A:
+	cli
+	push byte 0
+	push byte 0x3A
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_3B:
+	cli
+	push byte 0
+	push byte 0x3B
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_3C:
+	cli
+	push byte 0
+	push byte 0x3C
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_3D:
+	cli
+	push byte 0
+	push byte 0x3D
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_3E:
+	cli
+	push byte 0
+	push byte 0x3E
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_3F:
+	cli
+	push byte 0
+	push byte 0x3F
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_40:
+	cli
+	push byte 0
+	push byte 0x40
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_41:
+	cli
+	push byte 0
+	push byte 0x41
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_42:
+	cli
+	push byte 0
+	push byte 0x42
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_43:
+	cli
+	push byte 0
+	push byte 0x43
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_44:
+	cli
+	push byte 0
+	push byte 0x44
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_45:
+	cli
+	push byte 0
+	push byte 0x45
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_46:
+	cli
+	push byte 0
+	push byte 0x46
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_47:
+	cli
+	push byte 0
+	push byte 0x47
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_48:
+	cli
+	push byte 0
+	push byte 0x48
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_49:
+	cli
+	push byte 0
+	push byte 0x49
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_4A:
+	cli
+	push byte 0
+	push byte 0x4A
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_4B:
+	cli
+	push byte 0
+	push byte 0x4B
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_4C:
+	cli
+	push byte 0
+	push byte 0x4C
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_4D:
+	cli
+	push byte 0
+	push byte 0x4D
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_4E:
+	cli
+	push byte 0
+	push byte 0x4E
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_4F:
+	cli
+	push byte 0
+	push byte 0x4F
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_50:
+	cli
+	push byte 0
+	push byte 0x50
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_51:
+	cli
+	push byte 0
+	push byte 0x51
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_52:
+	cli
+	push byte 0
+	push byte 0x52
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_53:
+	cli
+	push byte 0
+	push byte 0x53
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_54:
+	cli
+	push byte 0
+	push byte 0x54
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_55:
+	cli
+	push byte 0
+	push byte 0x55
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_56:
+	cli
+	push byte 0
+	push byte 0x56
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_57:
+	cli
+	push byte 0
+	push byte 0x57
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_58:
+	cli
+	push byte 0
+	push byte 0x58
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_59:
+	cli
+	push byte 0
+	push byte 0x59
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_5A:
+	cli
+	push byte 0
+	push byte 0x5A
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_5B:
+	cli
+	push byte 0
+	push byte 0x5B
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_5C:
+	cli
+	push byte 0
+	push byte 0x5C
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_5D:
+	cli
+	push byte 0
+	push byte 0x5D
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_5E:
+	cli
+	push byte 0
+	push byte 0x5E
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_5F:
+	cli
+	push byte 0
+	push byte 0x5F
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_60:
+	cli
+	push byte 0
+	push byte 0x60
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_61:
+	cli
+	push byte 0
+	push byte 0x61
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_62:
+	cli
+	push byte 0
+	push byte 0x62
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_63:
+	cli
+	push byte 0
+	push byte 0x63
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_64:
+	cli
+	push byte 0
+	push byte 0x64
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_65:
+	cli
+	push byte 0
+	push byte 0x65
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_66:
+	cli
+	push byte 0
+	push byte 0x66
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_67:
+	cli
+	push byte 0
+	push byte 0x67
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_68:
+	cli
+	push byte 0
+	push byte 0x68
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_69:
+	cli
+	push byte 0
+	push byte 0x69
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_6A:
+	cli
+	push byte 0
+	push byte 0x6A
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_6B:
+	cli
+	push byte 0
+	push byte 0x6B
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_6C:
+	cli
+	push byte 0
+	push byte 0x6C
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_6D:
+	cli
+	push byte 0
+	push byte 0x6D
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_6E:
+	cli
+	push byte 0
+	push byte 0x6E
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_6F:
+	cli
+	push byte 0
+	push byte 0x6F
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_70:
+	cli
+	push byte 0
+	push byte 0x70
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_71:
+	cli
+	push byte 0
+	push byte 0x71
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_72:
+	cli
+	push byte 0
+	push byte 0x72
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_73:
+	cli
+	push byte 0
+	push byte 0x73
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_74:
+	cli
+	push byte 0
+	push byte 0x74
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_75:
+	cli
+	push byte 0
+	push byte 0x75
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_76:
+	cli
+	push byte 0
+	push byte 0x76
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_77:
+	cli
+	push byte 0
+	push byte 0x77
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_78:
+	cli
+	push byte 0
+	push byte 0x78
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_79:
+	cli
+	push byte 0
+	push byte 0x79
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_7A:
+	cli
+	push byte 0
+	push byte 0x7A
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_7B:
+	cli
+	push byte 0
+	push byte 0x7B
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_7C:
+	cli
+	push byte 0
+	push byte 0x7C
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_7D:
+	cli
+	push byte 0
+	push byte 0x7D
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_7E:
+	cli
+	push byte 0
+	push byte 0x7E
+	jmp interrupts_ISR_Stub
+
+interrupts_ISR_7F:
+	cli
+	push byte 0
+	push byte 0x7F
+	jmp interrupts_ISR_Stub
+
 
 ; We call a C function in here. We need to let the assembler know
 ; that '_fault_handler' exists in another file
