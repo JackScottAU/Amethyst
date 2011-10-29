@@ -1,32 +1,13 @@
-/*
-	Handler.c - Generic ISR Handler.
-	Part of the Jane Microkernel.
-	
-	Maintainer:	Jack Scott (yayyak@yayyak.net).
-	Last Modified:	2006-01-18.
-	License:	3-clause BSD License.
-	Notes:		None.
-*/
-
 #include <portIO.h>
 #include <Clock.h>
 #include <Registers.h>
 #include <interrupts.h>
 
-
+/**
+ * @param Registers The state of the registers on the stack provided by the ISR stub.
+ */
 void interrupts_handler(struct Registers_S *Registers)
 {
-	/*
-	SYNOPSIS:	Takes control of the interrupt and delegates the task.
-	INPUT:		Structure of the registers (used for exceptions).
-	OUTPUT:		None.
-	NOTES:		This is a fairly large function, but it deals with all
-			cases. Eventually this function will send a message off
-			to another task to actually do the work, but since I
-			don't have messaging implemented, some work is done here
-			instead.
-	*/
-	
 	//Variable Declarations.
 	//unsigned char temp = 0;
 	

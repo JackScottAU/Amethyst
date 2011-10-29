@@ -26,7 +26,7 @@ cd-image: Build/kernel32
 
 #Custom file build targets:
 Build/kernel32: Source/kernel.o Source/entry.o Source/portIO.o Source/vgaConsole.o Source/gdt.o Source/x86/interrupts_setup.o Source/x86/interrupts_handler.o Source/x86/interrupts_stubs.o Source/Clock.o
-	-@mkdir Build
+	-@mkdir -p Build
 	@$(LD) -T Resources/Linker-Script.ld -o $@ $^
 
 Source/entry.o: Source/entry.S

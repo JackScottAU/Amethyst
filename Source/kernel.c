@@ -11,7 +11,11 @@
 //To shut GCC up.
 void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData);
 
-// KERNEL MAIN FUNCTION
+/**
+ * Initialises the core systems of the kernel and language runtime before launching a command interpreter.
+ * @param magicNumber The check number passed from the multiboot loader.
+ * @param multibootData The info data structure passed from the multiboot loader.
+ */
 void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 {
 	if(magicNumber != 0x2BADB002)

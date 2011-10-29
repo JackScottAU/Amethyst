@@ -1,6 +1,12 @@
 #include <portIO.h>
+#include <Types.h>
 
-unsigned char readByte(unsigned short int portNumber)
+/**
+ * 
+ * @param portNumber
+ * @return 
+ */
+uint8 readByte(uint16 portNumber)
 {
 	/*
 	SYNOPSIS:	Reads a byte from the specified port.
@@ -9,7 +15,7 @@ unsigned char readByte(unsigned short int portNumber)
 	NOTES:		None.
 	*/
 	
-	unsigned char value;
+	uint8 value;
 
 	__asm__ __volatile__(
 		"inb %w1,%b0"
@@ -20,7 +26,12 @@ unsigned char readByte(unsigned short int portNumber)
 	return value;
 }
 
-void writeByte(unsigned short int portNumber, unsigned char value)
+/**
+ * 
+ * @param portNumber
+ * @param value
+ */
+void writeByte(uint16 portNumber, uint8 value)
 {
 	/*
 	SYNOPSIS:	Writes a byte to the specified port.

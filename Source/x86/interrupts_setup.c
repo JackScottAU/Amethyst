@@ -1,16 +1,7 @@
-/*
-	IDT.c - Interrupt Descriptor Table Management.
-	Part of the Jane Microkernel.
-	
-	Maintainer:	Jack Scott (yayyak@yayyak.net).
-	Last Modified:	2007-01-18.
-	License:	3-clause BSD License.
-	Notes:		None.
-*/
-
 #include <portIO.h>
 #include <Types.h>
 #include <interrupts.h>
+
 
 struct IDT_Entry_S
 {
@@ -27,7 +18,6 @@ struct IDT_Pointer_S
 	unsigned int Base;
 } __attribute__((packed));
 
-//Random comment.
 
 struct IDT_Entry_S IDT_Table[256];
 struct IDT_Pointer_S IDT_Pointer;
