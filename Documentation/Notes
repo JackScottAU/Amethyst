@@ -1,0 +1,20 @@
+Single address space - everything runs as a bytecode on top of kernel mode.
+So just need a simple GDT. Physical memory manager and virtual memory manager need to be very good and very fast.
+
+Physical Memory Manager --> Virtual Memory Manager --> Object Memory Manager (GC) --> Runtime Interpreter <-- GUI Shell <-- Video/Console/etc Drivers
+				^					^			^
+			Paging Memory Manager			Class/Object Loader & Saver	^
+				^					^		^	^
+			Disk/FS Drivers		----->		VFS Drivers		Network Drivers
+			
+			
+File system:
+	Stores three things: code objects, code classes, data objects
+	Data objects are kept in a heirachy by user, then however they want
+	Code objects are kept in a DHT.
+	Code classes are kept in a global tree.
+	Goals:
+		Distributed, but a copy of user's data is always kept on their machine.
+		User's data locked by OpenPGP or somesuch.
+		Full revision control over data and code objects, if desired.
+		Something ZFS-like.
