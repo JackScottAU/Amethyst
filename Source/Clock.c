@@ -8,9 +8,6 @@
 #include <Clock.h>
 #include <vgaConsole.h>
 
-//Holds uptime (Secs*CLOCK_HERTZ)
-unsigned long Clock_Ticks;
-
 time_t clock_systemClock;
 
 void clock_setHertz(unsigned int Hertz)
@@ -49,7 +46,7 @@ void clock_handler_PIC()
 
 unsigned long Clock_Uptime()
 {
-	return (Clock_Ticks / CLOCK_HERTZ);
+	return (clock_systemClock.seconds);
 }
 
 void clock_init()
