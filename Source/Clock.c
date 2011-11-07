@@ -11,8 +11,9 @@
 //Holds uptime (Secs*CLOCK_HERTZ)
 unsigned long Clock_Ticks;
 
+time_t clock_systemClock;
 
-void Clock_SetHertz(unsigned int Hertz)
+void clock_setHertz(unsigned int Hertz)
 {
 	/*
 	SYNOPSIS:	Sets the divisor of the channel 0 clock.
@@ -33,11 +34,14 @@ void Clock_SetHertz(unsigned int Hertz)
  */
 void clock_handler_PIC()
 {
-	Clock_Ticks++;
+	clock_systemClock.milliSeconds++;
 	
-	if(Clock_Ticks%1000==0)
+	if(clock_systemClock.milliSeconds%CLOCK_HERTZ==0)
 	{
-		vgaConsole_printf("Clock: %h\n",Clock_Ticks/1000);
+		clock_systemClock.seconds++;
+		clock_systemClock.milliSeconds = 0;
+		
+		vgaConsole_printf("Clock: %h\n",clock_systemClock.seconds);
 	}
 	
 	//There are a list of things that need to be notified on clockticks... visit them here.
@@ -50,8 +54,11 @@ unsigned long Clock_Uptime()
 
 void clock_init()
 {
-	Clock_SetHertz(CLOCK_HERTZ);
-	Clock_Ticks = 0;
+	clock_setHertz(CLOCK_HERTZ);
+	
+	clock_systemClock.seconds = 0;
+	clock_systemClock.milliSeconds = 0;
+	
 	//Get time from RTC here.
 }
 
