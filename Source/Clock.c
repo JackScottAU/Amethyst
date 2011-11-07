@@ -7,6 +7,7 @@
 #include <portIO.h>
 #include <Clock.h>
 #include <vgaConsole.h>
+#include <interrupts.h>
 
 time_t clock_systemClock;
 
@@ -62,4 +63,21 @@ void clock_init()
 void clock_shutdown()
 {
 	//Give back time to the RTC for next time.
+}
+
+uint8 clock_getRTCRegister(uint8 chosenRegister)
+{
+	uint8 data = 0;
+	
+	interrupts_disableInterrupts();
+	
+	writeByte(0x70,chosenRegister);
+	
+	//DELAY HERE.
+	
+	data = readByte(0x71);
+	
+	interrupts_enableInterrupts();
+	
+	return(data);
 }

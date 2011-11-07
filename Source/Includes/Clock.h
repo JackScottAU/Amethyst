@@ -10,6 +10,8 @@
 	unsigned long Clock_Uptime(void);
 
 	void clock_setHertz(unsigned int Hertz);
+	
+	uint8 clock_getRTCRegister(uint8 chosenRegister);
 
 	#define CLOCK_HERTZ 1000
 
