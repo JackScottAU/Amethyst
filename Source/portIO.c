@@ -46,3 +46,8 @@ void writeByte(uint16 portNumber, uint8 value)
 		:"a"(value), "d"(portNumber)
 	);
 }
+
+void haltCPU(void)
+{
+	__asm__ __volatile__("hlt");
+}

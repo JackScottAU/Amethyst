@@ -7,6 +7,7 @@
 #include <vgaConsole.h>
 #include <interrupts.h>
 #include <Clock.h>
+#include <portIO.h>
 
 //To shut GCC up.
 void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData);
@@ -21,7 +22,8 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	if(magicNumber != 0x2BADB002)
 	{
 		vgaConsole_printf("Multiboot error found. Halting...");
-		//CLI/HLT.
+		interrupts_disableInterrupts();
+		haltCPU();
 	}
  
 	vgaConsole_clearScreen();
