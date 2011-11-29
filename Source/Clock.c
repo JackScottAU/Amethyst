@@ -57,12 +57,34 @@ void clock_init()
 	clock_systemClock.seconds = 0;
 	clock_systemClock.milliSeconds = 0;
 	
-	//Get time from RTC here.
+	uint8 statusB = clock_getRTCRegister(0x0B);
+	
+	//Read seconds.
+	if(statusB & 0x04)
+	{
+		clock_systemClock.seconds += clock_getRTCRegister(0x00);
+	} else {
+		clock_systemClock.seconds += clock_convertBCDtoNormal(clock_getRTCRegister(0x00));
+	}
+	
+	//Read minutes.
+	if(statusB & 0x04)
+	{
+		clock_systemClock.seconds += clock_getRTCRegister(0x00);
+	} else {
+		clock_systemClock.seconds += clock_convertBCDtoNormal(clock_getRTCRegister(0x00));
+	}
 }
 
 void clock_shutdown()
 {
 	//Give back time to the RTC for next time.
+}
+
+uint8 clock_convertBCDtoNormal(uint8 value)
+{
+	value = ((value / 16) * 10) + (value & 0x0F);
+	return(value);
 }
 
 uint8 clock_getRTCRegister(uint8 chosenRegister)
