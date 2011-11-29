@@ -38,7 +38,8 @@ extern "C" {
 		#define MULTIBOOT_MEMORY_AVAILABLE	1
 		#define MULTIBOOT_MEMORY_RESERVED	2
 		uint32 type;
-	};
+		
+	} __attribute__((packed));
 
 #ifdef	__cplusplus
 }

@@ -40,6 +40,20 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	interrupts_initialise();
 	vgaConsole_printf("%s",1);
 	
+	//Read memory map.
+	vgaConsole_printf("Memory map length:%h\n",multibootData->memoryMapLength/24);
+	
+	struct multiboot_memoryMapNode* memNode = (void*) multibootData->memoryMapAddress;
+	
+	for(uint32 i=0;
+		i<multibootData->memoryMapLength/24;
+		i++)
+	{
+		//Print details
+		if(memNode[i].type==1)
+			vgaConsole_printf("%h.%h.%h\n",(uint32)memNode[i].addr, (uint32)memNode[i].len,memNode[i].type);
+	}
+	
 	clock_init();
 	
 	while(1)
