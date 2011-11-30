@@ -5,7 +5,7 @@
  * 
  * This file contains functions to allocate and free a block of memory (to be 
  * used by the interpreter and other kernel functions), as well as support code 
- * for initialising and mainting the list of free memory regions.
+ * for initialising and maintaining the list of free memory regions.
  */
 
 #include <memoryManager.h>
