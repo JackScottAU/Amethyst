@@ -11,6 +11,20 @@
 #include <memoryManager.h>
 
 extern uint32 kernel_end;
+uint32 memoryManager_findEndOfReservedMemory(struct multiboot_moduleNode* module, uint32 count);
+
+uint32 memoryManager_findEndOfReservedMemory(struct multiboot_moduleNode* module, uint32 count)
+{
+	uint32 endOfReservedMemory = (uint32) &kernel_end;
+	
+	for(uint32 i = 0; i < count; i++)
+	{
+		if(module[i].end > (void*) endOfReservedMemory)
+			endOfReservedMemory = (uint32) module[i].end;
+	}
+	
+	return endOfReservedMemory;
+}
 
 //To shut GCC up.
 void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData);
@@ -43,7 +57,7 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	interrupts_initialise();
 	vgaConsole_printf("%s",1);
 	
-	memoryManager_init(multibootData->memoryMapAddress, multibootData->memoryMapLength, (uint32) &kernel_end);
+	memoryManager_init(multibootData->memoryMapAddress, multibootData->memoryMapLength, (uint32) memoryManager_findEndOfReservedMemory(multibootData->modsAddr, multibootData->modsCount));
 	
 	clock_init();
 	
@@ -52,3 +66,4 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 		//Do Nothing here
 	};
 }
+

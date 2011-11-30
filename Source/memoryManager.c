@@ -3,10 +3,17 @@
 #include <memoryManager.h>
 
 
-
+//Holds the address of the start of the list representing free memory blocks.
 memoryManager_freeMemoryNode* memoryManager_firstFreeNode = (memoryManager_freeMemoryNode*) 0xFFFFFFFF;
 
 
+
+/**
+ * 
+ * @param startAddress
+ * @param length
+ * @param endOfReservedMemory
+ */
 void memoryManager_init(struct multiboot_memoryMapNode* startAddress, uint32 length, uint32 endOfReservedMemory)
 {
 	struct multiboot_memoryMapNode* memNode = (void*) startAddress;
@@ -37,9 +44,9 @@ void memoryManager_init(struct multiboot_memoryMapNode* startAddress, uint32 len
 				}
 				
 				//Do magic to try and find where to place this in the list.
-				if((uint32)memoryManager_firstFreeNode==0xFFFFFFFF)
+				if((uint32)memoryManager_firstFreeNode==END_OF_MEMORY_LIST)
 				{
-					node->next = (memoryManager_freeMemoryNode*) 0xFFFFFFFF;
+					node->next = (memoryManager_freeMemoryNode*) END_OF_MEMORY_LIST;
 					memoryManager_firstFreeNode = node;
 				} else {
 					//Add it to the front of the list. We'll figure out sorting it later.

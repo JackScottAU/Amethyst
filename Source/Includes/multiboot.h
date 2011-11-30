@@ -21,7 +21,7 @@ extern "C" {
 		uint32 bootDevice;
 		char* commandLine;
 		uint32 modsCount;
-		uint32 modsAddr;
+		struct multiboot_moduleNode* modsAddr;
 		uint32 syms1;	//28
 		uint32 syms2;
 		uint32 syms3;
@@ -38,7 +38,13 @@ extern "C" {
 		#define MULTIBOOT_MEMORY_AVAILABLE	1
 		#define MULTIBOOT_MEMORY_RESERVED	2
 		uint32 type;
-		
+	} __attribute__((packed));
+	
+	struct multiboot_moduleNode {
+		void* start;
+		void* end;
+		char* string;
+		uint32 reserved;
 	} __attribute__((packed));
 
 #ifdef	__cplusplus
