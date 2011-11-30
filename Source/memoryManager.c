@@ -78,55 +78,51 @@ void memoryManager_free(void* mem)
 
 /**
  * Uses the map of memory supplied by the multiboot loader to create a list of free memory.
- * @param startAddress
- * @param length
- * @param endOfReservedMemory
+ * @param memNode An array of all the memory map records passed from the multiboot loader.
+ * @param length The length in bytes of the memory map array.
+ * @param endOfReservedMemory A pointer to the end of the kernel (or module's) code, so we don't overwrite it.
  */
-void memoryManager_init(struct multiboot_memoryMapNode* startAddress, uint32 length, uint32 endOfReservedMemory)
+void memoryManager_init(struct multiboot_memoryMapNode* memNode, uint32 length, uint32 endOfReservedMemory)
 {
-	struct multiboot_memoryMapNode* memNode = (void*) startAddress;
-	
+	//Loop through each of the memory map records. Each record is 24 bytes long.
 	for(uint32 i=0; i<length/24; i++)
 	{
-		//Print details
-		if(memNode[i].type==1)
+		//We need to check if it is available RAM (type 1) and that the size is worth recording.
+		if(memNode[i].type==1 && memNode[i].len>sizeof(memoryManager_freeMemoryNode))
 		{
-//			vgaConsole_printf("%h.%h.%h\n",(uint32)memNode[i].addr, (uint32)memNode[i].len,memNode[i].type);
-			
-			if(memNode[i].len>sizeof(memoryManager_freeMemoryNode))
+			//We need to be able to address the free memory record somehow.
+			memoryManager_freeMemoryNode* node;
+				
+			//Check if we're overwriting kernels or modules.
+			if( (uint32)memNode[i].addr >= 0x00100000  && (uint32)memNode[i].addr <= endOfReservedMemory ) 
 			{
-				memoryManager_freeMemoryNode* node;
-				
-				//Check if we're overwriting kernels or modules.
-				if( (uint32)memNode[i].addr >= 0x00100000  && (uint32)memNode[i].addr <= endOfReservedMemory ) 
-				{
-					node = (memoryManager_freeMemoryNode*) endOfReservedMemory;
-					
-					node->address = (uint64) endOfReservedMemory + sizeof(memoryManager_freeMemoryNode);
-					node->length = (uint64) memNode[i].len - sizeof(memoryManager_freeMemoryNode) - (endOfReservedMemory - 0x00100000);
-				} else {
-					node = (memoryManager_freeMemoryNode*) (uint32) memNode[i].addr; //Put a free block in the start of this area.
-					
-					node->address = (uint64) memNode[i].addr + sizeof(memoryManager_freeMemoryNode);
-					node->length = (uint64) memNode[i].len - sizeof(memoryManager_freeMemoryNode);
-				}
-				
-				//Do magic to try and find where to place this in the list.
-				if((uint32)memoryManager_firstFreeNode==END_OF_MEMORY_LIST)
-				{
-					node->next = (memoryManager_freeMemoryNode*) END_OF_MEMORY_LIST;
-					memoryManager_firstFreeNode = node;
-				} else {
-					//Add it to the front of the list. We'll figure out sorting it later.
-					node->next = memoryManager_firstFreeNode;
-					memoryManager_firstFreeNode = node;
-				}
+				//Move everything away from the kernel and modules.
+				node = (memoryManager_freeMemoryNode*) endOfReservedMemory;
+
+				node->address = (uint64) endOfReservedMemory + sizeof(memoryManager_freeMemoryNode);
+				node->length = (uint64) memNode[i].len - sizeof(memoryManager_freeMemoryNode) - (endOfReservedMemory - 0x00100000);
 			} else {
-				//PANIC.
+				//Don't need to move anything.
+				node = (memoryManager_freeMemoryNode*) (uint32) memNode[i].addr; //Put a free block in the start of this area.
+
+				node->address = (uint64) memNode[i].addr + sizeof(memoryManager_freeMemoryNode);
+				node->length = (uint64) memNode[i].len - sizeof(memoryManager_freeMemoryNode);
+			}
+
+			//Do magic to try and find where to place this in the list.
+			if((uint32)memoryManager_firstFreeNode==END_OF_MEMORY_LIST)
+			{
+				node->next = (memoryManager_freeMemoryNode*) END_OF_MEMORY_LIST;
+				memoryManager_firstFreeNode = node;
+			} else {
+				//Add it to the front of the list. We'll figure out sorting it later.
+				node->next = memoryManager_firstFreeNode;
+				memoryManager_firstFreeNode = node;
 			}
 		}
 	}
 	
+	//Print this out, just for debugging purposes.
 	memoryManager_debug_printFreeMemoryList();
 }
 
