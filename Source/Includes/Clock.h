@@ -23,10 +23,9 @@
 	#define CLOCK_HERTZ 1000
 
 	#define SECONDS_PER_MINUTE 60
-	#define SECONDS_PER_HOUR
-	#define SECONDS_PER_DAY
-	#define DAYS_IN_JANUARY
-	#define SECONDS_PER_YEAR
+	#define SECONDS_PER_HOUR 3600
+	#define SECONDS_PER_DAY 86400
+	#define SECONDS_PER_YEAR 31556926 //According to Google. We ignore leap seconds in this approximate fix.
 	
 	//EPOCH: 2000-01-01 00:00:00.000
 
