@@ -20,7 +20,7 @@ extern "C" {
 		struct memoryManager_freeMemoryNode_s* next;
 	} memoryManager_freeMemoryNode; //Kept in order of size, small to large.
 	
-	void memoryManager_init(struct multiboot_memoryMapNode* startAddress, uint32 length);
+	void memoryManager_init(struct multiboot_memoryMapNode* startAddress, uint32 length, uint32 endOfReservedMemory);
 
 
 #ifdef	__cplusplus

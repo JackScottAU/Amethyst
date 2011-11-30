@@ -2,10 +2,12 @@
 #include <vgaConsole.h>
 #include <memoryManager.h>
 
+
+
 memoryManager_freeMemoryNode* memoryManager_firstFreeNode = (memoryManager_freeMemoryNode*) 0xFFFFFFFF;
 
 
-void memoryManager_init(struct multiboot_memoryMapNode* startAddress, uint32 length)
+void memoryManager_init(struct multiboot_memoryMapNode* startAddress, uint32 length, uint32 endOfReservedMemory)
 {
 	struct multiboot_memoryMapNode* memNode = (void*) startAddress;
 	
@@ -14,13 +16,25 @@ void memoryManager_init(struct multiboot_memoryMapNode* startAddress, uint32 len
 		//Print details
 		if(memNode[i].type==1)
 		{
-			vgaConsole_printf("%h.%h.%h\n",(uint32)memNode[i].addr, (uint32)memNode[i].len,memNode[i].type);
+//			vgaConsole_printf("%h.%h.%h\n",(uint32)memNode[i].addr, (uint32)memNode[i].len,memNode[i].type);
 			
 			if(memNode[i].len>sizeof(memoryManager_freeMemoryNode))
 			{
-				memoryManager_freeMemoryNode* node = (memoryManager_freeMemoryNode*) (uint32) memNode[i].addr; //Put a free block in the start of this area.
-				node->address = (uint64) memNode[i].addr + sizeof(memoryManager_freeMemoryNode);
-				node->length = (uint64) memNode[i].len - sizeof(memoryManager_freeMemoryNode);
+				memoryManager_freeMemoryNode* node;
+				
+				//Check if we're overwriting kernels or modules.
+				if( (uint32)memNode[i].addr >= 0x00100000  && (uint32)memNode[i].addr <= endOfReservedMemory ) 
+				{
+					node = (memoryManager_freeMemoryNode*) endOfReservedMemory;
+					
+					node->address = (uint64) endOfReservedMemory + sizeof(memoryManager_freeMemoryNode);
+					node->length = (uint64) memNode[i].len - sizeof(memoryManager_freeMemoryNode) - (endOfReservedMemory - 0x00100000);
+				} else {
+					node = (memoryManager_freeMemoryNode*) (uint32) memNode[i].addr; //Put a free block in the start of this area.
+					
+					node->address = (uint64) memNode[i].addr + sizeof(memoryManager_freeMemoryNode);
+					node->length = (uint64) memNode[i].len - sizeof(memoryManager_freeMemoryNode);
+				}
 				
 				//Do magic to try and find where to place this in the list.
 				if((uint32)memoryManager_firstFreeNode==0xFFFFFFFF)

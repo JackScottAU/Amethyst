@@ -10,6 +10,8 @@
 #include <portIO.h>
 #include <memoryManager.h>
 
+extern uint32 kernel_end;
+
 //To shut GCC up.
 void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData);
 
@@ -41,7 +43,7 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	interrupts_initialise();
 	vgaConsole_printf("%s",1);
 	
-	memoryManager_init(multibootData->memoryMapAddress, multibootData->memoryMapLength);
+	memoryManager_init(multibootData->memoryMapAddress, multibootData->memoryMapLength, (uint32) &kernel_end);
 	
 	clock_init();
 	
