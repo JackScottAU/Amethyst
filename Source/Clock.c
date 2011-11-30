@@ -91,9 +91,9 @@ void clock_init()
 		//24-hour mode.
 		if(statusB & 0x04)
 		{
-			clock_systemClock.seconds += SECONDS_PER_HOUR * clock_getRTCRegister(0x04);
+			clock_systemClock.seconds += SECONDS_PER_HOUR * (clock_getRTCRegister(0x04)+(CLOCK_UTC_OFFSET));
 		} else {
-			clock_systemClock.seconds += SECONDS_PER_HOUR * clock_convertBCDtoNormal(clock_getRTCRegister(0x04));
+			clock_systemClock.seconds += SECONDS_PER_HOUR * (clock_convertBCDtoNormal(clock_getRTCRegister(0x04))+(CLOCK_UTC_OFFSET));
 		}
 	} else {
 		//12-hour mode.
@@ -112,7 +112,7 @@ void clock_init()
 		if(ampm)
 			temp = temp + 12;
 		
-		clock_systemClock.seconds += SECONDS_PER_HOUR * temp;
+		clock_systemClock.seconds += SECONDS_PER_HOUR * (temp+(CLOCK_UTC_OFFSET));
 	}
 	
 	//Read days.
@@ -154,7 +154,9 @@ void clock_init()
 	
 	//Now add in any leap days from feb.
 	//The Gregorian leap year rules are that if a year is a multiple of 4 then it's a leap year, unless it happens to be a new century and it can't be divided by 400. <-- from OSDev wiki.
-	//TODO. This is fucked.
+	int numberOfLeapYearDays = 0;
+	numberOfLeapYearDays = (year/4)+1; //This works until 2100.
+	clock_systemClock.seconds += SECONDS_PER_DAY * numberOfLeapYearDays;
 }
 
 void clock_shutdown()

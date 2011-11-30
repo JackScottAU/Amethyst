@@ -26,6 +26,10 @@
 	#define SECONDS_PER_HOUR 3600
 	#define SECONDS_PER_DAY 86400
 	#define SECONDS_PER_YEAR 31556926 //According to Google. We ignore leap seconds in this approximate fix.
+
+	//If the RTC is in local time, this is the number that needs to be added in order to get UTC.
+	//Example: I am in UTC+11, so my value is -11 (11-11=0)
+	#define CLOCK_UTC_OFFSET 0
 	
 	//EPOCH: 2000-01-01 00:00:00.000
 
