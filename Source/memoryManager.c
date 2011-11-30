@@ -37,6 +37,10 @@ void* memoryManager_allocate(uint32 size)
 	//Once we have traversed the list, this pointer holds the best free memory space.
 	memoryManager_freeMemoryNode* chosen = (memoryManager_freeMemoryNode*) END_OF_MEMORY_LIST;
 	
+	//If the size requested is small enough that it can't be freed safely, make it so it is.
+	if(size<(sizeof(memoryManager_freeMemoryNode)+4))
+		size = sizeof(memoryManager_freeMemoryNode) + 4;
+	
 	//Traverse the list.
 	while((uint32) current != END_OF_MEMORY_LIST)
 	{
