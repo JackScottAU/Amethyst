@@ -1,11 +1,1 @@
-0-1MiB assumed busy.
-1-12MiB assumed used by kernel and modules etc
-12-15MiB assumed free for use by memory manager.
-15-16MiB assumed busy.
-16MiB+ assumed free if it exists.
-
-Minimum 32 byte (plus 4 byte header) allocation.
-
-memory_allocate()
-memory_free()
-
+All of what was written was out of date.
