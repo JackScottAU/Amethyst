@@ -4,12 +4,53 @@
 
 
 //Holds the address of the start of the list representing free memory blocks.
-memoryManager_freeMemoryNode* memoryManager_firstFreeNode = (memoryManager_freeMemoryNode*) 0xFFFFFFFF;
+memoryManager_freeMemoryNode* memoryManager_firstFreeNode = (memoryManager_freeMemoryNode*) END_OF_MEMORY_LIST;
 
 
+void* memoryManager_allocate(uint32 size)
+{
+	//void* memoryToReturn;
+	memoryManager_allocatedHeader* memoryHeader;
+	
+	//We currently use first-fit. This is bad.
+	//Display list of nodes for testing.
+	memoryManager_freeMemoryNode* current = memoryManager_firstFreeNode;
+	memoryManager_freeMemoryNode* chosen = (memoryManager_freeMemoryNode*) END_OF_MEMORY_LIST;
+	
+	while((uint32) current != 0xFFFFFFFF)
+	{
+		if(current->length > size)
+		{
+			chosen = current;
+			break;
+		}
+			
+		current = current->next;
+	}
+	
+	//At this point, chosen is our memory block.
+	memoryHeader = (memoryManager_allocatedHeader*) (uint32) chosen->address;
+	memoryHeader->size = size;
+	chosen->address = chosen->address + size + sizeof(memoryManager_allocatedHeader);
+	chosen->length = chosen->length - size - sizeof(memoryManager_allocatedHeader);
+	
+	//vgaConsole_printf("Free memory block: %h (start) ... %h (length)\n",(uint32)chosen->address, (uint32)chosen->length);
+
+	return (void*) ((uint32)memoryHeader + (uint32)sizeof(memoryManager_allocatedHeader));
+}
 
 /**
- * 
+ * Frees the memory.
+ * @param mem
+ */
+void memoryManager_free(void* mem)
+{
+	//Do nothing.
+	if(mem){};
+}
+
+/**
+ * Uses the map of memory supplied by the multiboot loader to create a list of free memory.
  * @param startAddress
  * @param length
  * @param endOfReservedMemory
@@ -59,12 +100,16 @@ void memoryManager_init(struct multiboot_memoryMapNode* startAddress, uint32 len
 		}
 	}
 	
-	
+	memoryManager_debug_printFreeMemoryList();
+}
+
+void memoryManager_debug_printFreeMemoryList(void)
+{
 	//Display list of nodes for testing.
 	memoryManager_freeMemoryNode* current = memoryManager_firstFreeNode;
 	while((uint32) current != 0xFFFFFFFF)
 	{
-		vgaConsole_printf("In list: %h.%h\n",(uint32)current->address, (uint32)current->length);
+		vgaConsole_printf("Free memory block: %h (start) ... %h (length)\n",(uint32)current->address, (uint32)current->length);
 		
 		current = current->next;
 	}

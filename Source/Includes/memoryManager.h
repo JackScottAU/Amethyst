@@ -32,6 +32,8 @@ extern "C" {
 	
 	void* memoryManager_allocate(uint32 size);
 	void memoryManager_free(void* mem);
+	
+	void memoryManager_debug_printFreeMemoryList(void);
 
 #ifdef	__cplusplus
 }

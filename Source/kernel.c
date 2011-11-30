@@ -61,6 +61,12 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	
 	clock_init();
 	
+	void* foo;
+	foo = memoryManager_allocate(0x10);
+	vgaConsole_printf("Allocated at: %h\n",foo);
+	memoryManager_debug_printFreeMemoryList();
+	
+	
 	while(1)
 	{
 		//Do Nothing here
