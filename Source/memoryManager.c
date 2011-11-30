@@ -1,26 +1,48 @@
-#include <multiboot.h>
-#include <vgaConsole.h>
+/**
+ * memoryManager.c - Memory management functions.
+ * Part of the Synergy operating system.
+ * Licensed under the ISC license.
+ * 
+ * This file contains functions to allocate and free a block of memory (to be 
+ * used by the interpreter and other kernel functions), as well as support code 
+ * for initialising and mainting the list of free memory regions.
+ */
+
 #include <memoryManager.h>
+#include <multiboot.h>
+#include <vgaConsole.h>		//This is only used for debugging.
 
 
 //Holds the address of the start of the list representing free memory blocks.
+//When the kernel is first started, this list is empty.
 memoryManager_freeMemoryNode* memoryManager_firstFreeNode = (memoryManager_freeMemoryNode*) END_OF_MEMORY_LIST;
 
 
+/**
+ * Allocates a block of memory of the correct size. Currently uses a first-fit algorithm.
+ * @param size The size of the requested block of memory.
+ * @return A pointer to the block of memory.
+ */
 void* memoryManager_allocate(uint32 size)
 {
-	//void* memoryToReturn;
+	//TODO: Switch from a first-fit to a best-fit algorithm.
+	
+	//A pointer to the header that is before the allocated block.
+	//We allocate space for this header once we have found a free space for it.
 	memoryManager_allocatedHeader* memoryHeader;
 	
-	//We currently use first-fit. This is bad.
-	//Display list of nodes for testing.
+	//A pointer to the list of free memory spaces.
 	memoryManager_freeMemoryNode* current = memoryManager_firstFreeNode;
+	
+	//Once we have traversed the list, this pointer holds the best free memory space.
 	memoryManager_freeMemoryNode* chosen = (memoryManager_freeMemoryNode*) END_OF_MEMORY_LIST;
 	
-	while((uint32) current != 0xFFFFFFFF)
+	//Traverse the list.
+	while((uint32) current != END_OF_MEMORY_LIST)
 	{
-		if(current->length > size)
+		if(current->length > (size+sizeof(memoryManager_allocatedHeader)))
 		{
+			//We've found a good space. Use it.
 			chosen = current;
 			break;
 		}
@@ -28,20 +50,25 @@ void* memoryManager_allocate(uint32 size)
 		current = current->next;
 	}
 	
-	//At this point, chosen is our memory block.
+	//We now have a free block of memory. chosen->address points to the start of this area.
+	
+	//Create the allocated memory header at the start of the free area.
 	memoryHeader = (memoryManager_allocatedHeader*) (uint32) chosen->address;
+	
+	//In the header we store how much was allocated. Maybe we'll store other things later?
 	memoryHeader->size = size;
+	
+	//Update the address and length of the free area accordingly.
 	chosen->address = chosen->address + size + sizeof(memoryManager_allocatedHeader);
 	chosen->length = chosen->length - size - sizeof(memoryManager_allocatedHeader);
 	
-	//vgaConsole_printf("Free memory block: %h (start) ... %h (length)\n",(uint32)chosen->address, (uint32)chosen->length);
-
+	//Return the first usable byte of the allocated block.
 	return (void*) ((uint32)memoryHeader + (uint32)sizeof(memoryManager_allocatedHeader));
 }
 
 /**
- * Frees the memory.
- * @param mem
+ * Frees a block of memory that was allocated using memoryManager_allocate().
+ * @param mem The first usable byte (after the header) of the allocated memory block.
  */
 void memoryManager_free(void* mem)
 {
@@ -103,14 +130,22 @@ void memoryManager_init(struct multiboot_memoryMapNode* startAddress, uint32 len
 	memoryManager_debug_printFreeMemoryList();
 }
 
+/**
+ * Print out the complete list of free memory regions in the system.
+ */
 void memoryManager_debug_printFreeMemoryList(void)
 {
-	//Display list of nodes for testing.
+	uint32 total = 0;
+	
 	memoryManager_freeMemoryNode* current = memoryManager_firstFreeNode;
-	while((uint32) current != 0xFFFFFFFF)
+	while((uint32) current != END_OF_MEMORY_LIST)
 	{
 		vgaConsole_printf("Free memory block: %h (start) ... %h (length)\n",(uint32)current->address, (uint32)current->length);
 		
+		total += current->length;
+		
 		current = current->next;
 	}
+	
+	vgaConsole_printf("Available memory:\t%h\n",total);
 }

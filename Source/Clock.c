@@ -70,9 +70,9 @@ void clock_init()
 	//Read minutes.
 	if(statusB & 0x04)
 	{
-		clock_systemClock.seconds += clock_getRTCRegister(0x00);
+		clock_systemClock.seconds += SECONDS_PER_MINUTE * clock_getRTCRegister(0x02);
 	} else {
-		clock_systemClock.seconds += clock_convertBCDtoNormal(clock_getRTCRegister(0x00));
+		clock_systemClock.seconds += SECONDS_PER_MINUTE * clock_convertBCDtoNormal(clock_getRTCRegister(0x02));
 	}
 }
 
