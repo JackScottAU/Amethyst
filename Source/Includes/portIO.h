@@ -11,5 +11,6 @@
 
 	unsigned char readByte(unsigned short int PortNumber);
 	void writeByte(unsigned short int PortNumber, unsigned char Value);
+	void haltCPU(void);
 
 #endif /* __PORTIO_H */
