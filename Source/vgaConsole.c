@@ -215,7 +215,18 @@ void vgaConsole_putString(const char *Text)
 
 void vgaConsole_scroll(void)
 {
-	//TODO.
+	for(uint16 i = 80;i<(80*25);i++)
+	{
+		vgaConsole_videoMemory[i-80] = vgaConsole_videoMemory[i];
+	}
+	
+	for(uint16 i = 80*25;i<(80*26);i++)
+	{
+		vgaConsole_videoMemory[i-80] = 0x0000;
+	}
+	
+	vgaConsole_cursorY--;
+	vgaConsole_updateCursor();
 }
 
 void vgaConsole_setColour(unsigned char foreColour, unsigned char backColour)
