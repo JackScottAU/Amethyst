@@ -126,6 +126,19 @@ void memoryManager_init(struct multiboot_memoryMapNode* memNode, uint32 length, 
 	memoryManager_debug_printFreeMemoryList();
 }
 
+uint32 memoryManager_findEndOfReservedMemory(struct multiboot_moduleNode* module, uint32 count)
+{
+	uint32 endOfReservedMemory = (uint32) &kernel_end;
+	
+	for(uint32 i = 0; i < count; i++)
+	{
+		if(module[i].end > (void*) endOfReservedMemory)
+			endOfReservedMemory = (uint32) module[i].end;
+	}
+	
+	return endOfReservedMemory;
+}
+
 /**
  * Print out the complete list of free memory regions in the system.
  */
