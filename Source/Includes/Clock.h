@@ -32,6 +32,7 @@
 	
 	clock_timerRequest* clock_addOneShotRequest(time_t* requestedTime, void (*funcToCall)(void));
 	clock_timerRequest* clock_addRepeatRequest(uint64 secGap, uint16 milGap, void (*funcToCall)(void));
+	void clock_deleteTimerRequest(clock_timerRequest* request);
 
 	#define CLOCK_HERTZ 1000
 

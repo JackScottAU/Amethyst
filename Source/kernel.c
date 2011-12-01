@@ -15,9 +15,13 @@
 void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData);
 void kernel_testClock(void);
 
+clock_timerRequest* grrr;
+
 void kernel_testClock(void)
 {
 	vgaConsole_printf("Clock shot! Time: %h\n",clock_uptime());
+	
+	clock_deleteTimerRequest(grrr);
 }
 
 /**
@@ -58,7 +62,7 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	memoryManager_debug_printFreeMemoryList();
 	memoryManager_free(foo);
 	
-	clock_addRepeatRequest(1, 0, (*kernel_testClock));
+	grrr = clock_addRepeatRequest(1, 0, (*kernel_testClock));
 	
 	while(1)
 	{

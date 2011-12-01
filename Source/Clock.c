@@ -72,6 +72,37 @@ clock_timerRequest* clock_addRepeatRequest(uint64 secGap, uint16 milGap, void (*
 	return(request);
 }
 
+void clock_deleteTimerRequest(clock_timerRequest* request)
+{
+	//TODO.
+	clock_timerRequest* current = clock_timerRequestsList;
+	clock_timerRequest* oldCurrent = 0;
+	
+	if(current==request)
+	{
+		clock_timerRequestsList = current->next;
+		memoryManager_free(current);
+	}
+	
+	while(current)
+	{
+		//Perform check.
+		if(current==request)
+		{
+			//Remove it from the list.
+			clock_timerRequest*  temp = current;
+
+			oldCurrent->next = current->next;
+			current = oldCurrent->next;
+
+			memoryManager_free(temp);
+		} else {
+			oldCurrent = current;
+			current = current->next;
+		}
+	}
+}
+
 void clock_setHertz(unsigned int Hertz)
 {
 	/*
