@@ -2,6 +2,9 @@
 #include <Clock.h>
 #include <Registers.h>
 #include <interrupts.h>
+#include <memoryManager.h>
+
+interrupts_handlerCallback* interrupts_callbacks = (interrupts_handlerCallback*) 0x00;
 
 /**
  * @param Registers The state of the registers on the stack provided by the ISR stub.
@@ -24,7 +27,7 @@ void interrupts_handler(struct Registers_S *Registers)
 		switch(Registers->IntNum)
 		{
 		case 0x20:	//Programmable Interval Timer
-			clock_handler_PIC();
+//			clock_handler_PIC(0);
 			break;
 		
 		case 0x21:	//Keyboard
@@ -49,9 +52,74 @@ void interrupts_handler(struct Registers_S *Registers)
 		writeByte(0x20, 0x20);
 	}
 	
-	//Kernel Service Interrupt.
-	if((Registers->IntNum >= 0x30) && (Registers->IntNum <= 0x31))
+	interrupts_handlerCallback* current = interrupts_callbacks;
+	interrupts_handlerCallback* oldCurrent = (interrupts_handlerCallback*) 0;
+	while(current)
 	{
-		//
+		//Perform check.
+		if((current->interruptNumber==Registers->IntNum))
+		{
+			//We have a shot!
+			void (*foo)();
+			foo = current->funcToCall;
+			(*foo)(Registers->IntNum, current->arbitraryNumber); //Call the function.
+		}
+		oldCurrent = current;
+		current = current->next;
+	}
+	oldCurrent++;
+}
+
+interrupts_handlerCallback* interrupts_addHandler(uint8 interruptNumber, uint32 arbitraryNumber, void (* funcToCall)(uint32 arbitraryNumber))
+{
+	interrupts_handlerCallback* request = memoryManager_allocate(sizeof(interrupts_handlerCallback));
+	
+	request->interruptNumber = interruptNumber;
+	request->arbitraryNumber = arbitraryNumber;
+	request->funcToCall = funcToCall;
+	
+	//Add to queue.
+	//Do magic to try and find where to place this in the list.
+	if(!interrupts_callbacks)
+	{
+		request->next = (interrupts_handlerCallback*) 0x00;
+		interrupts_callbacks = request;
+	} else {
+		//Add it to the front of the list. We'll figure out sorting it later.
+		request->next = interrupts_callbacks;
+		interrupts_callbacks = request;
+	}
+	
+	return(request);
+}
+
+void interrupts_removeHandler(interrupts_handlerCallback* request)
+{
+	//TODO.
+	interrupts_handlerCallback* current = interrupts_callbacks;
+	interrupts_handlerCallback* oldCurrent = 0;
+	
+	if(current==request)
+	{
+		interrupts_callbacks = current->next;
+		memoryManager_free(current);
+	}
+	
+	while(current)
+	{
+		//Perform check.
+		if(current==request)
+		{
+			//Remove it from the list.
+			interrupts_handlerCallback*  temp = current;
+
+			oldCurrent->next = current->next;
+			current = oldCurrent->next;
+
+			memoryManager_free(temp);
+		} else {
+			oldCurrent = current;
+			current = current->next;
+		}
 	}
 }

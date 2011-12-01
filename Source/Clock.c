@@ -74,7 +74,6 @@ clock_timerRequest* clock_addRepeatRequest(uint64 secGap, uint16 milGap, void (*
 
 void clock_deleteTimerRequest(clock_timerRequest* request)
 {
-	//TODO.
 	clock_timerRequest* current = clock_timerRequestsList;
 	clock_timerRequest* oldCurrent = 0;
 	
@@ -122,22 +121,19 @@ void clock_setHertz(unsigned int Hertz)
 /**
  * \brief Handles the clock-tick message produced by the programmable interrupt timer (PIT).
  */
-void clock_handler_PIC()
+void clock_handler_PIC(uint32 arbitraryNumber)
 {
-	clock_systemClock.milliSeconds++;
+	arbitraryNumber++; //To stop GCC complaining about unsused variable. Does nothing.
 	
-	//vgaConsole_printf("Tiger.\n");
+	clock_systemClock.milliSeconds++;
 	
 	if(clock_systemClock.milliSeconds%CLOCK_HERTZ==0)
 	{
 		clock_systemClock.seconds++;
 		clock_systemClock.milliSeconds = 0;
-		
-//		vgaConsole_printf("Clock: %h\n",clock_systemClock.seconds);
 	}
 	
 	//There are a list of things that need to be notified on clockticks... visit them here.
-	//TODO.
 	clock_timerRequest* current = clock_timerRequestsList;
 	clock_timerRequest* oldCurrent = 0;
 	while(current)
@@ -189,6 +185,8 @@ void clock_init()
 	
 	clock_systemClock.seconds = 0;
 	clock_systemClock.milliSeconds = 0;
+	
+	interrupts_addHandler(0x20,0,(*clock_handler_PIC));
 	
 	//We now proceed to get an approx. fix on time from the RTC. This will
 	//be recalculated once we have a better fix from a network time server.

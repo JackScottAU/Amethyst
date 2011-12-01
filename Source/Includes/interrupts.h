@@ -4,10 +4,18 @@
 #ifndef _INTERRUPTS_H
 #define _INTERRUPTS_H
 
+//-- Public Data Structures --//
+	typedef struct interrupts_handlerCallback_s {
+		void (* funcToCall)(uint32 arbitraryNumber);
+		uint8 interruptNumber;
+		uint32 arbitraryNumber;
+		struct interrupts_handlerCallback_s* next;
+	} interrupts_handlerCallback;
+
 //-- Public Interface --//
 	void interrupts_initialise(void);
-	void interrupts_addCallback(uint8 interruptNumber, void* functionPointer);
-	void interrupts_removeCallback(uint8 interruptNumber, void* functionPointer);
+	interrupts_handlerCallback* interrupts_addHandler(uint8 interruptNumber, uint32 arbitraryNumber, void (* funcToCall)(uint32 arbitraryNumber));
+	void interrupts_removeHandler(interrupts_handlerCallback* request);
 	
 //-- Private Interface --//
 	void interrupts_disableInterrupts(void);

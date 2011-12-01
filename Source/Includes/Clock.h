@@ -21,7 +21,7 @@
 	
 	void clock_init(void);
 	void clock_shutdown(void);
-	void clock_handler_PIC(void);
+	void clock_handler_PIC(uint32 arbitraryNumber);
 	unsigned long clock_uptime(void);
 
 	void clock_setHertz(unsigned int Hertz);

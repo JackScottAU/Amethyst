@@ -21,7 +21,7 @@ void kernel_testClock(void)
 {
 	vgaConsole_printf("Clock shot! Time: %h\n",clock_uptime());
 	
-	clock_deleteTimerRequest(grrr);
+	//clock_deleteTimerRequest(grrr);
 }
 
 /**
