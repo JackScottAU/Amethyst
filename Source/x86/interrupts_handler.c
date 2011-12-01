@@ -17,30 +17,13 @@ void interrupts_handler(struct Registers_S *Registers)
 	//If it is an exception.
 	if(Registers->IntNum <= 0x1F)
 	{		
-		__asm__("cli");
-		__asm__("hlt");
+		interrupts_disableInterrupts();
+		haltCPU();
 	}
 	
 	//If it is an IRQ.
 	if((Registers->IntNum >= 0x20) && (Registers->IntNum <= 0x2F))
 	{
-		switch(Registers->IntNum)
-		{
-		case 0x20:	//Programmable Interval Timer
-//			clock_handler_PIC(0);
-			break;
-		
-		case 0x21:	//Keyboard
-			//temp = readByte(0x60);
-			break;
-		
-		case 0x24:	//COM1
-			break;
-		
-		default:	//As yet unhandled things.
-			break;
-		}
-		
 		//Send EOI to 8259 controller.
 		if(Registers->IntNum >= 0x28)
 		{

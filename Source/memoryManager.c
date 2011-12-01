@@ -76,8 +76,43 @@ void* memoryManager_allocate(uint32 size)
  */
 void memoryManager_free(void* mem)
 {
-	//Do nothing.
-	if(mem){};
+	memoryManager_allocatedHeader* allocatedHeader = (memoryManager_allocatedHeader*) ((uint32)mem- sizeof(memoryManager_allocatedHeader));
+	
+	int size = allocatedHeader->size + sizeof(memoryManager_allocatedHeader);
+	
+	memoryManager_freeMemoryNode* node = (memoryManager_freeMemoryNode*) ((uint32)mem- sizeof(memoryManager_allocatedHeader));
+	
+	node->address = (uint32) node + sizeof(memoryManager_freeMemoryNode);
+	node->length = size - sizeof(memoryManager_freeMemoryNode);
+	
+	//Do magic to try and find where to place this in the list.
+	if((uint32)memoryManager_firstFreeNode==END_OF_MEMORY_LIST)
+	{
+		node->next = (memoryManager_freeMemoryNode*) END_OF_MEMORY_LIST;
+		memoryManager_firstFreeNode = node;
+	} else {
+		//Add it to the front of the list. We'll figure out sorting it later.
+		node->next = memoryManager_firstFreeNode;
+		memoryManager_firstFreeNode = node;
+		
+	}
+	
+/*	vgaConsole_printf("Freeing memory:\n\t");
+	vgaConsole_printf("Value given to function:\t%h\n\t",mem);
+	vgaConsole_printf("Allocated header address:\t%h\n\t",allocatedHeader);
+	vgaConsole_printf("sizeof(memoryManager_allocatedHeader):\t%h\n\t",sizeof(memoryManager_allocatedHeader));
+	vgaConsole_printf("sizeof(memoryManager_freeMemoryNode):\t%h\n\t",sizeof(memoryManager_freeMemoryNode));
+	vgaConsole_printf("Size:\t%h\n\t",size);
+	vgaConsole_printf("node->address:\t%h\n\t",node->address);
+	vgaConsole_printf("node->length:\t%h\n\t",node->length);
+	vgaConsole_printf("node->next:\t%h\n\t",node->next);
+	vgaConsole_printf("node:\t%h\n\t",node);
+	vgaConsole_printf("memoryManager_firstFreeNode:\t%h\n\t",memoryManager_firstFreeNode);
+	
+	vgaConsole_printf("About to halt.\n");
+	memoryManager_debug_printFreeMemoryList();
+	//__asm__("cli");
+	//__asm__("hlt");*/
 }
 
 /**
@@ -127,7 +162,7 @@ void memoryManager_init(struct multiboot_memoryMapNode* memNode, uint32 length, 
 	}
 	
 	//Print this out, just for debugging purposes.
-	memoryManager_debug_printFreeMemoryList();
+	//memoryManager_debug_printFreeMemoryList();
 }
 
 uint32 memoryManager_findEndOfReservedMemory(struct multiboot_moduleNode* module, uint32 count)
@@ -153,7 +188,7 @@ void memoryManager_debug_printFreeMemoryList(void)
 	memoryManager_freeMemoryNode* current = memoryManager_firstFreeNode;
 	while((uint32) current != END_OF_MEMORY_LIST)
 	{
-		vgaConsole_printf("Free memory block: %h (start) ... %h (length)\n",(uint32)current->address, (uint32)current->length);
+		vgaConsole_printf("Free memory block: %h (start) ... %h (length) (%h)\n",(uint32)current->address, (uint32)current->length, current);
 		
 		total += current->length;
 		

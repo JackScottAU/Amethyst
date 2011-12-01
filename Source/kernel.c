@@ -44,22 +44,27 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	
 	vgaConsole_printf("Multiboot Flags: \t%h\n",multibootData->flags);
 	
-	vgaConsole_printf("Loading GDT...\t\t\t\t\t\t\t\t");
+	vgaConsole_printf("Loading a GDT...\t\t\t\t\t\t\t");
 	gdt_install();
 	vgaConsole_printf("%s",1);
 	
-	vgaConsole_printf("Setting up Interrupts...\t\t\t\t\t\t");
+	vgaConsole_printf("Setting up interrupts...\t\t\t\t\t\t");
 	interrupts_initialise();
 	vgaConsole_printf("%s",1);
 	
+	vgaConsole_printf("Setting up the memory manager...\t\t\t\t\t");
 	memoryManager_init(multibootData->memoryMapAddress, multibootData->memoryMapLength, (uint32) memoryManager_findEndOfReservedMemory(multibootData->modsAddr, multibootData->modsCount));
+	vgaConsole_printf("%s",1);
 	
+	vgaConsole_printf("Setting up the clock...\t\t\t\t\t\t\t");
 	clock_init();
+	vgaConsole_printf("%s",1);
 	
 	void* foo;
 	foo = memoryManager_allocate(0x10);
 	vgaConsole_printf("Allocated at: %h\n",foo);
 	memoryManager_debug_printFreeMemoryList();
+	vgaConsole_printf("About to free.\n");
 	memoryManager_free(foo);
 	
 	grrr = clock_addRepeatRequest(1, 0, (*kernel_testClock));
