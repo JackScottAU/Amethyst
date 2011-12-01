@@ -13,6 +13,12 @@
 
 //To shut GCC up.
 void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData);
+void kernel_testClock(void);
+
+void kernel_testClock(void)
+{
+	vgaConsole_printf("Clock shot! Time: %h\n",clock_uptime());
+}
 
 /**
  * Initialises the core systems of the kernel and language runtime before launching a command interpreter.
@@ -51,6 +57,8 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	vgaConsole_printf("Allocated at: %h\n",foo);
 	memoryManager_debug_printFreeMemoryList();
 	memoryManager_free(foo);
+	
+	clock_addRepeatRequest(1, 0, (*kernel_testClock));
 	
 	while(1)
 	{

@@ -9,16 +9,29 @@
 		uint16 milliSeconds;
 	} time_t;
 	
+	typedef struct clock_timerRequest_s {
+		uint64 seconds;
+		uint16 milliSeconds;
+		void (* funcToCall)(void);
+		uint32 isRepeatTimer;
+		uint64 repeatSecondsToAdd;
+		uint16 repeatMilliSecondsToAdd;
+		struct clock_timerRequest_s* next;
+	} clock_timerRequest;
+	
 	void clock_init(void);
 	void clock_shutdown(void);
 	void clock_handler_PIC(void);
-	unsigned long Clock_Uptime(void);
+	unsigned long clock_uptime(void);
 
 	void clock_setHertz(unsigned int Hertz);
 	
 	uint8 clock_getRTCRegister(uint8 chosenRegister);
 	void clock_updateTimeFromRTC(time_t* clock);
 	uint8 clock_convertBCDtoNormal(uint8 value);
+	
+	clock_timerRequest* clock_addOneShotRequest(time_t* requestedTime, void (*funcToCall)(void));
+	clock_timerRequest* clock_addRepeatRequest(uint64 secGap, uint16 milGap, void (*funcToCall)(void));
 
 	#define CLOCK_HERTZ 1000
 

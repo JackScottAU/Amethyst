@@ -7,15 +7,70 @@
 #include <portIO.h>
 #include <Clock.h>
 #include <vgaConsole.h>
+#include <memoryManager.h>
 #include <interrupts.h>
 
 time_t clock_systemClock;
+
+clock_timerRequest* clock_timerRequestsList = (clock_timerRequest*) 0x00;
 
 int clock_daysPerMonth[12] = {
 		31,28,31,
 		30,31,30,
 		31,31,30,
 		31,30,31};
+
+clock_timerRequest* clock_addOneShotRequest(time_t* requestedTime, void (*funcToCall)(void))
+{
+	clock_timerRequest* request = memoryManager_allocate(sizeof(clock_timerRequest));
+	
+	request->seconds = requestedTime->seconds;
+	request->milliSeconds = requestedTime->milliSeconds;
+	request->funcToCall = funcToCall;
+	request->isRepeatTimer = 0;
+	
+	//Add to queue.
+	//Do magic to try and find where to place this in the list.
+	if(!clock_timerRequestsList)
+	{
+		request->next = (clock_timerRequest*) 0x00;
+		clock_timerRequestsList = request;
+	} else {
+		//Add it to the front of the list. We'll figure out sorting it later.
+		request->next = clock_timerRequestsList;
+		clock_timerRequestsList = request;
+	}
+	
+	return(request);
+}
+
+clock_timerRequest* clock_addRepeatRequest(uint64 secGap, uint16 milGap, void (*funcToCall)(void))
+{
+	clock_timerRequest* request = memoryManager_allocate(sizeof(clock_timerRequest));
+	
+	request->seconds = clock_systemClock.seconds + secGap;
+	request->milliSeconds = clock_systemClock.milliSeconds + milGap;
+	request->funcToCall = funcToCall;
+	request->isRepeatTimer = 1;
+	request->repeatSecondsToAdd = secGap;
+	request->repeatMilliSecondsToAdd = milGap;
+	
+	//Add to queue.
+	//Do magic to try and find where to place this in the list.
+	if(!clock_timerRequestsList)
+	{
+		request->next = (clock_timerRequest*) 0x00;
+		clock_timerRequestsList = request;
+	} else {
+		//Add it to the front of the list. We'll figure out sorting it later.
+		request->next = clock_timerRequestsList;
+		clock_timerRequestsList = request;
+	}
+	
+	vgaConsole_printf("Added repeat timer. \n");
+	
+	return(request);
+}
 
 void clock_setHertz(unsigned int Hertz)
 {
@@ -40,21 +95,61 @@ void clock_handler_PIC()
 {
 	clock_systemClock.milliSeconds++;
 	
+	//vgaConsole_printf("Tiger.\n");
+	
 	if(clock_systemClock.milliSeconds%CLOCK_HERTZ==0)
 	{
 		clock_systemClock.seconds++;
 		clock_systemClock.milliSeconds = 0;
 		
-		vgaConsole_printf("Clock: %h\n",clock_systemClock.seconds);
+//		vgaConsole_printf("Clock: %h\n",clock_systemClock.seconds);
 	}
 	
 	//There are a list of things that need to be notified on clockticks... visit them here.
 	//TODO.
-}
-
-unsigned long Clock_Uptime()
-{
-	return (clock_systemClock.seconds);
+	clock_timerRequest* current = clock_timerRequestsList;
+	clock_timerRequest* oldCurrent = 0;
+	while(current)
+	{
+		//Perform check.
+		if((current->seconds==clock_systemClock.seconds)&&(current->milliSeconds==clock_systemClock.milliSeconds))
+		{
+			//We have a shot!
+			void (*foo)();
+			foo = current->funcToCall;
+			(*foo)(); //Call the function.
+			//vgaConsole_printf("Shot! %h.%h",current->seconds,current->milliSeconds);
+			
+			if(current->isRepeatTimer)
+			{
+				//Reset to give it another go.
+				current->seconds = current->seconds + current->repeatSecondsToAdd;
+				current->milliSeconds = current->milliSeconds + current->repeatMilliSecondsToAdd;
+				
+				if(current->milliSeconds>=1000)
+				{
+					current->seconds++;
+					current->milliSeconds = current->milliSeconds-1000;
+				}
+				
+				oldCurrent = current;
+				current = current->next;
+			} else {
+				//Remove it from the list.
+				clock_timerRequest*  temp = current;
+				
+				oldCurrent->next = current->next;
+				current = oldCurrent->next;
+				
+				memoryManager_free(temp);
+			}
+		} else {
+			oldCurrent = current;
+			current = current->next;
+		}
+		
+		//vgaConsole_printf("list: %h.%h\n",current,oldCurrent);
+	}
 }
 
 void clock_init()
@@ -163,6 +258,11 @@ void clock_shutdown()
 {
 	//Give back time to the RTC for next time.
 	//TODO.
+}
+
+unsigned long clock_uptime()
+{
+	return (clock_systemClock.seconds);
 }
 
 uint8 clock_convertBCDtoNormal(uint8 value)
