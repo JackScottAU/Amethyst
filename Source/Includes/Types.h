@@ -14,5 +14,9 @@
 	typedef unsigned	long		uint32;
 	typedef signed		long long	sint64;
 	typedef unsigned	long long	uint64;
+	
+	#define NULL ((void*) 0x00000000)
+	#define TRUE 1
+	#define FALSE 0
 
 #endif /* __TYPES_H */

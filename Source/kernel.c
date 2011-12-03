@@ -1,14 +1,16 @@
-// Synergy OS
+/**
+ * kernel.c - Kernel initialisation functions.
+ * Part of the Synergy operating system.
+ * Licensed under the ISC license.
+ */
 
-// INCLUDES
+#include <Clock.h>
+#include <GDT.h>
+#include <interrupts.h>
+#include <memoryManager.h>
 #include <multiboot.h>
 #include <Types.h>
-#include <GDT.h>
 #include <vgaConsole.h>
-#include <interrupts.h>
-#include <Clock.h>
-#include <portIO.h>
-#include <memoryManager.h>
 
 
 //To shut GCC up.
@@ -72,6 +74,7 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	while(1)
 	{
 		//Do Nothing here
+		//In here we should do things like reordering free memory blocks.
 	};
 }
 
