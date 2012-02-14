@@ -4,8 +4,18 @@
 
 #include <Types.h>
 
+	/**
+	 * This is the representation of time used throughout the entire 
+	 * operating system. It allows for approximately +/- 292.5 billion years
+	 * from our epoch (2000-01-01 00:00:00.000) with a precision of one
+	 * millisecond (set in CLOCK_HERTZ below).
+	 * 
+	 * The milliSeconds field is always positive, like so:
+	 *	seconds=-1, milliSeconds=1 == 1999-12-31 23:59:59.001, NOT
+	 *				      1999-12-31 23:59:59.999 !!!
+	 */
 	typedef struct {
-		uint64 seconds;
+		sint64 seconds;
 		uint16 milliSeconds;
 	} time_t;
 	
