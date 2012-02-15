@@ -13,9 +13,9 @@
 			documentation directory.
 */
 
-#include <BasicIO.h>	//ReadByte, WriteByte.
+#include <portIO.h>	//ReadByte, WriteByte.
 #include <Clock.h>	//Clock_Uptime().
-#include <Config.h>	//DEBUG, VERSION_STRING.
+//#include <Config.h>	//DEBUG, VERSION_STRING.
 #include <Debug.h>
 #include <Registers.h>	//Registers_S.
 
