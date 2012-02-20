@@ -260,7 +260,7 @@ void clock_init()
 	//We now need to add up all the other days in the preceeding months.
 	for(int i =0; i<month;i++)
 	{
-		totaldays = clock_daysPerMonth[month];
+		totaldays += clock_daysPerMonth[month];
 	}
 	clock_systemClock.seconds += SECONDS_PER_DAY * totaldays;
 	
