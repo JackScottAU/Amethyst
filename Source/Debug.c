@@ -13,15 +13,11 @@
 			documentation directory.
 */
 
-#include <portIO.h>	//ReadByte, WriteByte.
+#include <portIO.h>	//readByte, writeByte.
 #include <Clock.h>	//Clock_Uptime().
 //#include <Config.h>	//DEBUG, VERSION_STRING.
 #include <Debug.h>
 #include <Registers.h>	//Registers_S.
-
-//Don't bother compiling this in if we don't need DEBUG support. It's just a 
-//waste of a huge amount of disk space and memory.
-#ifdef DEBUG
 
 void Debug_Init()
 {
@@ -36,18 +32,18 @@ void Debug_Init()
 	*/
 	
 	//Write information to the UART chip.
-	WriteByte(0x3F8+1, 0x00);
-	WriteByte(0x3F8+3, 0x80);
-	WriteByte(0x3F8+0, 0x03);
-	WriteByte(0x3F8+1, 0x00);
-	WriteByte(0x3F8+3, 0x03);
-	WriteByte(0x3F8+2, 0xC7);
-	WriteByte(0x3F8+4, 0x0B);
-	WriteByte(0x3F8+1, 0x01);
+	writeByte(0x3F8+1, 0x00);
+	writeByte(0x3F8+3, 0x80);
+	writeByte(0x3F8+0, 0x03);
+	writeByte(0x3F8+1, 0x00);
+	writeByte(0x3F8+3, 0x03);
+	writeByte(0x3F8+2, 0xC7);
+	writeByte(0x3F8+4, 0x0B);
+	writeByte(0x3F8+1, 0x01);
 	
 	//Write a few welcoming messages to the debugging console.
 	Debug_PutString("*** Jane Debugging Console ***\n\n");
-	Debug_PutString("Kernel Version: " VERSION_STRING "\n");
+//	Debug_PutString("Kernel Version: " VERSION_STRING "\n");
 }
 
 void Debug_Handler(struct Registers_S *Registers)
@@ -63,11 +59,11 @@ void Debug_Handler(struct Registers_S *Registers)
 	unsigned int *MemAddr;
 	
 	//Keep checking registers until a character can safely be read.
-	while((ReadByte(0x3F8+5)&0x01) == 0 )
+	while((readByte(0x3F8+5)&0x01) == 0 )
 		continue;
 	
 	//Switch through all the possible commands.
-	switch(ReadByte(0x3F8))
+	switch(readByte(0x3F8))
 	{
 	case '?':
 		Debug_PutString("**POSSIBLE COMMANDS:**\n");
@@ -79,7 +75,7 @@ void Debug_Handler(struct Registers_S *Registers)
 		break;
 	
 	case 'c':
-		Debug_PutVar("Uptime (secs)",Clock_Uptime());
+		Debug_PutVar("Uptime (secs)",clock_uptime());
 		break;
 	
 	case 'k':
@@ -132,16 +128,16 @@ void Debug_PutChar(char Character)
 	*/
 	
 	//Keep checking the buffer until a character can be written.
-	while((ReadByte(0x3F8+5)&0x20) == 0 )
+	while((readByte(0x3F8+5)&0x20) == 0 )
 		continue;
 	
 	//Handle the newline correctly.
 	if(Character=='\n')
 	{
-		WriteByte(0x3F8, '\n');
-		WriteByte(0x3F8, '\r');
+		writeByte(0x3F8, '\n');
+		writeByte(0x3F8, '\r');
 	} else {
-		WriteByte(0x3F8, Character);
+		writeByte(0x3F8, Character);
 	}
 }
 
@@ -270,5 +266,3 @@ void Debug_RegDump(struct Registers_S *Registers)
 	Debug_PutHex(Registers->GS);
 	Debug_PutString("\n");
 }
-
-#endif
