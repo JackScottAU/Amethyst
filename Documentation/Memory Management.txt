@@ -1,1 +1,15 @@
-All of what was written was out of date.
+Synergy OS uses amazingly simple memory management. Everything uses physical 
+addresses, and paging is not enabled at all, due to the single-address-space 
+requirements.
+
+Basically we get given a list of free memory regions by the bootloader (GRUB).
+We take out anything being used by the kernel or by boot modules, and the rest
+is assigned to free memory, which is then used by malloc() and free() for other
+kernel functions.
+
+START		END		DESCRIPTION
+================================================================================
+0x00000000	Start of EBDA	Free Memory (RAM)
+Start of EBDA	0x00010000	Reserved for machine use
+0x00010000	End of Modules	Used by kernel & modules
+End of modules	End of RAM	Free Memory

@@ -1,9 +1,7 @@
 /*
-	portIO.h - Basic port handling.
-	Part of the Synergy Operating System
-	
-	Author:		Jack Scott (jack@jackscott.id.au).
-	Last Modified:	2011-10-19.
+ * portIO.h - Basic port handling.
+ * Part of the Synergy Operating System
+ * Licensed under the ISC license.
 */
 
 #ifndef __PORTIO_H

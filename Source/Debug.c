@@ -1,6 +1,7 @@
-/*
-	Debug.c - Serial Debugging Console Driver.
-	Part of the Jane Microkernel.
+/**
+ * Debug.c - Serial Debugging Console Driver.
+ * Part of the Synergy operating system.
+ * Licensed under the ISC license.
 	
 	Maintainer:	Jack Scott (yayyak@yayyak.net).
 	Last Modified:	2007-01-17.
