@@ -20,7 +20,7 @@
 	} time_t;
 	
 	typedef struct clock_timerRequest_s {
-		uint64 seconds;
+		sint64 seconds;
 		uint16 milliSeconds;
 		void (* funcToCall)(void);
 		uint32 isRepeatTimer;

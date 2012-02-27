@@ -9,6 +9,7 @@
 #include <interrupts.h>
 #include <memoryManager.h>
 #include <multiboot.h>
+#include <portIO.h>
 #include <Types.h>
 #include <vgaConsole.h>
 
