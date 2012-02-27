@@ -108,11 +108,7 @@ void memoryManager_free(void* mem)
 	vgaConsole_printf("node->next:\t%h\n\t",node->next);
 	vgaConsole_printf("node:\t%h\n\t",node);
 	vgaConsole_printf("memoryManager_firstFreeNode:\t%h\n\t",memoryManager_firstFreeNode);
-	
-	vgaConsole_printf("About to halt.\n");
-	memoryManager_debug_printFreeMemoryList();
-	//__asm__("cli");
-	//__asm__("hlt");*/
+	*/
 }
 
 /**

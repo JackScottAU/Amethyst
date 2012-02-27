@@ -78,9 +78,11 @@ void clock_deleteTimerRequest(clock_timerRequest* request)
 	clock_timerRequest* oldCurrent = 0;
 	
 	if(current==request)
-	{
+	{ //Deals with head-of-list issues.
 		clock_timerRequestsList = current->next;
 		memoryManager_free(current);
+		
+		current = 0; //So we don't continue on to the next section and try to delete things twice and make a huge mess of the entire system.
 	}
 	
 	while(current)

@@ -20,11 +20,13 @@ void kernel_testClock(void);
 
 clock_timerRequest* grrr;
 
+int i = 0;
+
 void kernel_testClock(void)
 {
 	vgaConsole_printf("Clock shot! Time: %h\n",clock_uptime());
 	
-	//clock_deleteTimerRequest(grrr);
+	i++;
 }
 
 /**
@@ -69,13 +71,22 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	memoryManager_debug_printFreeMemoryList();
 	vgaConsole_printf("About to free.\n");
 	memoryManager_free(foo);
-	
+	memoryManager_debug_printFreeMemoryList();
 	grrr = clock_addRepeatRequest(1, 0, (*kernel_testClock));
 	
 	while(1)
 	{
 		//Do Nothing here
 		//In here we should do things like reordering free memory blocks.
+		
+		if(i==10)
+		{
+			clock_deleteTimerRequest(grrr);
+		
+			memoryManager_debug_printFreeMemoryList();
+			
+			i=0;
+		}
 	};
 }
 
