@@ -244,19 +244,20 @@ void vgaConsole_setColour(unsigned char foreColour, unsigned char backColour)
 	};
 }
 
+/**
+ * Moves the VGA BIOS cursor to the current X and Y positions.
+ */
 void vgaConsole_updateCursor(void)
 {
-	// SYNOPSIS:	Moves Blinking Cursor to current X and Y positions by setting CRT Control Register indices 14 and 15.
-	// INPUT:	None
-	// OUTPUT:	None
-	// REQUIRES:	VideoInfo, WriteByte()
-	
+	//The offset, in characters, from the top-left of the screen.
 	unsigned short int offset;
 	
+	//Compute the offset from the current X and Y positions.
 	offset = (vgaConsole_cursorY * 80) + vgaConsole_cursorX;
 	
+	//Write the values to the CRT control register indices 14 and 15.
 	writeByte(0x3D4, 14);
-	writeByte(0x3D5, offset >> 8);
+	writeByte(0x3D5, offset >> 8);   //High byte.
 	writeByte(0x3D4, 15);
-	writeByte(0x3D5, offset);
+	writeByte(0x3D5, offset & 0x08); //Low byte.
 }

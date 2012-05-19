@@ -21,20 +21,6 @@ void interrupts_handler(struct Registers_S *Registers)
 		haltCPU();
 	}
 	
-	//If it is an IRQ.
-	if((Registers->IntNum >= 0x20) && (Registers->IntNum <= 0x2F))
-	{
-		//Send EOI to 8259 controller.
-		if(Registers->IntNum >= 0x28)
-		{
-			//If it is the slave, send it to that.
-			writeByte(0xA0, 0x20);
-		}
-		
-		//But send it to the master no matter what.
-		writeByte(0x20, 0x20);
-	}
-	
 	interrupts_handlerCallback* current = interrupts_callbacks;
 	interrupts_handlerCallback* oldCurrent = (interrupts_handlerCallback*) 0;
 	while(current)
@@ -51,6 +37,20 @@ void interrupts_handler(struct Registers_S *Registers)
 		current = current->next;
 	}
 	oldCurrent++;
+	
+	//If it is an IRQ.
+	if((Registers->IntNum >= 0x20) && (Registers->IntNum <= 0x2F))
+	{
+		//Send EOI to 8259 controller.
+		if(Registers->IntNum >= 0x28)
+		{
+			//If it is the slave, send it to that.
+			writeByte(0xA0, 0x20);
+		}
+		
+		//But send it to the master no matter what.
+		writeByte(0x20, 0x20);
+	}
 }
 
 interrupts_handlerCallback* interrupts_addHandler(uint8 interruptNumber, uint32 arbitraryNumber, void (* funcToCall)(uint32 arbitraryNumber))
