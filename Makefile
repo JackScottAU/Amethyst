@@ -1,7 +1,7 @@
 # Toolchain:
-CC	:= /usr/cross/bin/i586-elf-gcc
-AS	:= /usr/cross/bin/i586-elf-as
-LD	:= /usr/cross/bin/i586-elf-ld
+CC	:= i586-elf-gcc
+AS	:= i586-elf-as
+LD	:= i586-elf-ld
 MKISOFS	:= genisoimage
 
 #Options:
