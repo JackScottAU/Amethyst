@@ -1,5 +1,7 @@
-Introduction:
-=============
+# Synergy OS Kernel
+
+## Introduction
+
 Synergy is a new operating system with the goal of bringing together all 
 computers into a perfect cloud; sharing processing power and data storage, 
 whilst still giving each user full control over their individual privacy and 
@@ -16,10 +18,22 @@ platforms will be supported eventually. Support is planned not only for desktop
 and laptop systems, but also for tablets, smart phones, and other embedded 
 devices.
 
-Minimum System Requirements:
-============================
-  * Intel x86-based CPU with FPU
-  * 8MiB RAM
-  * CD-ROM drive
-  * Keyboard
-  * VGA-compatible Video card and Monitor
+## Minimum System Requirements
+
+* Intel Pentium CPU (or later/equivalent)
+* 8MiB RAM
+* CD-ROM drive
+* Keyboard
+* VGA-compatible Video card and Monitor
+
+## Compilation & Installation
+
+As long as you have genisoimage and an appropriate GCC cross-compiler installed
+(in other words, i586-elf-gcc is available), building the Synergy kernel should
+be pretty easy:
+
+    :::bash
+    make all
+
+To run Synergy, boot the resulting Synergy-OS.iso CD image on either a physical 
+machine or an emulator (Oracle VirtualBox is recommended, but any should work).
