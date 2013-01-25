@@ -32,8 +32,17 @@ As long as you have genisoimage and an appropriate GCC cross-compiler installed
 (in other words, i586-elf-gcc is available), building the Synergy kernel should
 be pretty easy:
 
-    :::bash
     make all
 
 To run Synergy, boot the resulting Synergy-OS.iso CD image on either a physical 
 machine or an emulator (Oracle VirtualBox is recommended, but any should work).
+
+## Further Information
+
+The issue tracker as well as the primary mirror for the git repository are on
+[BitBucket](https://bitbucket.org/JackScottAU/synergy-os).
+
+Backup copies of the git repository are also hosted on 
+[QuokForge](http://quokforge.org/projects/synergy-os) and 
+[GitHub](https://github.com/JackScottAU/Synergy-OS). These are not always 
+guaranteed to be up to date.
