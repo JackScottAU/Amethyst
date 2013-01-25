@@ -47,6 +47,28 @@ void writeByte(uint16 portNumber, uint8 value)
 	);
 }
 
+uint32 readLong(uint16 portNumber)
+{
+	uint32 value;
+
+	__asm__ __volatile__(
+		"inl %w1,%0"
+		:"=a"(value)
+		:"d"(portNumber)
+	);
+	
+	return value;
+}
+
+void writeLong(uint16 portNumber, uint32 value)
+{
+	__asm__ __volatile__(
+		"outl %0,%w1"
+		:
+		:"a"(value), "d"(portNumber)
+	);
+}
+
 void haltCPU(void)
 {
 	__asm__ __volatile__("hlt");

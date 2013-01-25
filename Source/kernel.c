@@ -12,6 +12,7 @@
 #include <portIO.h>
 #include <Types.h>
 #include <vgaConsole.h>
+#include <pciBus.h>
 
 
 //To shut GCC up.
@@ -61,18 +62,20 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	memoryManager_init(multibootData->memoryMapAddress, multibootData->memoryMapLength, (uint32) memoryManager_findEndOfReservedMemory(multibootData->modsAddr, multibootData->modsCount));
 	vgaConsole_printf("%s",1);
 	
+	pci_enumerateBuses();
+	
 	vgaConsole_printf("Setting up the clock...\t\t\t\t\t\t\t");
-	clock_init();
+	//clock_init();
 	vgaConsole_printf("%s",1);
 	
 	void* foo;
-	foo = memoryManager_allocate(0x10);
+	//foo = memoryManager_allocate(0x10);
 	vgaConsole_printf("Allocated at: %h\n",foo);
 	memoryManager_debug_printFreeMemoryList();
 	vgaConsole_printf("About to free.\n");
-	memoryManager_free(foo);
+	//memoryManager_free(foo);
 	memoryManager_debug_printFreeMemoryList();
-	grrr = clock_addRepeatRequest(1, 0, (*kernel_testClock));
+	//grrr = clock_addRepeatRequest(1, 0, (*kernel_testClock));
 	
 	while(1)
 	{

@@ -14,11 +14,7 @@ time_t clock_systemClock;
 
 clock_timerRequest* clock_timerRequestsList = (clock_timerRequest*) 0x00;
 
-int clock_daysPerMonth[12] = {
-		31,28,31,
-		30,31,30,
-		31,31,30,
-		31,30,31};
+int clock_daysPerMonth[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 clock_timerRequest* clock_addOneShotRequest(time_t* requestedTime, void (*funcToCall)(void))
 {

@@ -27,13 +27,11 @@ uint8 vgaConsole_cursorY	= 0;
 uint8 vgaConsole_colour		= VGACONSOLE_LIGHT_GREY;
 
 
+/**
+ * Clears the screen.
+ */
 void vgaConsole_clearScreen(void)
 {
-	// SYNOPSIS:	X.
-	// INPUT:	None
-	// OUTPUT:	None
-	// REQUIRES:	VideoInfo, memsetw(), Vid_UpdateCursor()
-	
 	//While this isn't a particularly gruelling calculation, we may as well only do it once.
 	//LSB is a space character, MSB is the currently selected colour.
 	uint16 blank = 0x20 | (vgaConsole_colour << 8);
@@ -121,15 +119,12 @@ void vgaConsole_printf(const char* formatString, ...)
 	va_end(args);
 }
 
+/**
+ * Puts a single character on the screen, obeying all ASCII rules.
+ * @param c A single character.
+ */
 void vgaConsole_putChar(unsigned char c)
 {
-	// SYNOPSIS:	Puts a single character on the screen, obeying all ASCII rules.
-	// INPUT:	Single character
-	// OUTPUT:	None
-	// REQUIRES:	VideoInfo, Vid_Scroll(), Vid_UpdateCursor()
-	
-	//unsigned short int *Position;
-	
 	switch(c)
 	{
 		case 0x08:	//Backspace
@@ -196,13 +191,12 @@ void vgaConsole_putHexadecimal(uint32 arg)
 	vgaConsole_updateCursor();
 }
 
+/**
+ * Uses PutChar to print a string to screen.
+ * @param Text Text to output (Variable length)
+ */
 void vgaConsole_putString(const char *Text)
-{
-	// SYNOPSIS:	Uses PutChar to print a string to screen.
-	// INPUT:	Text to output (Variable length)
-	// OUTPUT:	None
-	// REQUIRES:	PutChar(), strlen()
-	
+{	
 	int i;
 	
 	for(i=0;Text[i]!=0;i++)
@@ -229,13 +223,13 @@ void vgaConsole_scroll(void)
 	vgaConsole_updateCursor();
 }
 
+/**
+ * Changes current colour by setting attribute byte in VideoInfo structure.
+ * @param foreColour Foreground Colour (0-15)
+ * @param backColour Background Colour (0-15)
+ */
 void vgaConsole_setColour(unsigned char foreColour, unsigned char backColour)
 {
-	// SYNOPSIS:	Changes current colour by setting attribute byte in VideoInfo structure.
-	// INPUT:	Foreground Colour (0-15), Background Colour (0-15)
-	// OUTPUT:	None
-	// REUIRES:	VideoInfo
-	
 	if((foreColour < 16) && (backColour < 16))
 	{
 		vgaConsole_colour = (backColour << 4) | (foreColour);
