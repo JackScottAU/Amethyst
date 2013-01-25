@@ -97,7 +97,7 @@ void vgaConsole_printf(const char* formatString, ...)
 			}
 			if(formatString[i]=='d')
 			{
-				//vgaConsole_putDecimal(arg);
+				vgaConsole_putDecimal(arg);
 			}
 			if(formatString[i]=='h')
 			{
@@ -187,6 +187,16 @@ void vgaConsole_putHexadecimal(uint32 arg)
 			vgaConsole_putChar('A'+(j-10));
 		}
 	}
+	
+	vgaConsole_updateCursor();
+}
+
+void vgaConsole_putDecimal(uint32 arg)
+{
+	if(arg/10 >= 1)
+		vgaConsole_putDecimal(arg/10);
+	
+	vgaConsole_putChar((arg%10)+'0');
 	
 	vgaConsole_updateCursor();
 }

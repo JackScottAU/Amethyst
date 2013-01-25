@@ -12,6 +12,7 @@
 	void vgaConsole_printf(const char* formatString, ...);
 	void vgaConsole_putChar(unsigned char c);
 	void vgaConsole_putHexadecimal(uint32 arg);
+	void vgaConsole_putDecimal(uint32 arg);
 	void vgaConsole_putString(const char *Text);
 	void vgaConsole_scroll(void);
 	void vgaConsole_setColour(uint8 foreColour, uint8 backColour);
