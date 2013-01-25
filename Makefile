@@ -16,6 +16,7 @@ all: clean cd-image
 clean:
 	-@rm -r Build
 	-@rm -r Source/*.o
+	-@rm -r Source/x86/*.o
 	-@rm Synergy-OS.iso
 
 cd-image: Build/kernel32

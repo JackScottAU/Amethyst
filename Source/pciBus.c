@@ -1,5 +1,6 @@
 /**
- Enumerates PCI buses. Will do more eventually.
+ * Enumerates PCI buses. Will do more eventually.
+ * The reference for most of the code within this file is http://wiki.osdev.org/PCI
  */
 
 #include <Types.h>
@@ -31,11 +32,11 @@ const char* classNames[] = {
 
 void pci_enumerateBuses(void)
 {
-	uint16 bus = 0;
+	uint16 bus;
 	
 	//very brute force. need to fix this.
 	
-	//for(bus = 0; bus <= 255; bus++)
+	for(bus = 0; bus <= 255; bus++)
 		pci_checkBus(bus);
 }
 
@@ -58,7 +59,7 @@ void pci_checkSlot(uint8 bus, uint8 slot)
 		if((manuslot & 0xFFFF) == 0xFFFF)
 			break;
 		
-		vgaConsole_printf("Found PCI device with vendor %h and device %h\n",manuslot&0xFFFF,manuslot>>16);
+		vgaConsole_printf("Found PCI device at %d:%d:%d with vendor %h and device %h\n",bus,slot,function,manuslot&0xFFFF,manuslot>>16);
 		//uint32 classRegister = pci_readConfigurationRegister(bus, slot, function, 0x08);
 		//uint8 class = (uint8) classRegister >> 24;
 		//vgaConsole_printf("it has class %h\n",classRegister);
@@ -68,12 +69,12 @@ void pci_checkSlot(uint8 bus, uint8 slot)
 
 uint32 pci_readConfigurationRegister(uint8 bus, uint8 slot, uint8 function, uint8 registerNo)
 {
-	uint32 address;
-	address = 0x80000000 | (uint32)((bus & 0xFF)<<16) | (uint32)((slot & 0x1F)<<11) | (uint32)((function & 0x5)<<8) | (uint32)((registerNo & 0x2F)<<2);
+	//Create the address of the register we want to read from. This is an address in "PCI configuration space", *not* I/O space or general memory space.
+	uint32 address = 0x80000000 | (uint32)((bus & 0xFF)<<16) | (uint32)((slot & 0x1F)<<11) | (uint32)((function & 0x5)<<8) | (uint32)((registerNo & 0x2F)<<2);
 	
-	//vgaConsole_printf("Checking PCI bus for: %h\n",address);
-	
+	//Write the address of the register we want to the access request I/O port.
 	writeLong(0xCF8, address);
 	
+	//Read the contents of the register at that address back from the data I/O port.
 	return readLong(0xCFC);
 }

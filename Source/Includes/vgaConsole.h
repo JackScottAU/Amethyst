@@ -11,7 +11,7 @@
 	void vgaConsole_clearScreen(void);
 	void vgaConsole_printf(const char* formatString, ...);
 	void vgaConsole_putChar(unsigned char c);
-	void vgaConsole_putHexadecimal(uint32 arg);
+	void vgaConsole_putHexadecimal(uint32 arg, uint8 leadingZeroes);
 	void vgaConsole_putDecimal(uint32 arg);
 	void vgaConsole_putString(const char *Text);
 	void vgaConsole_scroll(void);

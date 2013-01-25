@@ -101,7 +101,11 @@ void vgaConsole_printf(const char* formatString, ...)
 			}
 			if(formatString[i]=='h')
 			{
-				vgaConsole_putHexadecimal(arg);
+				vgaConsole_putHexadecimal(arg, 0);
+			}
+			if(formatString[i]=='H')
+			{
+				vgaConsole_putHexadecimal(arg, 1);
 			}
 			if(formatString[i]=='%')
 			{
@@ -170,22 +174,43 @@ void vgaConsole_putChar(unsigned char c)
 	};
 }
 
-void vgaConsole_putHexadecimal(uint32 arg)
+void vgaConsole_putHexadecimalInternal(uint32 arg);
+void vgaConsole_putHexadecimalInternal(uint32 arg)
+{
+	if(arg/16 >= 1)
+		vgaConsole_putHexadecimalInternal(arg/16);
+	
+	if((arg%16)<10)
+	{
+		vgaConsole_putChar('0'+(arg%16));
+	} else {
+		vgaConsole_putChar('A'+((arg%16)-10));
+	}
+	
+	vgaConsole_updateCursor();
+}
+
+void vgaConsole_putHexadecimal(uint32 arg, uint8 leadingZeroes)
 {
 	vgaConsole_putString("0x");
 	
-	int j;
-	
-	for(int i=28;i>=0;i-=4)
+	if(leadingZeroes)
 	{
-		j = (arg & (0xF<<i))>>i;
-		
-		if(j<10)
+		int j;
+
+		for(int i=28;i>=0;i-=4)
 		{
-			vgaConsole_putChar('0'+j);
-		} else {
-			vgaConsole_putChar('A'+(j-10));
+			j = (arg & (0xF<<i))>>i;
+
+			if(j<10)
+			{
+				vgaConsole_putChar('0'+j);
+			} else {
+				vgaConsole_putChar('A'+(j-10));
+			}
 		}
+	} else {
+		vgaConsole_putHexadecimalInternal(arg);
 	}
 	
 	vgaConsole_updateCursor();
