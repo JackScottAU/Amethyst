@@ -50,3 +50,9 @@ file.*
 input.*
 sound.*
 library.* for stdlib-style stuff.
+
+Three different languages:
+
+  * Scripting Language - plugs in to object model used by operating system
+  * Programming Language - for developing compiled/jit programs in
+  * CLI language - for one line interactions
