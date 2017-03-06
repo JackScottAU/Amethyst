@@ -4,3 +4,4 @@
 /Build/
 /Documentation/html/
 /Documentation/latex/
+*.o
