@@ -36,8 +36,8 @@ Source/entry.o: Source/entry.S
 Source/gdt.o: Source/gdt.S
 	@$(AS) -o Source/gdt.o Source/gdt.S
 	
-Source/x86/interrupts_stubs.o: Source/x86/interrupts_stubs.asm
-	@nasm -f elf -o Source/x86/interrupts_stubs.o Source/x86/interrupts_stubs.asm
+Source/x86/interrupts_stubs.o: Source/x86/interrupts_stubs.S
+	@$(AS) -o Source/x86/interrupts_stubs.o Source/x86/interrupts_stubs.S
 
 # Object-file compilation rules:
 %.o: %.c
