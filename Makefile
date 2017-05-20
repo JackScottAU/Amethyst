@@ -33,8 +33,8 @@ Build/kernel32: Source/kernel.o Source/entry.o Source/portIO.o Source/pciBus.o S
 Source/entry.o: Source/entry.S
 	@$(AS) -o Source/entry.o Source/entry.S
 	
-Source/gdt.o: Source/gdt.asm
-	@nasm -f elf -o Source/gdt.o Source/gdt.asm
+Source/gdt.o: Source/gdt.S
+	@$(AS) -o Source/gdt.o Source/gdt.S
 	
 Source/x86/interrupts_stubs.o: Source/x86/interrupts_stubs.asm
 	@nasm -f elf -o Source/x86/interrupts_stubs.o Source/x86/interrupts_stubs.asm
