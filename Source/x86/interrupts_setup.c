@@ -19,7 +19,7 @@ struct IDT_Pointer_S
 } __attribute__((packed));
 
 
-struct IDT_Entry_S IDT_Table[256];
+struct IDT_Entry_S IDT_Table[0x40];
 struct IDT_Pointer_S IDT_Pointer;
 
 void interrupts_disableInterrupts(void)
@@ -54,12 +54,12 @@ void interrupts_installEmptyIDT()
 	unsigned int Count = 0;
 	
 	//Create the pointer.
-	IDT_Pointer.Limit = (sizeof (struct IDT_Entry_S) * 256) - 1;
+	IDT_Pointer.Limit = (sizeof (struct IDT_Entry_S) * 0x40) - 1;
 	IDT_Pointer.Base = (unsigned int) &IDT_Table;
 	
 	//Empty the IDT. THis is a hack of a code.
 	Temp = (void*) &IDT_Table;
-	while(Count < (sizeof(struct IDT_Entry_S) * 256))
+	while(Count < (sizeof(struct IDT_Entry_S) * 0x40))
 	{
 		*Temp = 0x00;
 		Temp++;
@@ -136,70 +136,6 @@ void interrupts_installISRs()
 	interrupts_setGate(0x3D, (unsigned)interrupts_ISR_3D, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
 	interrupts_setGate(0x3E, (unsigned)interrupts_ISR_3E, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
 	interrupts_setGate(0x3F, (unsigned)interrupts_ISR_3F, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x40, (unsigned)interrupts_ISR_40, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x41, (unsigned)interrupts_ISR_41, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x42, (unsigned)interrupts_ISR_42, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x43, (unsigned)interrupts_ISR_43, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x44, (unsigned)interrupts_ISR_44, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x45, (unsigned)interrupts_ISR_45, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x46, (unsigned)interrupts_ISR_46, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x47, (unsigned)interrupts_ISR_47, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x48, (unsigned)interrupts_ISR_48, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x49, (unsigned)interrupts_ISR_49, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x4A, (unsigned)interrupts_ISR_4A, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x4B, (unsigned)interrupts_ISR_4B, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x4C, (unsigned)interrupts_ISR_4C, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x4D, (unsigned)interrupts_ISR_4D, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x4E, (unsigned)interrupts_ISR_4E, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x4F, (unsigned)interrupts_ISR_4F, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x50, (unsigned)interrupts_ISR_50, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x51, (unsigned)interrupts_ISR_51, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x52, (unsigned)interrupts_ISR_52, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x53, (unsigned)interrupts_ISR_53, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x54, (unsigned)interrupts_ISR_54, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x55, (unsigned)interrupts_ISR_55, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x56, (unsigned)interrupts_ISR_56, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x57, (unsigned)interrupts_ISR_57, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x58, (unsigned)interrupts_ISR_58, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x59, (unsigned)interrupts_ISR_59, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x5A, (unsigned)interrupts_ISR_5A, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x5B, (unsigned)interrupts_ISR_5B, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x5C, (unsigned)interrupts_ISR_5C, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x5D, (unsigned)interrupts_ISR_5D, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x5E, (unsigned)interrupts_ISR_5E, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x5F, (unsigned)interrupts_ISR_5F, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x60, (unsigned)interrupts_ISR_60, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x61, (unsigned)interrupts_ISR_61, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x62, (unsigned)interrupts_ISR_62, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x63, (unsigned)interrupts_ISR_63, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x64, (unsigned)interrupts_ISR_64, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x65, (unsigned)interrupts_ISR_65, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x66, (unsigned)interrupts_ISR_66, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x67, (unsigned)interrupts_ISR_67, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x68, (unsigned)interrupts_ISR_68, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x69, (unsigned)interrupts_ISR_69, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x6A, (unsigned)interrupts_ISR_6A, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x6B, (unsigned)interrupts_ISR_6B, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x6C, (unsigned)interrupts_ISR_6C, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x6D, (unsigned)interrupts_ISR_6D, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x6E, (unsigned)interrupts_ISR_6E, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x6F, (unsigned)interrupts_ISR_6F, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x70, (unsigned)interrupts_ISR_70, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x71, (unsigned)interrupts_ISR_71, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x72, (unsigned)interrupts_ISR_72, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x73, (unsigned)interrupts_ISR_73, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x74, (unsigned)interrupts_ISR_74, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x75, (unsigned)interrupts_ISR_75, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x76, (unsigned)interrupts_ISR_76, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x77, (unsigned)interrupts_ISR_77, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x78, (unsigned)interrupts_ISR_78, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x79, (unsigned)interrupts_ISR_79, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x7A, (unsigned)interrupts_ISR_7A, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x7B, (unsigned)interrupts_ISR_7B, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x7C, (unsigned)interrupts_ISR_7C, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x7D, (unsigned)interrupts_ISR_7D, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x7E, (unsigned)interrupts_ISR_7E, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
-	interrupts_setGate(0x7F, (unsigned)interrupts_ISR_7F, 0x08, IDT_FLAG_PRESENT | IDT_FLAG_RING0 | IDT_FLAG_INTGATE32);
 }
 
 void interrupts_remap8259s(uint8 baseIRQ)
