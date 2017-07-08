@@ -76,8 +76,8 @@ uint32 pci_readConfigurationRegister(uint8 bus, uint8 slot, uint8 function, uint
 	uint32 address = 0x80000000 | (uint32)((bus & 0xFF)<<16) | (uint32)((slot & 0x1F)<<11) | (uint32)((function & 0x5)<<8) | (uint32)((registerNo & 0xFC));
 	
 	//Write the address of the register we want to the access request I/O port.
-	writeLong(0xCF8, address);
+	portIO_write32(0xCF8, address);
 	
 	//Read the contents of the register at that address back from the data I/O port.
-	return readLong(0xCFC);
+	return portIO_read32(0xCFC);
 }

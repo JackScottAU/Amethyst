@@ -140,20 +140,20 @@ void interrupts_installISRs()
 
 void interrupts_remap8259s(uint8 baseIRQ)
 {
-	writeByte(IDT_PIC1_BASEADDRESS, 0x11);
-	writeByte(IDT_PIC2_BASEADDRESS, 0x11);
+	portIO_write8(IDT_PIC1_BASEADDRESS, 0x11);
+	portIO_write8(IDT_PIC2_BASEADDRESS, 0x11);
 	
-	writeByte(IDT_PIC1_BASEADDRESS+1, baseIRQ);
-	writeByte(IDT_PIC2_BASEADDRESS+1, baseIRQ+0x08);
+	portIO_write8(IDT_PIC1_BASEADDRESS+1, baseIRQ);
+	portIO_write8(IDT_PIC2_BASEADDRESS+1, baseIRQ+0x08);
 	
-	writeByte(IDT_PIC1_BASEADDRESS+1, 0x04);
-	writeByte(IDT_PIC2_BASEADDRESS+1, 0x02);
+	portIO_write8(IDT_PIC1_BASEADDRESS+1, 0x04);
+	portIO_write8(IDT_PIC2_BASEADDRESS+1, 0x02);
 	
-	writeByte(IDT_PIC1_BASEADDRESS+1, 0x01);
-	writeByte(IDT_PIC2_BASEADDRESS+1, 0x01);
+	portIO_write8(IDT_PIC1_BASEADDRESS+1, 0x01);
+	portIO_write8(IDT_PIC2_BASEADDRESS+1, 0x01);
 	
-	writeByte(IDT_PIC1_BASEADDRESS+1, 0x0);
-	writeByte(IDT_PIC2_BASEADDRESS+1, 0x0);
+	portIO_write8(IDT_PIC1_BASEADDRESS+1, 0x0);
+	portIO_write8(IDT_PIC2_BASEADDRESS+1, 0x0);
 }
 
 void interrupts_setGate(unsigned char Number, unsigned long Address, unsigned short Selector, unsigned char Flags)

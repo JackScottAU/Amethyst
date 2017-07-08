@@ -45,11 +45,11 @@ void interrupts_handler(struct Registers_S *Registers)
 		if(Registers->IntNum >= 0x28)
 		{
 			//If it is the slave, send it to that.
-			writeByte(0xA0, 0x20);
+			portIO_write8(0xA0, 0x20);
 		}
 		
 		//But send it to the master no matter what.
-		writeByte(0x20, 0x20);
+		portIO_write8(0x20, 0x20);
 	}
 }
 

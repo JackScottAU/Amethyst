@@ -285,8 +285,8 @@ void vgaConsole_updateCursor(void)
 	offset = (vgaConsole_cursorY * 80) + vgaConsole_cursorX;
 	
 	//Write the values to the CRT control register indices 14 and 15.
-	writeByte(0x3D4, 14);
-	writeByte(0x3D5, offset >> 8);   //High byte.
-	writeByte(0x3D4, 15);
-	writeByte(0x3D5, offset & 0x08); //Low byte.
+	portIO_write8(0x3D4, 14);
+	portIO_write8(0x3D5, offset >> 8);   //High byte.
+	portIO_write8(0x3D4, 15);
+	portIO_write8(0x3D5, offset & 0x08); //Low byte.
 }
