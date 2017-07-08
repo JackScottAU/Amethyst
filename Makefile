@@ -16,7 +16,8 @@ all: clean cd-image
 clean:
 	-@rm -r Build
 	-@rm -r Source/*.o
-	-@rm -r Source/x86/*.o
+	-@rm -r Source/drivers/*.o
+	-@rm -r Source/arch/x86/*.o
 	-@rm Synergy-OS.iso
 
 cd-image: Build/kernel32
@@ -26,18 +27,18 @@ cd-image: Build/kernel32
 	@$(MKISOFS) -quiet -R -b boot/grub/stage2_eltorito -no-emul-boot -boot-load-size 4 -boot-info-table -o Synergy-OS.iso Build
 
 #Custom file build targets:
-Build/kernel32: Source/kernel.o Source/entry.o Source/portIO.o Source/pciBus.o Source/vgaConsole.o Source/gdt.o Source/x86/interrupts_setup.o Source/x86/interrupts_handler.o Source/x86/interrupts_stubs.o Source/Clock.o Source/memoryManager.o
+Build/kernel32: Source/kernel.o Source/arch/x86/entry.o Source/arch/x86/portIO.o Source/drivers/pciBus.o Source/drivers/vgaConsole.o Source/arch/x86/gdt.o Source/arch/x86/interrupts_setup.o Source/arch/x86/interrupts_handler.o Source/arch/x86/interrupts_stubs.o Source/Clock.o Source/memoryManager.o
 	-@mkdir -p Build
 	@$(LD) -T Resources/Linker-Script.ld -o $@ $^
 
-Source/entry.o: Source/entry.S
-	@$(AS) -o Source/entry.o Source/entry.S
+Source/arch/x86/entry.o: Source/arch/x86/entry.S
+	@$(AS) -o Source/arch/x86/entry.o Source/arch/x86/entry.S
 	
-Source/gdt.o: Source/gdt.S
-	@$(AS) -o Source/gdt.o Source/gdt.S
+Source/arch/x86/gdt.o: Source/arch/x86/gdt.S
+	@$(AS) -o Source/arch/x86/gdt.o Source/arch/x86/gdt.S
 	
-Source/x86/interrupts_stubs.o: Source/x86/interrupts_stubs.S
-	@$(AS) -o Source/x86/interrupts_stubs.o Source/x86/interrupts_stubs.S
+Source/arch/x86/interrupts_stubs.o: Source/arch/x86/interrupts_stubs.S
+	@$(AS) -o Source/arch/x86/interrupts_stubs.o Source/arch/x86/interrupts_stubs.S
 
 # Object-file compilation rules:
 %.o: %.c
