@@ -1,12 +1,13 @@
 ## Source Tree Layout
 
-Documentation - contains docs
-arch - architecture-dependent stuff
-	x86 - files for x86
-		
-kernel - general kernel files
-	interrupts
-drivers - device and bus drivers
+* Documentation/ - contains docs
+* Modules/ - Source code files for userland code.
+* Resources/ - third-party code like GRUB etc.
+* Source/ - Source code files to build the kernel.
+    * arch/ - architecture-dependent stuff
+	    * x86/ - files for x86
+    * kernel/ - general kernel code not dependant on architecture.
+	* drivers/ - code for drivers (all drivers except root platform device, even architecture-specific ones).
 
 ## Other Notes
 
