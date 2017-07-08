@@ -1,3 +1,15 @@
+## Source Tree Layout
+
+Documentation - contains docs
+arch - architecture-dependent stuff
+	x86 - files for x86
+		
+kernel - general kernel files
+	interrupts
+drivers - device and bus drivers
+
+## Other Notes
+
 Single address space - everything runs as a bytecode on top of kernel mode.
 So just need a simple GDT. Physical memory manager and virtual memory manager need to be very good and very fast.
 
