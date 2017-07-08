@@ -1,8 +1,6 @@
 #This is the code to load my manually built GDT table into the memory.
 
 .global gdt_install
-.global gdt_pointer
-.global gdt_table
 
 gdt_install:     #Installs a new GDT and reloads segment registers.
 	lgdt gdt_pointer
@@ -14,7 +12,7 @@ gdt_install:     #Installs a new GDT and reloads segment registers.
 	movw %ax,%ss
 	ljmp $0x08, $gdtFlush
 gdtFlush:
-        ret
+	ret
 
 .align 32
 gdt_table:       #The actual GDT table.
