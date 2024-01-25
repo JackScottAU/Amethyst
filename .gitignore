@@ -3,3 +3,4 @@
 /kernel32
 /Build/
 *.o
+/.vs

@@ -4,12 +4,12 @@
  * Licensed under the ISC license.
  */
 
-#ifndef _GDT_H
-#define _GDT_H
+#ifndef INCLUDES_GDT_H_
+#define INCLUDES_GDT_H_
 
-	/**
-	 * Installs a basic GDT table.
-	 */
-	void gdt_install();
+    /**
+     * Installs a basic GDT table.
+     */
+    void gdt_install();
 
-#endif /* _GDT_H */
+#endif  // INCLUDES_GDT_H_

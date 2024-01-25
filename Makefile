@@ -1,7 +1,7 @@
 # Toolchain:
-CC	:= i686-elf-gcc
-AS	:= i686-elf-as
-LD	:= i686-elf-ld
+CC	:= i586-elf-gcc
+AS	:= i586-elf-as
+LD	:= i586-elf-ld
 MKISOFS	:= genisoimage
 
 #Options:
@@ -21,7 +21,7 @@ clean:
 	-@rm -f  Synergy-OS.iso
 
 lint:
-	@cpplint --quiet --recursive --linelength=120 --root=Source Source
+	@cpplint --quiet --recursive --linelength=120 --filter=-legal/copyright --root=Source Source
 
 cd-image: Build/kernel32
 	-@mkdir -p Build/boot/grub

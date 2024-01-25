@@ -39,6 +39,14 @@ Future work may include support for the following platforms:
 
 ## Compilation & Installation
 
+### Build System Requirements
+
+The following packages are needed:
+
+* build-essential
+* genisoimage
+* cpplint
+
 As long as you have genisoimage and an appropriate GCC cross-compiler installed
 (in other words, i586-elf-gcc is available), building the Synergy kernel should
 be pretty easy:
