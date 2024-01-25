@@ -9,7 +9,7 @@ WARNINGS	:= -Wall -Wextra -pedantic -Wshadow -Wpointer-arith -Wcast-align -Wwrit
 CFLAGS		:= -nostdlib -fno-builtin -nostartfiles -nodefaultlibs -I Source/Includes -std=c99 $(WARNINGS)
 
 #Top-level targets:
-.PHONY: all clean cd-image hdd-image floppy-image
+.PHONY: all clean cd-image hdd-image floppy-image lint
 
 all: clean cd-image
 
@@ -19,6 +19,9 @@ clean:
 	-@rm -rf Source/drivers/*.o
 	-@rm -rf Source/arch/x86/*.o
 	-@rm -f  Synergy-OS.iso
+
+lint:
+	@cpplint --quiet --recursive --linelength=120 --root=Source Source
 
 cd-image: Build/kernel32
 	-@mkdir -p Build/boot/grub
