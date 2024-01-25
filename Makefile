@@ -14,11 +14,11 @@ CFLAGS		:= -nostdlib -fno-builtin -nostartfiles -nodefaultlibs -I Source/Include
 all: clean cd-image
 
 clean:
-	-@rm -r Build
-	-@rm -r Source/*.o
-	-@rm -r Source/drivers/*.o
-	-@rm -r Source/arch/x86/*.o
-	-@rm Synergy-OS.iso
+	-@rm -rf Build
+	-@rm -rf Source/*.o
+	-@rm -rf Source/drivers/*.o
+	-@rm -rf Source/arch/x86/*.o
+	-@rm -f  Synergy-OS.iso
 
 cd-image: Build/kernel32
 	-@mkdir -p Build/boot/grub

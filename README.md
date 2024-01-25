@@ -14,7 +14,7 @@ platforms will be supported eventually. Eventual platforms will include:
 This repository contains the kernel, and is written in C/C++ with scatterings 
 of architecture-specific assembly.
 
-## Minimum System Requirements
+## Supported Platforms
 
 ### x86-32 Architecture
 
@@ -28,13 +28,14 @@ The 'x86-32' architecture attempts to follow the [PC-97 design standard](https:/
 * PCI Bus
 * VGA-compatible Video card and Monitor
 
-### x86-64 Architecture
+Testing is done via Hyper-V, VirtualBox, QEMU, etc.
 
-* 64-bit CPU
-* 64MB RAM
-* UEFI Boot Services
-* CD-ROM drive
-* Keyboard and monitor
+### Future Platforms
+
+Future work may include support for the following platforms:
+
+ *  **x86-64** - UEFI-based x64 PC
+ *  **rpi-5** - Raspberry Pi 5
 
 ## Compilation & Installation
 
