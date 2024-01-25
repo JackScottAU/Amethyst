@@ -18,11 +18,14 @@ of architecture-specific assembly.
 
 ### x86-32 Architecture
 
-* Intel 80586 CPU (or later/equivalent) - planning to change to 386 later
+The 'x86-32' architecture attempts to follow the (PC-97 design standard)[https://www.tech-insider.org/windows/research/1997/0711.html] for x86-based IBM-compatible PCs.
+
+* Intel Pentium CPU (or later/equivalent)
 * BIOS Boot Services
-* 8MiB RAM
-* CD-ROM drive (planning to change this to Floppy later)
+* 16MiB RAM
+* CD-ROM drive
 * Keyboard
+* PCI Bus
 * VGA-compatible Video card and Monitor
 
 ### x86-64 Architecture
@@ -48,7 +51,7 @@ machine or an emulator (Oracle VirtualBox is recommended, but any should work).
 
 More documentation is in the documentation folder:
 
-* [Devices and Drivers](documentation/devices-and-drivers.md)
+* [Devices and Drivers](Documentation/devices-and-drivers.md)
 
 ## Contributing
 
