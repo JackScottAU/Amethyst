@@ -1,3 +1,16 @@
+## Source Tree Layout
+
+* Documentation/ - contains docs
+* Modules/ - Source code files for userland code.
+* Resources/ - third-party code like GRUB etc.
+* Source/ - Source code files to build the kernel.
+    * arch/ - architecture-dependent stuff
+	    * x86/ - files for x86
+    * kernel/ - general kernel code not dependant on architecture.
+	* drivers/ - code for drivers (all drivers except root platform device, even architecture-specific ones).
+
+## Other Notes
+
 Single address space - everything runs as a bytecode on top of kernel mode.
 So just need a simple GDT. Physical memory manager and virtual memory manager need to be very good and very fast.
 
@@ -50,3 +63,9 @@ file.*
 input.*
 sound.*
 library.* for stdlib-style stuff.
+
+Three different languages:
+
+  * Scripting Language - plugs in to object model used by operating system
+  * Programming Language - for developing compiled/jit programs in
+  * CLI language - for one line interactions

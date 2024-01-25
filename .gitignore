@@ -2,5 +2,4 @@
 /Synergy-OS.iso
 /kernel32
 /Build/
-/Documentation/html/
-/Documentation/latex/
+*.o

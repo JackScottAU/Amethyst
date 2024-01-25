@@ -111,9 +111,9 @@ void clock_setHertz(unsigned int Hertz)
 	
 	int Divisor;
 	Divisor = 1193180 / Hertz;
-	writeByte(0x43, 0x36);			//Set command byte.
-	writeByte(0x40, Divisor & 0xFF);	//LSB
-	writeByte(0x40, Divisor >> 8);		//MSB
+	portIO_write8(0x43, 0x36);			//Set command byte.
+	portIO_write8(0x40, Divisor & 0xFF);	//LSB
+	portIO_write8(0x40, Divisor >> 8);		//MSB
 }
 
 /**
@@ -304,11 +304,11 @@ uint8 clock_getRTCRegister(uint8 chosenRegister)
 	
 	interrupts_disableInterrupts();
 	
-	writeByte(0x70,chosenRegister);
+	portIO_write8(0x70,chosenRegister);
 	
 	//DELAY HERE.
 	
-	data = readByte(0x71);
+	data = portIO_read8(0x71);
 	
 	interrupts_enableInterrupts();
 	

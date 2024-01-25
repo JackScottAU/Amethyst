@@ -19,7 +19,7 @@
 void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData);
 void kernel_testClock(void);
 
-clock_timerRequest* grrr;
+clock_timerRequest* exampleClockRequest;
 
 int i = 0;
 
@@ -69,7 +69,7 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	clock_init();
 	vgaConsole_printf("%s",1);
 	
-	grrr = clock_addRepeatRequest(1, 0, (*kernel_testClock));
+	exampleClockRequest = clock_addRepeatRequest(1, 0, (*kernel_testClock));
 	
 	while(1)
 	{
@@ -78,7 +78,7 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 		
 		if(i==10)
 		{
-			clock_deleteTimerRequest(grrr);
+			clock_deleteTimerRequest(exampleClockRequest);
 			
 			i=0;
 		}

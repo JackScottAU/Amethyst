@@ -40,9 +40,5 @@ machine or an emulator (Oracle VirtualBox is recommended, but any should work).
 ## Further Information
 
 The issue tracker as well as the primary mirror for the git repository are on
-[BitBucket](https://bitbucket.org/JackScottAU/synergy-os).
+[GitHub](https://github.com/JackScottAU/Synergy-OS).
 
-Backup copies of the git repository are also hosted on 
-[QuokForge](http://quokforge.org/projects/synergy-os) and 
-[GitHub](https://github.com/JackScottAU/Synergy-OS). These are not always 
-guaranteed to be up to date.

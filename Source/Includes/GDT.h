@@ -1,18 +1,15 @@
-/*
-	GDT.h - Global Descriptor Table Header.
-	Part of the Jane Microkernel.
-	
-	Author:		Jack Scott (yayyak@yayyak.net).
-	Last Modified:	2006-12-27.
-	License:	3-clause BSD License.
-	Notes:		None.
-*/
+/**
+ * GDT.h - Functions interacting with the system GDT table.
+ * Part of the Synergy Operating System.
+ * Licensed under the ISC license.
+ */
 
-#ifndef GDT_H
-#define GDT_H
+#ifndef _GDT_H
+#define _GDT_H
 
+	/**
+	 * Installs a basic GDT table.
+	 */
 	void gdt_install();
-	void* gdt_table;
-	void* gdt_pointer;
 
-#endif /* GDT_H */
+#endif /* _GDT_H */
