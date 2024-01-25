@@ -10,25 +10,25 @@
 
 // PCI Bus Class names. If we can get these within 34 characters length we can use in display table below.
 const char* classNames[] = {
-	"Unknown",
-	"Mass Storage Controller",
-	"Network Controller",
-	"Display Controller",
-	"Multimedia Controller",
-	"Memory Controller",
-	"Bridge Device",
-	"Simple Communications Controller",
-	"Base System Peripherals",
-	"Input Devices",
-	"Docking Stations",
-	"Processors",
-	"Serial Bus Controllers",
-	"Wireless Controllers",
-	"Intelligent I/O Controllers",
-	"Satellite Communication Controllers",
-	"Encryption/Decryption Controllers",
-	"Data Acquisition and Signal Processing Controllers",
-	"Reserved"
+	"Unknown                           ",
+	"Mass Storage Controller           ",
+	"Network Controller                ",
+	"Display Controller                ",
+	"Multimedia Controller             ",
+	"Memory Controller                 ",
+	"Bridge Device                     ",
+	"Simple Communications Controller  ",
+	"Base System Peripheral            ",
+	"Input Device                      ",
+	"Docking Station                   ",
+	"Processor                         ",
+	"Serial Bus Controller             ",
+	"Wireless Controller               ",
+	"Intelligent I/O Controller        ",
+	"Satellite Communication Controller",
+	"Encryption/Decryption Controller  ",
+	"Signal Processing Controller      ",
+	"Reserved                          "
 };
 
 void pci_enumerateBuses(void)
@@ -38,7 +38,7 @@ void pci_enumerateBuses(void)
 	//very brute force. need to fix this.
 	
 	vgaConsole_printf("  +-----+------+------+--------+--------+------------------------------------+\n");
-	vgaConsole_printf("  | BUS | SLOT | FUNC | VENDOR | DEVICE |                                    |\n");
+	vgaConsole_printf("  | BUS | SLOT | FUNC | VENDOR | DEVICE | CLASS DESCRIPTION                  |\n");
 	vgaConsole_printf("  +-----+------+------+--------+--------+------------------------------------+\n");
 
 	for(bus = 0; bus <= 255; bus++)
@@ -70,8 +70,9 @@ void pci_checkSlot(uint8 bus, uint8 slot)
 		uint8 class = (uint8) (classRegister >> 24);
 		
 
-		vgaConsole_printf("  | %d   | %d    | %d    | %h | %h |                                    |\n",bus,slot,function,deviceAndVendor&0xFFFF,deviceAndVendor>>16);
-        	// vgaConsole_printf(classNames[class]);
+		vgaConsole_printf("  | %d   | %d    | %d    | %h | %h | ",bus,slot,function,deviceAndVendor&0xFFFF,deviceAndVendor>>16);
+        	vgaConsole_printf(classNames[class]);
+		vgaConsole_printf(" |\n");
 	}
 }
 
