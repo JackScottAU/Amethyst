@@ -48,7 +48,7 @@ machine or an emulator (Oracle VirtualBox is recommended, but any should work).
 
 More documentation is in the documentation folder:
 
-* [Devices and Drivers](documentation/devices-and-drives.md)
+* [Devices and Drivers](documentation/devices-and-drivers.md)
 
 ## Contributing
 
