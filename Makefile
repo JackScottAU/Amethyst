@@ -1,9 +1,8 @@
 # Toolchain:
-CC	:= i586-elf-gcc
-AS	:= i586-elf-as
-LD	:= i586-elf-ld
+CC	:= i686-elf-gcc
+AS	:= i686-elf-as
+LD	:= i686-elf-ld
 MKISOFS	:= genisoimage
-GRUBDIR := /usr/lib/grub/x86_64-pc
 
 #Options:
 WARNINGS	:= -Wall -Wextra -pedantic -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wuninitialized
@@ -23,9 +22,9 @@ clean:
 
 cd-image: Build/kernel32
 	-@mkdir -p Build/boot/grub
-	@cp $(GRUBDIR)/stage2_eltorito Build/boot/grub/stage2
+	@cp Resources/stage2_eltorito Build/boot/grub
 	@cp Resources/menu.lst Build/boot/grub
-	@$(MKISOFS) -quiet -R -b boot/grub/stage2 -no-emul-boot -boot-load-size 4 -boot-info-table -o Synergy-OS.iso Build
+	@$(MKISOFS) -quiet -R -b boot/grub/stage2_eltorito -no-emul-boot -boot-load-size 4 -boot-info-table -o Synergy-OS.iso Build
 
 #Custom file build targets:
 Build/kernel32: Source/kernel.o Source/arch/x86/entry.o Source/arch/x86/portIO.o Source/drivers/pciBus.o Source/drivers/vgaConsole.o Source/arch/x86/gdt.o Source/arch/x86/interrupts_setup.o Source/arch/x86/interrupts_handler.o Source/arch/x86/interrupts_stubs.o Source/Clock.o Source/memoryManager.o Source/string.o
