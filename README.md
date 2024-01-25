@@ -18,7 +18,7 @@ of architecture-specific assembly.
 
 ### x86-32 Architecture
 
-* Intel 80386 CPU (or later/equivalent)
+* Intel 80586 CPU (or later/equivalent)
 * BIOS Boot Services
 * 8MiB RAM
 * Floppy drive
@@ -46,6 +46,11 @@ machine or an emulator (Oracle VirtualBox is recommended, but any should work).
 
 ## Further Information
 
+More documentation is in the documentation folder:
+
+* [Devices and Drivers](documentation/devices-and-drives.md)
+
+## Contributing
+
 The issue tracker as well as the primary mirror for the git repository are on
 [GitHub](https://github.com/JackScottAU/Synergy-OS).
-
