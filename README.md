@@ -2,29 +2,36 @@
 
 ## Introduction
 
-Synergy is a new operating system with the goal of bringing together all 
-computers into a perfect cloud; sharing processing power and data storage, 
-whilst still giving each user full control over their individual privacy and 
-their data.
-
-The Synergy platform will use a Java-like managed language and runtime to enable
-cross-platform support, and to allow the power of all machines to be harnessed 
-to their best advantage. A key goal of this language is to make support for 
-threading commonplace amongst user-land programs, in order to harness the power 
-of emerging multi-core machines.
+This is my operating system hobby project.
 
 The system is currently being developed for x86-based PCs, but additional 
-platforms will be supported eventually. Support is planned not only for desktop 
-and laptop systems, but also for tablets, smart phones, and other embedded 
-devices.
+platforms will be supported eventually. Eventual platforms will include:
+
+* 32-bit PCs (Architecture 'x86-32') - primary focus at the moment
+* 64-bit PCs (Architecture 'x86-64')
+* Raspberry Pi 5 (Architecture 'rpi-5')
+
+This repository contains the kernel, and is written in C/C++ with scatterings 
+of architecture-specific assembly.
 
 ## Minimum System Requirements
 
-* Intel Pentium CPU (or later/equivalent)
+### x86-32 Architecture
+
+* Intel 80386 CPU (or later/equivalent)
+* BIOS Boot Services
 * 8MiB RAM
-* CD-ROM drive
+* Floppy drive
 * Keyboard
 * VGA-compatible Video card and Monitor
+
+### x86-64 Architecture
+
+* 64-bit CPU
+* 64MB RAM
+* UEFI Boot Services
+* CD-ROM drive
+* Keyboard and monitor
 
 ## Compilation & Installation
 
