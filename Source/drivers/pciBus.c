@@ -8,6 +8,7 @@
 #include <vgaConsole.h>
 #include <pciBus.h>
 
+// PCI Bus Class names. If we can get these within 34 characters length we can use in display table below.
 const char* classNames[] = {
 	"Unknown",
 	"Mass Storage Controller",
@@ -36,8 +37,14 @@ void pci_enumerateBuses(void)
 	
 	//very brute force. need to fix this.
 	
+	vgaConsole_printf("  +-----+------+------+--------+--------+------------------------------------+\n");
+	vgaConsole_printf("  | BUS | SLOT | FUNC | VENDOR | DEVICE |                                    |\n");
+	vgaConsole_printf("  +-----+------+------+--------+--------+------------------------------------+\n");
+
 	for(bus = 0; bus <= 255; bus++)
 		pci_checkBus(bus);
+
+	vgaConsole_printf("  +-----+------+------+--------+--------+------------------------------------+\n");
 }
 
 void pci_checkBus(uint8 bus)
@@ -59,14 +66,12 @@ void pci_checkSlot(uint8 bus, uint8 slot)
 		if((deviceAndVendor & 0xFFFF) == 0xFFFF)
 			break;
 
-        uint32 classRegister = pci_readConfigurationRegister(bus, slot, function, 0x08);
+        	uint32 classRegister = pci_readConfigurationRegister(bus, slot, function, 0x08);
 		uint8 class = (uint8) (classRegister >> 24);
 		
-		vgaConsole_printf("PCI device at %d:%d:%d has vendor %h and device %h, of class ",bus,slot,function,deviceAndVendor&0xFFFF,deviceAndVendor>>16);
-        vgaConsole_printf(classNames[class]);
-		
-		vgaConsole_printf(".\n");
-		
+
+		vgaConsole_printf("  | %d   | %d    | %d    | %h | %h |                                    |\n",bus,slot,function,deviceAndVendor&0xFFFF,deviceAndVendor>>16);
+        	// vgaConsole_printf(classNames[class]);
 	}
 }
 
