@@ -7,6 +7,7 @@
 #include <portIO.h>
 #include <vgaConsole.h>
 #include <pciBus.h>
+#include <memoryManager.h>
 
 // PCI Bus Class names. If we can get these within 34 characters length we can use in display table below.
 const char* classNames[] = {
@@ -31,6 +32,11 @@ const char* classNames[] = {
 	"Reserved                          "
 };
 
+pciBus_Entry* pci_busEntries;
+pciBus_Entry* pci_currentEntry;
+
+// There are 256 buses, each with up to 32 devices (need to rename us from slots to devices), each with up to 8 functions.
+
 void pci_enumerateBuses(void)
 {
 	uint16 bus;
@@ -40,6 +46,11 @@ void pci_enumerateBuses(void)
 	vgaConsole_printf("  +-----+------+------+--------+--------+------------------------------------+\n");
 	vgaConsole_printf("  | BUS | SLOT | FUNC | VENDOR | DEVICE | CLASS DESCRIPTION                  |\n");
 	vgaConsole_printf("  +-----+------+------+--------+--------+------------------------------------+\n");
+
+	// Init the table.
+	pci_busEntries = memoryManager_allocate(sizeof(pciBus_Entry));
+	pci_currentEntry = pci_busEntries;
+	pci_currentEntry->next = 0x0; // set next to zero. this is added later.
 
 	for(bus = 0; bus <= 255; bus++)
 		pci_checkBus(bus);
@@ -69,6 +80,16 @@ void pci_checkSlot(uint8 bus, uint8 slot)
         	uint32 classRegister = pci_readConfigurationRegister(bus, slot, function, 0x08);
 		uint8 class = (uint8) (classRegister >> 24);
 		
+		pci_currentEntry->bus = bus;
+		pci_currentEntry->slot = slot;
+		pci_currentEntry->function = function;
+		pci_currentEntry->vendorID = deviceAndVendor&0xFFFF;
+		pci_currentEntry->deviceID = deviceAndVendor>>16;
+
+		// Make new entry.
+		pci_currentEntry->next = memoryManager_allocate(sizeof(pciBus_Entry));
+		pci_currentEntry = pci_currentEntry->next;
+		pci_currentEntry->next = 0x0;
 
 		vgaConsole_printf("  | %d   | %d    | %d    | %h | %h | ",bus,slot,function,deviceAndVendor&0xFFFF,deviceAndVendor>>16);
         	vgaConsole_printf(classNames[class]);
