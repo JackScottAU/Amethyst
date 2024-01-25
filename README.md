@@ -18,10 +18,10 @@ of architecture-specific assembly.
 
 ### x86-32 Architecture
 
-* Intel 80586 CPU (or later/equivalent)
+* Intel 80586 CPU (or later/equivalent) - planning to change to 386 later
 * BIOS Boot Services
 * 8MiB RAM
-* Floppy drive
+* CD-ROM drive (planning to change this to Floppy later)
 * Keyboard
 * VGA-compatible Video card and Monitor
 
