@@ -18,7 +18,7 @@ of architecture-specific assembly.
 
 ### x86-32 Architecture
 
-The 'x86-32' architecture attempts to follow the (PC-97 design standard)[https://www.tech-insider.org/windows/research/1997/0711.html] for x86-based IBM-compatible PCs.
+The 'x86-32' architecture attempts to follow the [PC-97 design standard](https://www.tech-insider.org/windows/research/1997/0711.html) for x86-based IBM-compatible PCs.
 
 * Intel Pentium CPU (or later/equivalent)
 * BIOS Boot Services
