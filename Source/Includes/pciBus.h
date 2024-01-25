@@ -11,6 +11,7 @@
 	#include <Types.h>
 
 	void pci_enumerateBuses(void);
+	void pci_printBuses(void);
 	void pci_checkBus(uint8 bus);
 	void pci_checkSlot(uint8 bus, uint8 slot);
 	
@@ -30,6 +31,7 @@
 		uint8 function;
 		uint16 vendorID;
 		uint16 deviceID;
+		uint8 classID;
 		struct pciBus_Entry_s* next;
 	} pciBus_Entry;
 

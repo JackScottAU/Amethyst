@@ -37,15 +37,36 @@ pciBus_Entry* pci_currentEntry;
 
 // There are 256 buses, each with up to 32 devices (need to rename us from slots to devices), each with up to 8 functions.
 
+void pci_printBuses(void)
+{
+        vgaConsole_printf("  +-----+------+------+--------+--------+------------------------------------+\n");
+        vgaConsole_printf("  | BUS | SLOT | FUNC | VENDOR | DEVICE | CLASS DESCRIPTION                  |\n");
+        vgaConsole_printf("  +-----+------+------+--------+--------+------------------------------------+\n");
+
+	// Iterate through the bus entries stored.
+	pci_currentEntry = pci_busEntries;
+	while(pci_currentEntry->next != 0x0)
+	{
+		// Print entry.
+                vgaConsole_printf("  | %d   | %d    | %d    | %h | %h | ", pci_currentEntry->bus, pci_currentEntry->slot, pci_currentEntry->function, pci_currentEntry->vendorID, pci_currentEntry->deviceID);
+                vgaConsole_printf(classNames[pci_currentEntry->classID]);
+                vgaConsole_printf(" |\n");
+
+		pci_currentEntry = pci_currentEntry->next;
+	}
+
+	vgaConsole_printf("  +-----+------+------+--------+--------+------------------------------------+\n");
+}
+
 void pci_enumerateBuses(void)
 {
 	uint16 bus;
 	
 	//very brute force. need to fix this.
 	
-	vgaConsole_printf("  +-----+------+------+--------+--------+------------------------------------+\n");
-	vgaConsole_printf("  | BUS | SLOT | FUNC | VENDOR | DEVICE | CLASS DESCRIPTION                  |\n");
-	vgaConsole_printf("  +-----+------+------+--------+--------+------------------------------------+\n");
+//	vgaConsole_printf("  +-----+------+------+--------+--------+------------------------------------+\n");
+//	vgaConsole_printf("  | BUS | SLOT | FUNC | VENDOR | DEVICE | CLASS DESCRIPTION                  |\n");
+//	vgaConsole_printf("  +-----+------+------+--------+--------+------------------------------------+\n");
 
 	// Init the table.
 	pci_busEntries = memoryManager_allocate(sizeof(pciBus_Entry));
@@ -55,7 +76,7 @@ void pci_enumerateBuses(void)
 	for(bus = 0; bus <= 255; bus++)
 		pci_checkBus(bus);
 
-	vgaConsole_printf("  +-----+------+------+--------+--------+------------------------------------+\n");
+//	vgaConsole_printf("  +-----+------+------+--------+--------+------------------------------------+\n");
 }
 
 void pci_checkBus(uint8 bus)
@@ -85,15 +106,16 @@ void pci_checkSlot(uint8 bus, uint8 slot)
 		pci_currentEntry->function = function;
 		pci_currentEntry->vendorID = deviceAndVendor&0xFFFF;
 		pci_currentEntry->deviceID = deviceAndVendor>>16;
+		pci_currentEntry->classID = class;
 
 		// Make new entry.
 		pci_currentEntry->next = memoryManager_allocate(sizeof(pciBus_Entry));
 		pci_currentEntry = pci_currentEntry->next;
 		pci_currentEntry->next = 0x0;
 
-		vgaConsole_printf("  | %d   | %d    | %d    | %h | %h | ",bus,slot,function,deviceAndVendor&0xFFFF,deviceAndVendor>>16);
-        	vgaConsole_printf(classNames[class]);
-		vgaConsole_printf(" |\n");
+//		vgaConsole_printf("  | %d   | %d    | %d    | %h | %h | ",bus,slot,function,deviceAndVendor&0xFFFF,deviceAndVendor>>16);
+//        	vgaConsole_printf(classNames[class]);
+//		vgaConsole_printf(" |\n");
 	}
 }
 

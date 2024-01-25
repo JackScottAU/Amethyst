@@ -62,8 +62,10 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	memoryManager_init(multibootData->memoryMapAddress, multibootData->memoryMapLength, (uint32) memoryManager_findEndOfReservedMemory(multibootData->modsAddr, multibootData->modsCount));
 	vgaConsole_printf("%s",1);
 	
-	vgaConsole_printf("Enumerating PCI buses...\n");
+	vgaConsole_printf("Enumerating PCI buses...\t\t\t\t\t\t");
 	pci_enumerateBuses();
+	vgaConsole_printf("%s",1);
+	pci_printBuses();
 	
 	vgaConsole_printf("Setting up the clock...\t\t\t\t\t\t\t");
 	clock_init();
