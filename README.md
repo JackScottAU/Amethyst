@@ -46,15 +46,29 @@ The following packages are needed:
 * build-essential
 * genisoimage
 * cpplint
+* qemu-system-x86
 
-As long as you have genisoimage and an appropriate GCC cross-compiler installed
-(in other words, i586-elf-gcc is available), building the Synergy kernel should
-be pretty easy:
+You will also need cross-compilers for the supported platforms:
 
-    make all
+* i586-elf-gcc
 
-To run Synergy, boot the resulting Synergy-OS.iso CD image on either a physical 
-machine or an emulator (Oracle VirtualBox is recommended, but any should work).
+### Development Cycle
+
+Once the prerequisites are met, you can run the following command to compile
+the operating system and launch it in the QEMU emulator:
+
+    make x86_32
+
+### Makefile Options
+
+* **make clean** - Removes all intermediate and final build output. Necessary 
+  when switching platforms.
+* **make lint** - Runs a code linter and informs you of the thousands of issues.
+* **make kernel-x86_32** - Builds the kernel for the x86_32 platform. Useful
+  for testing compilation.
+* **make image-x86_32** - Builds the final installation image for the x86_32 
+  platform.
+* **make qemu-x86_32** - Runs the built image in QEMU.
 
 ## Further Information
 

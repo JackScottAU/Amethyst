@@ -9,9 +9,8 @@ WARNINGS	:= -Wall -Wextra -pedantic -Wshadow -Wpointer-arith -Wcast-align -Wwrit
 CFLAGS		:= -nostdlib -fno-builtin -nostartfiles -nodefaultlibs -I Source/Includes -std=c99 $(WARNINGS)
 
 #Top-level targets:
-.PHONY: all clean cd-image hdd-image floppy-image lint qemu
-
-all: clean cd-image qemu
+.DEFAULT_GOAL := x86_32
+.PHONY: all clean cd-image hdd-image floppy-image lint qemu x86_32 kernel-x86_32 image-x86_32 qemu-x86_32
 
 clean:
 	-@rm -rf Build
@@ -20,10 +19,16 @@ clean:
 	-@rm -rf Source/arch/x86/*.o
 	-@rm -f  Synergy-OS.iso
 
+x86_32: clean qemu-x86_32
+
+kernel-x86_32: Build/kernel32
+
+image-x86_32: cd-image
+
 lint:
 	@cpplint --quiet --recursive --linelength=120 --filter=-legal/copyright --root=Source Source
 
-qemu:
+qemu-x86_32: image-x86_32
 	@qemu-system-i386 -cpu pentium -m 16 -no-reboot -drive format=raw,media=cdrom,file=Synergy-OS.iso -vga std
 
 cd-image: Build/kernel32
