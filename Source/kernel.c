@@ -13,6 +13,7 @@
 #include <Types.h>
 #include <vgaConsole.h>
 #include <pciBus.h>
+#include <keyboard.h>
 
 
 //To shut GCC up.
@@ -66,6 +67,10 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	pci_enumerateBuses();
 	vgaConsole_printf("%s",1);
 	pci_printBuses();
+
+	vgaConsole_printf("Setting up the keyboard...\t\t\t\t\t\t");
+	keyboard_registerHandler();
+	vgaConsole_printf("%s", 1);
 	
 	vgaConsole_printf("Setting up the clock...\t\t\t\t\t\t\t");
 	clock_init();
