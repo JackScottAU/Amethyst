@@ -1,7 +1,7 @@
 # Toolchain:
 CC	:= i586-elf-gcc
 AS	:= i586-elf-as
-LD	:= i586-elf-ld
+LD	:= i586-elf-gcc
 MKISOFS	:= genisoimage
 
 #Options:
@@ -40,7 +40,7 @@ cd-image: Build/kernel32
 #Custom file build targets:
 Build/kernel32: Source/kernel.o Source/arch/x86/entry.o Source/stream.o Source/arch/x86/portIO.o Source/drivers/pciBus.o Source/drivers/keyboard.o Source/drivers/serial.o Source/drivers/vgaConsole.o Source/arch/x86/gdt.o Source/arch/x86/interrupts_setup.o Source/arch/x86/interrupts_handler.o Source/arch/x86/interrupts_stubs.o Source/Clock.o Source/memoryManager.o Source/string.o
 	-@mkdir -p Build
-	@$(LD) -T Resources/Linker-Script.ld -o $@ $^
+	@$(LD) -T Resources/Linker-Script.ld -ffreestanding -nostdlib -lgcc -o $@ $^
 
 Source/arch/x86/entry.o: Source/arch/x86/entry.S
 	@$(AS) -o Source/arch/x86/entry.o Source/arch/x86/entry.S
