@@ -71,9 +71,7 @@ void serial_interruptHandler(uint32 eventData) {
         serial_writeChar(serial_buffer[serial_bufferWriteIndex]);
     }
 
-    vgaConsole_putChar(serial_buffer[serial_bufferWriteIndex]);
-
-    uint32 toPrint = serial_buffer[serial_bufferWriteIndex];
+    // vgaConsole_putChar(serial_buffer[serial_bufferWriteIndex]);
 
     serial_bufferWriteIndex++;
 
@@ -90,7 +88,7 @@ void serial_registerHandler() {
     serial_bufferWriteIndex = 0;
     serial_bufferReadIndex = 0;
 
-    for(int i = 0; i < serial_bufferSize; i++) {
+    for(uint32 i = 0; i < serial_bufferSize; i++) {
         serial_buffer[i] = 0;
     }
 }

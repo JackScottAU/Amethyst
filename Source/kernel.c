@@ -16,6 +16,7 @@
 #include <keyboard.h>
 #include <serial.h>
 #include <stream.h>
+#include <string.h>
 
 
 //To shut GCC up.
