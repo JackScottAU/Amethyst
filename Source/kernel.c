@@ -73,27 +73,24 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	keyboard_registerHandler();
 	vgaConsole_printf("%s", 1);
 	
+	serial_init(SERIAL_COM1, SERIAL_BAUD_38400);
+	serial_writeLine("Synergy OS.");
+
+	
 	vgaConsole_printf("Setting up the clock...\t\t\t\t\t\t\t");
 	clock_init();
 	vgaConsole_printf("%s",1);
 	
 //	exampleClockRequest = clock_addRepeatRequest(1, 0, (*kernel_testClock));
 
-	serial_init();
-	serial_writeByte('S');
-	serial_writeByte('y');
 	
 	while(1)
 	{
-		//Do Nothing here
-		//In here we should do things like reordering free memory blocks.
-		
-		if(i==10)
-		{
-		//	clock_deleteTimerRequest(exampleClockRequest);
-			
-			i=0;
-		}
+		serial_writeString("# ");
+
+		// This is the beginning of the shell. In the future we will do things.
+		char* entered = serial_readLine();
+		vgaConsole_putString(entered);
 	};
 }
 

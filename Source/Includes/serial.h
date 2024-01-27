@@ -1,5 +1,5 @@
 /**
- *  Synergy Operating System - ISA 16550 UART.
+ *  Synergy Operating System - Driver for ISA 16550 UART.
  *  Copyright 2024 Jack Scott <jack@jackscott.id.au>.
  *  Released under the terms of the ISC license.
 */
@@ -9,8 +9,28 @@
 
 #include <Types.h>
 
-int serial_init(void);
+#define SERIAL_COM1         0x03F8
+#define SERIAL_COM2         0x02F8
+
+#define SERIAL_BAUD_115200  0x01
+#define SERIAL_BAUD_57600   0x02
+#define SERIAL_BAUD_38400   0x03
+#define SERIAL_BAUD_28800   0x04
+#define SERIAL_BAUD_19200   0x06
+#define SERIAL_BAUD_14400   0x08
+#define SERIAL_BAUD_9600    0x0C
+
+int serial_init(uint16 baseAddress, uint8 divisor);
 char serial_readByte(void);
-void serial_writeByte(char a);
+
+int serial_canRead(void);
+char serial_readChar(void);
+char* serial_readString(void);
+char* serial_readLine(void);
+
+void serial_writeChar(char a);
+
+void serial_writeString(const char* string);
+void serial_writeLine(const char* string);
 
 #endif // INCLUDES_SERIAL_H_

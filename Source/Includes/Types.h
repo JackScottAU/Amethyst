@@ -19,4 +19,6 @@
 	#define TRUE 1
 	#define FALSE 0
 
+	#define bool char
+
 #endif /* __TYPES_H */

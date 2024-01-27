@@ -119,10 +119,8 @@ void clock_setHertz(unsigned int Hertz)
 /**
  * \brief Handles the clock-tick message produced by the programmable interrupt timer (PIT).
  */
-void clock_handler_PIC(uint32 arbitraryNumber)
+void clock_handler_PIC(uint32 eventData)
 {
-	arbitraryNumber++; //To stop GCC complaining about unsused variable. Does nothing.
-	
 	clock_systemClock.milliSeconds++;
 	
 	if(clock_systemClock.milliSeconds%CLOCK_HERTZ==0)
