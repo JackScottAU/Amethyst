@@ -11,10 +11,14 @@
 
 ## Current Priorities
 
-1. Serial communication.
+1. Serial communication. - done enough to work. Needs tidying up when we make full drivers.
 2. Interactive shell.
 4. Device tree.
 3. ANSI Terminal Support for keyboard and VGA.
+4. Higher half kernel.
+5. Expanding string and linked list/tree support functions.
+6. Multitasking
+7. Drivers for storage
 
 ## Other Notes
 
