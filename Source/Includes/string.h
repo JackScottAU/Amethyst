@@ -11,6 +11,7 @@ extern "C" {
 #endif
 	
 	void string_copy(char *dest, const char* src);
+	int string_compare(const char* a, const char* b);
 
 	/**
 	 * Formats a string.

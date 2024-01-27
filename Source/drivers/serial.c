@@ -57,6 +57,8 @@ uint32 serial_bufferSize;
 uint32 serial_bufferReadIndex;
 uint32 serial_bufferWriteIndex;
 
+bool serial_echoMode = TRUE;
+
 int serial_received(void);
 
 void serial_interruptHandler(uint32 eventData);
@@ -65,9 +67,13 @@ void serial_interruptHandler(uint32 eventData) {
 
     serial_buffer[serial_bufferWriteIndex] = portIO_read8(SERIAL_COM1);
 
-    serial_writeChar(serial_buffer[serial_bufferWriteIndex]);
+    if(serial_echoMode) {
+        serial_writeChar(serial_buffer[serial_bufferWriteIndex]);
+    }
 
     vgaConsole_putChar(serial_buffer[serial_bufferWriteIndex]);
+
+    uint32 toPrint = serial_buffer[serial_bufferWriteIndex];
 
     serial_bufferWriteIndex++;
 
@@ -101,7 +107,6 @@ int serial_canRead() {
         bufferSize =  serial_bufferSize + serial_bufferWriteIndex - serial_bufferReadIndex;
     }
 
-    vgaConsole_printf("Serial buffer size: %d", bufferSize);
     return bufferSize;
 }
 
@@ -164,15 +169,42 @@ char* serial_readLine() {
     for(int i = 0; i < stringSize; i++) {
         string[i] = serial_readChar();
 
-        if(string[i] == '\r') {
-            string[i] = '\n';
-            string[i+1] = 0;
-            return string;
-        }
+        if(string[i] == '\r' || string[i] == '\n') {
+            // We've reached the end of the line. But we still have a bit to do.
+            // A good terminal should have sent both \r and \n. Some don't. Angry face. We need to send the missing one back, if it is missing.
 
-        if(string[i] == '\n') {
-            string[i+1] = 0;
-            return string;
+            string[i+1] = serial_readChar(); // can return zero, may return a \r or a \n. Could in theory return something else, but shouldn't.
+
+            if(string[i] == '\r' && string[i+1] == '\n') {
+                // Correct behaviour.
+                string[i] = 0;
+                return string;
+            }
+            if(string[i] == '\n' && string[i+1] == '\r') {
+                // Correct behaviour.
+                string[i] = 0;
+                return string;
+            }
+
+            if(string[i] == '\r' && string[i+1] != '\n') {
+                if(serial_echoMode) {
+                    serial_writeChar('\n');
+                }
+
+                string[i] = 0;
+                return string;
+            }
+
+            if(string[i] == '\n' && string[i+1] != '\r') {
+                if(serial_echoMode) {
+                    serial_writeChar('\r');
+                }
+
+                string[i] = 0;
+                return string;
+            }
+
+            vgaConsole_printf("serial: shouldn't get here.");
         }
     }
 

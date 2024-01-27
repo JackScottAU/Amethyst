@@ -7,3 +7,11 @@ void string_copy(char *dest, const char* src) {
         src++;
     }
 }
+
+int string_compare(const char* a, const char* b) {
+    while (*a && *a == *b) {
+         ++a; ++b; 
+    }
+    
+    return (int)(unsigned char)(*a) - (int)(unsigned char)(*b);
+}

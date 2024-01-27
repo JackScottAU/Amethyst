@@ -15,22 +15,12 @@
 #include <pciBus.h>
 #include <keyboard.h>
 #include <serial.h>
+#include <stream.h>
 
 
 //To shut GCC up.
 void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData);
-void kernel_testClock(void);
 
-clock_timerRequest* exampleClockRequest;
-
-int i = 0;
-
-void kernel_testClock(void)
-{
-	vgaConsole_printf("Clock shot! Time: %h\n",clock_uptime());
-	
-	i++;
-}
 
 /**
  * Initialises the core systems of the kernel and language runtime before launching a command interpreter.
@@ -75,13 +65,10 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	
 	serial_init(SERIAL_COM1, SERIAL_BAUD_38400);
 	serial_writeLine("Synergy OS.");
-
 	
 	vgaConsole_printf("Setting up the clock...\t\t\t\t\t\t\t");
 	clock_init();
 	vgaConsole_printf("%s",1);
-	
-//	exampleClockRequest = clock_addRepeatRequest(1, 0, (*kernel_testClock));
 
 	
 	while(1)
@@ -91,6 +78,9 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 		// This is the beginning of the shell. In the future we will do things.
 		char* entered = serial_readLine();
 		vgaConsole_putString(entered);
+
+		if(string_compare(entered, "Get-Time") == 0) {
+			stream_printf(serial_writeChar, "Time: %h\n",clock_uptime());
+		}
 	};
 }
-
