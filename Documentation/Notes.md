@@ -5,9 +5,16 @@
 * Resources/ - third-party code like GRUB etc.
 * Source/ - Source code files to build the kernel.
     * arch/ - architecture-dependent stuff
-	    * x86/ - files for x86
+	    * x86_32/ - files for x86
     * kernel/ - general kernel code not dependant on architecture.
 	* drivers/ - code for drivers (all drivers except root platform device, even architecture-specific ones).
+
+## Current Priorities
+
+1. Serial communication.
+2. Interactive shell.
+4. Device tree.
+3. ANSI Terminal Support for keyboard and VGA.
 
 ## Other Notes
 

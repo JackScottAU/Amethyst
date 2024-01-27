@@ -14,6 +14,7 @@
 #include <vgaConsole.h>
 #include <pciBus.h>
 #include <keyboard.h>
+#include <serial.h>
 
 
 //To shut GCC up.
@@ -76,7 +77,11 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	clock_init();
 	vgaConsole_printf("%s",1);
 	
-	exampleClockRequest = clock_addRepeatRequest(1, 0, (*kernel_testClock));
+//	exampleClockRequest = clock_addRepeatRequest(1, 0, (*kernel_testClock));
+
+	serial_init();
+	serial_writeByte('S');
+	serial_writeByte('y');
 	
 	while(1)
 	{
@@ -85,7 +90,7 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 		
 		if(i==10)
 		{
-			clock_deleteTimerRequest(exampleClockRequest);
+		//	clock_deleteTimerRequest(exampleClockRequest);
 			
 			i=0;
 		}
