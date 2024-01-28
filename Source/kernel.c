@@ -74,6 +74,8 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 
 	deviceTree_build();
 	deviceTree_Entry* deviceTree = deviceTree_get();
+
+	deviceTree_print(vgaConsole_putChar);
 	
 	while(1)
 	{

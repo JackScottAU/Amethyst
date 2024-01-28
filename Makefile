@@ -29,7 +29,7 @@ lint:
 	@cpplint --quiet --recursive --linelength=120 --filter=-legal/copyright --root=Source Source
 
 qemu-x86_32: image-x86_32
-	@qemu-system-i386 -cpu pentium -m 16 -no-reboot -drive format=raw,media=cdrom,file=Synergy-OS.iso -vga std -serial stdio -serial null
+	@qemu-system-i386 -cpu pentium -m 16 -no-reboot -drive format=raw,media=cdrom,file=Synergy-OS.iso -vga std -serial stdio -serial null -usb
 
 cd-image: Build/kernel32
 	-@mkdir -p Build/boot/grub

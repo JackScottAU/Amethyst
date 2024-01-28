@@ -9,12 +9,13 @@
 #define	__PCIBUS_H
 
 	#include <Types.h>
+	#include <deviceTree.h>
 
 	void pci_enumerateBuses(void);
 	void pci_printBuses(void);
 	void pci_checkBus(uint8 bus);
 	void pci_checkSlot(uint8 bus, uint8 slot);
-	
+	deviceTree_Entry* pci_addDevicesToTree(void);
 	/**
 	 * Reads the PCI configuration registers for a particular PCI device.
 	 * @param bus PCI bus number. 8 bits.

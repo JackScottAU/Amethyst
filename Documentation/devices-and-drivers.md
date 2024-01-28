@@ -14,6 +14,11 @@ A 'device' is a node in a tree that can either implement a class of device (vide
      +- PS/2 Controller (bus driver)
      |   +- PS/2 Keyboard (class driver for input)
      |   +- PS/2 Mouse (class driver for input)
+     +- PCI Root Hub - i440FX Northbridge (0:0:0)
+     |   +- PCI Bridge - PIIX3 Southbridge (0:1:0) // if slots have multiple functions, first one is a tree parent.
+     |   |   +- ISA Controller (0:1:1)
+     |   |   +- PCI Bridge (0:1:2) // i think this is the USB controller.
+     |   |   +- ISA Controller (0:1:3)
 
 ## Bus Devices & Drivers
 

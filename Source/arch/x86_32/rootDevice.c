@@ -4,7 +4,6 @@
 #include <serial.h>
 
 void deviceTree_printInternal(void (*putChar)(char), deviceTree_Entry* device, uint8 depth);
-deviceTree_Entry* deviceTree_addChild(deviceTree_Entry* parent, char* name);
 
 deviceTree_Entry* deviceTree_rootEntry = NULL;
 
@@ -18,42 +17,62 @@ void deviceTree_build(void) {
     deviceTree_rootEntry = memoryManager_allocate(sizeof(deviceTree_Entry));
     deviceTree_rootEntry->name = "x86_32 Root Platform Device";
     deviceTree_rootEntry->next = NULL;
+    deviceTree_rootEntry->child = NULL;
 
     deviceTree_Entry* device = deviceTree_rootEntry;
+
+    deviceTree_Entry* pcidev = pci_addDevicesToTree();
+
+    device->child = pcidev;
     
 
     if(!serial_detect(SERIAL_COM1)) {
-        deviceTree_addChild(device, "ISA Serial Port - COM1");
+        deviceTree_Entry* serial = deviceTree_createDevice("ISA Serial Port - COM1", DEVICETREE_TYPE_OTHER, NULL);
+
+        deviceTree_addChild(deviceTree_rootEntry, serial);
     }
 
     if(!serial_detect(SERIAL_COM2)) {
-        deviceTree_addChild(device, "ISA Serial Port - COM2");
+        deviceTree_Entry* serial = deviceTree_createDevice("ISA Serial Port - COM2", DEVICETREE_TYPE_OTHER, NULL);
+
+        deviceTree_addChild(deviceTree_rootEntry, serial);
     }
+
     
+    
+
+    // 0:0:0 is the PCI root hub (northbridge)
+    // Everything else is below that.
 }
 
-deviceTree_Entry* deviceTree_addChild(deviceTree_Entry* parent, char* name) {
+deviceTree_Entry* deviceTree_createDevice(char* name, uint32 type, void* data) {
+    deviceTree_Entry* device = memoryManager_allocate(sizeof(deviceTree_Entry));
+
+    device->next = NULL;
+    device->child = NULL;
+    device->name = name;
+    device->type = type;
+    device->data = data;
+
+    return device;
+}
+
+void deviceTree_addSibling(deviceTree_Entry* attached, deviceTree_Entry* toAttach) {
+    while(attached->next != NULL) {
+        attached = attached->next;
+    }
+
+    attached->next = toAttach;
+}
+
+void deviceTree_addChild(deviceTree_Entry* parent, deviceTree_Entry* toAttach) {
     deviceTree_Entry* child = parent->child;
 
     if(child != NULL) {
-        while(child->child != NULL) {
-            child = child->child;
-        }
-
-        child->next = memoryManager_allocate(sizeof(deviceTree_Entry));
-        child->next->next = NULL;
-        child->next->child = NULL;
-        child->next->name = name;
-
-        return child->next;
+        deviceTree_addSibling(child, toAttach);
     } else {
         // Add first child.
-        parent->child = memoryManager_allocate(sizeof(deviceTree_Entry));
-        parent->child->next = NULL;
-        parent->child->child = NULL;
-        parent->child->name = name;
-
-        return child->child;
+        parent->child = toAttach;
     }
 }
 
