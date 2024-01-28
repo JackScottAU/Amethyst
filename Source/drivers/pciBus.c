@@ -11,7 +11,7 @@
 #include <deviceTree.h>
 #include "pci/deviceNames.h"
 
- // PCI Bus Class names. If we can get these within 34 characters length we can use in display table below.
+// PCI Bus Class names. If we can get these within 34 characters length we can use in display table below.
 const char* classNames[] = {
     "Unknown                           ",
     "Mass Storage Controller           ",
@@ -37,7 +37,10 @@ const char* classNames[] = {
 pciBus_Entry* pci_busEntries;
 pciBus_Entry* pci_currentEntry;
 
-// There are 256 buses, each with up to 32 devices (need to rename us from slots to devices), each with up to 8 functions.
+// There are 256 buses, each with up to 32 devices, each with up to 8 functions.
+#define PCI_BUSCOUNT 256
+#define PCI_SLOTCOUNT 32
+#define PCI_FUNCCOUNT  8
 
 deviceTree_Entry* pci_addDevicesToTree(void) {
     pci_currentEntry = pci_busEntries;

@@ -22,8 +22,8 @@ const struct pci_deviceName deviceNames[] = {
 char* pci_getNameFromVendorAndDevice(uint16 vendor, uint16 device) {
     struct pci_deviceName* deviceNameEntry = deviceNames;
 
-    while(deviceNameEntry->vendor != 0xFFFF && deviceNameEntry->device != 0xFFFF) {
-        if(deviceNameEntry->vendor == vendor && deviceNameEntry->device == device) {
+    while (deviceNameEntry->vendor != 0xFFFF && deviceNameEntry->device != 0xFFFF) {
+        if (deviceNameEntry->vendor == vendor && deviceNameEntry->device == device) {
             return deviceNameEntry->name;
         }
 

@@ -1,5 +1,11 @@
-#include <stream.h>
+/**
+ *  Synergy Operating System - Stream input/output functions.
+ *  Copyright 2024 Jack Scott <jack@jackscott.id.au>.
+ *  Released under the terms of the ISC license.
+*/
+
 #include <stdarg.h>
+#include <stream.h>
 #include <Types.h>
 
 void stream_putDecimal(void (*putChar)(char), uint32 arg);
@@ -12,26 +18,23 @@ void stream_printf(void (*putChar)(char), const char* formatString, ...) {
     int arg;
     char* sarg;
 
-    va_start(args,formatString);
+    va_start(args, formatString);
 
 
 
-    while (formatString[i])
-    {
+    while (formatString[i]) {
         if (formatString[i] == '\n') {
             // output a carriage return as well.
-            putChar('\r'); // the actual \n is done down below.
+            putChar('\r');  // the actual \n is done down below.
         }
 
-        if (formatString[i]=='%')
-        {
+        if (formatString[i] == '%') {
             i++;
-            
+
             if (formatString[i] == '%') {
                 putChar('%');
             }
 
-            
             if (formatString[i] == 'd') {
                 arg = va_arg(args, int);
                 stream_putDecimal(putChar, arg);
