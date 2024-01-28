@@ -9,6 +9,7 @@
 #include <pciBus.h>
 #include <memoryManager.h>
 #include <deviceTree.h>
+#include "pci/deviceNames.h"
 
  // PCI Bus Class names. If we can get these within 34 characters length we can use in display table below.
 const char* classNames[] = {
@@ -33,27 +34,8 @@ const char* classNames[] = {
     "Reserved                          "
 };
 
-struct pci_deviceName {
-    uint16 vendor;
-    uint16 device;
-    char* name;
-};
-
-const uint32 numberOfNames = 7;
-const struct pci_deviceName deviceNames[] = {
-    { 0x8086, 0x100E, "82540EM Gigabit Ethernet Controller" },
-    { 0x8086, 0x1237, "i440FX Northbridge & PCI Root Hub" },
-    { 0x8086, 0x7000, "PIIX3 PCI-to-ISA Bridge" },
-    { 0x8086, 0x7010, "PIIX3 IDE Controller" },
-    { 0x8086, 0x7020, "PIIX3 UHCI USB Controller" },
-    { 0x8086, 0x7113, "PIIX4 ACPI" },
-    { 0x1234, 0x1111, "QEMU Standard VGA Graphics Adapter" }
-};
-
 pciBus_Entry* pci_busEntries;
 pciBus_Entry* pci_currentEntry;
-
-char* pci_getNameFromVendorAndDevice(uint16 vendor, uint16 device);
 
 // There are 256 buses, each with up to 32 devices (need to rename us from slots to devices), each with up to 8 functions.
 
@@ -81,18 +63,7 @@ deviceTree_Entry* pci_addDevicesToTree(void) {
     return root;
 }
 
-char* pci_getNameFromVendorAndDevice(uint16 vendor, uint16 device) {
-    for (int i = 0; i < numberOfNames; i++)
-    {
-        struct pci_deviceName nameS = deviceNames[i];
 
-        if(nameS.vendor == vendor && nameS.device == device) {
-            return nameS.name;
-        }
-    }
-
-    return "Unknown";
-}
 
 void pci_printBuses(void)
 {

@@ -73,9 +73,8 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	vgaConsole_printf("%s",1);
 
 	deviceTree_build();
-	deviceTree_Entry* deviceTree = deviceTree_get();
 
-	deviceTree_print(vgaConsole_putChar);
+	deviceTree_print(vgaConsole_putChar, FALSE);
 	
 	while(1)
 	{
@@ -90,7 +89,7 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 		}
 		
 		if(string_compare(entered, "Get-DeviceTree") == 0) {
-			deviceTree_print(serial_writeChar);
+			deviceTree_print(serial_writeChar, FALSE);
 		}
 	};
 }
