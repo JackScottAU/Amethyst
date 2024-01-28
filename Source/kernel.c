@@ -17,6 +17,7 @@
 #include <serial.h>
 #include <stream.h>
 #include <string.h>
+#include <deviceTree.h>
 
 
 //To shut GCC up.
@@ -71,6 +72,8 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	clock_init();
 	vgaConsole_printf("%s",1);
 
+	deviceTree_build();
+	deviceTree_Entry* deviceTree = deviceTree_get();
 	
 	while(1)
 	{
@@ -82,6 +85,10 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 
 		if(string_compare(entered, "Get-Time") == 0) {
 			stream_printf(serial_writeChar, "Time: %h\n",clock_uptime());
+		}
+		
+		if(string_compare(entered, "Get-DeviceTree") == 0) {
+			deviceTree_print(serial_writeChar);
 		}
 	};
 }

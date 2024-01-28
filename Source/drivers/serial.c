@@ -9,6 +9,25 @@
 
 void serial_registerHandler(void);
 int serial_testLoopBack(uint16 baseAddress);
+
+/**
+ * 0 if there is a device. any other number is no device.
+*/
+int serial_detect(uint16 baseAddress) {
+    portIO_write8(baseAddress + 7, 0xAE);
+
+    uint8 value = portIO_read8(baseAddress + 7);
+
+    if(value != 0xAE) {
+        return 1;
+    }
+
+    if(serial_testLoopBack(baseAddress)) {
+        return 1;
+    }
+
+    return 0;
+}
  
 int serial_init(uint16 baseAddress, uint8 divisor) {
     

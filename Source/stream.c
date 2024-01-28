@@ -10,6 +10,7 @@ void stream_printf(void (*putChar)(char), const char* formatString, ...) {
 	va_list args;
 	int i = 0;
 	int arg;
+    char* sarg;
 	
 	va_start(args,formatString);
 
@@ -17,6 +18,11 @@ void stream_printf(void (*putChar)(char), const char* formatString, ...) {
 
 	while(formatString[i])
 	{
+        if(formatString[i] == '\n') {
+            // output a carriage return as well.
+            putChar('\r'); // the actual \n is done down below.
+        }
+
 		if(formatString[i]=='%')
 		{
 			i++;
@@ -25,20 +31,31 @@ void stream_printf(void (*putChar)(char), const char* formatString, ...) {
 				putChar('%');
 			}
 
-			arg = va_arg(args,int);
 			
 			if(formatString[i]=='d')
 			{
+			    arg = va_arg(args,int);
 				stream_putDecimal(putChar, arg);
 			}
 			if(formatString[i]=='h')
 			{
+			    arg = va_arg(args,int);
 				stream_putHexadecimal(putChar, arg, 0);
 			}
 			if(formatString[i]=='H')
 			{
+			    arg = va_arg(args,int);
 				stream_putHexadecimal(putChar, arg, 1);
 			}
+
+            if(formatString[i] == 's') {
+			    sarg = va_arg(args,char*);
+                // Write a string.
+                while(*sarg) {
+                    putChar(*sarg);
+                    sarg++;
+                }
+            }
 
 		} else {
 			putChar(formatString[i]);;

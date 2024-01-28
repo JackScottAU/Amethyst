@@ -29,7 +29,7 @@ lint:
 	@cpplint --quiet --recursive --linelength=120 --filter=-legal/copyright --root=Source Source
 
 qemu-x86_32: image-x86_32
-	@qemu-system-i386 -cpu pentium -m 16 -no-reboot -drive format=raw,media=cdrom,file=Synergy-OS.iso -vga std -serial stdio
+	@qemu-system-i386 -cpu pentium -m 16 -no-reboot -drive format=raw,media=cdrom,file=Synergy-OS.iso -vga std -serial stdio -serial null
 
 cd-image: Build/kernel32
 	-@mkdir -p Build/boot/grub
@@ -38,7 +38,7 @@ cd-image: Build/kernel32
 	@$(MKISOFS) -quiet -R -b boot/grub/stage2_eltorito -no-emul-boot -boot-load-size 4 -boot-info-table -o Synergy-OS.iso Build
 
 #Custom file build targets:
-Build/kernel32: Source/kernel.o Source/arch/x86_32/entry.o Source/stream.o Source/arch/x86_32/portIO.o Source/drivers/pciBus.o Source/drivers/keyboard.o Source/drivers/serial.o Source/drivers/vgaConsole.o Source/arch/x86_32/gdt.o Source/arch/x86_32/interrupts_setup.o Source/arch/x86_32/interrupts_handler.o Source/arch/x86_32/interrupts_stubs.o Source/Clock.o Source/memoryManager.o Source/string.o
+Build/kernel32: Source/kernel.o Source/arch/x86_32/entry.o Source/arch/x86_32/rootDevice.o Source/stream.o Source/arch/x86_32/portIO.o Source/drivers/pciBus.o Source/drivers/keyboard.o Source/drivers/serial.o Source/drivers/vgaConsole.o Source/arch/x86_32/gdt.o Source/arch/x86_32/interrupts_setup.o Source/arch/x86_32/interrupts_handler.o Source/arch/x86_32/interrupts_stubs.o Source/Clock.o Source/memoryManager.o Source/string.o
 	-@mkdir -p Build
 	@$(LD) -T Resources/Linker-Script.ld -ffreestanding -nostdlib -lgcc -o $@ $^
 

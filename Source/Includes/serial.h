@@ -20,6 +20,7 @@
 #define SERIAL_BAUD_14400   0x08
 #define SERIAL_BAUD_9600    0x0C
 
+int serial_detect(uint16 baseAddress);
 int serial_init(uint16 baseAddress, uint8 divisor);
 char serial_readByte(void);
 
