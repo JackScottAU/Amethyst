@@ -127,7 +127,7 @@ void vgaConsole_printf(const char* formatString, ...)
  * Puts a single character on the screen, obeying all ASCII rules.
  * @param c A single character.
  */
-void vgaConsole_putChar(unsigned char c)
+void vgaConsole_putChar(char c)
 {
 	switch(c)
 	{

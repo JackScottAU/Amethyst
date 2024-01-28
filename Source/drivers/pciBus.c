@@ -135,13 +135,27 @@ void pci_checkSlot(uint8 bus, uint8 slot) {
     }
 }
 
-uint32 pci_readConfigurationRegister(uint8 bus, uint8 slot, uint8 function, uint8 registerNo) {
+/**
+ * Calculates the address in the PCI configuration space for a given PCI bus:slot:function and register number.
+*/
+uint32 pci_calculateRegisterAddress(uint8 bus, uint8 slot, uint8 function, uint8 registerNo) {
     //Create the address of the register we want to read from. This is an address in "PCI configuration space", *not* I/O space or general memory space.
-    uint32 address = 0x80000000 | (uint32)((bus & 0xFF) << 16) | (uint32)((slot & 0x1F) << 11) | (uint32)((function & 0x7) << 8) | (uint32)((registerNo & 0xFC));
+    return 0x80000000 | (uint32)((bus & 0xFF) << 16) | (uint32)((slot & 0x1F) << 11) | (uint32)((function & 0x7) << 8) | (uint32)((registerNo & 0xFC));
+}
 
+uint32 pci_readConfigurationRegister(uint8 bus, uint8 slot, uint8 function, uint8 registerNo) {
+    
     //Write the address of the register we want to the access request I/O port.
-    portIO_write32(0xCF8, address);
+    portIO_write32(0xCF8, pci_calculateRegisterAddress(bus, slot, function, registerNo));
 
     //Read the contents of the register at that address back from the data I/O port.
     return portIO_read32(0xCFC);
+}
+
+void pci_writeConfigurationRegister(uint8 bus, uint8 slot, uint8 function, uint8 registerNo, uint32 data) {
+    
+    //Write the address of the register we want to the access request I/O port.
+    portIO_write32(0xCF8, pci_calculateRegisterAddress(bus, slot, function, registerNo));
+
+    portIO_write32(0xCFC, data);
 }

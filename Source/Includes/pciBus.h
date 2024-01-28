@@ -16,6 +16,7 @@
 	void pci_checkBus(uint8 bus);
 	void pci_checkSlot(uint8 bus, uint8 slot);
 	deviceTree_Entry* pci_addDevicesToTree(void);
+
 	/**
 	 * Reads the PCI configuration registers for a particular PCI device.
 	 * @param bus PCI bus number. 8 bits.
@@ -25,6 +26,9 @@
 	 * @return The contents of the specified register for that bus/slot/function.
 	 */
 	uint32 pci_readConfigurationRegister(uint8 bus, uint8 slot, uint8 function, uint8 registerNo);
+
+void pci_writeConfigurationRegister(uint8 bus, uint8 slot, uint8 function, uint8 registerNo, uint32 data);
+uint32 pci_calculateRegisterAddress(uint8 bus, uint8 slot, uint8 function, uint8 registerNo);
 
 	typedef struct pciBus_Entry_s {
 		uint8 bus;

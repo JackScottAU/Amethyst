@@ -2,6 +2,7 @@
 #include <memoryManager.h>
 #include <stream.h>
 #include <serial.h>
+#include <pciBus.h>
 
 
 deviceTree_Entry* deviceTree_rootEntry = NULL;

@@ -5,7 +5,7 @@ LD	:= i586-elf-gcc
 MKISOFS	:= genisoimage
 
 #Options:
-WARNINGS	:= -Wall -Wextra -pedantic -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wuninitialized -Wno-unused-parameter
+WARNINGS	:= -Wall -Wextra -pedantic -Wshadow -Wpointer-arith -Wcast-align -Wno-discarded-qualifiers -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wuninitialized -Wno-unused-parameter
 CFLAGS		:= -nostdlib -fno-builtin -nostartfiles -nodefaultlibs -I Source/Includes -std=c99 $(WARNINGS)
 
 #Top-level targets:
@@ -26,7 +26,7 @@ kernel-x86_32: Build/kernel32
 image-x86_32: cd-image
 
 lint:
-	@cpplint --quiet --recursive --linelength=120 --filter=-legal/copyright --root=Source Source
+	@cpplint --quiet --recursive --linelength=120 --filter=-readability/casting --root=Source Source
 
 qemu-x86_32: image-x86_32
 	@qemu-system-i386 -cpu pentium -m 16 -no-reboot -drive format=raw,media=cdrom,file=Synergy-OS.iso -vga std -serial stdio
