@@ -5,6 +5,8 @@
 #ifndef __TYPES_H
 #define __TYPES_H
 
+#include <stdbool.h>
+
 //Basic Type Definitions.
 	typedef	signed		char		sint8;
 	typedef	unsigned	char		uint8;
@@ -16,9 +18,5 @@
 	typedef unsigned	long long	uint64;
 	
 	#define NULL ((void*) 0x00000000)
-	#define TRUE 1
-	#define FALSE 0
-
-	#define bool char
 
 #endif /* __TYPES_H */

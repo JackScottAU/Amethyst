@@ -20,7 +20,7 @@ void keyboard_interruptHandler(uint32 eventData) {
 }
 
 void keyboard_registerHandler() {
-    interrupts_addHandler(0x21,0,(*keyboard_interruptHandler));
+    interrupts_addHandler(0x21, 0, (*keyboard_interruptHandler));
 
     keyboard_buffer = memoryManager_allocate(sizeof(uint8) * 1024);
     keyboard_bufferLocation = 0;

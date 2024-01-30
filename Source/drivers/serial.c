@@ -76,7 +76,7 @@ uint32 serial_bufferSize;
 uint32 serial_bufferReadIndex;
 uint32 serial_bufferWriteIndex;
 
-bool serial_echoMode = TRUE;
+bool serial_echoMode = true;
 
 int serial_received(void);
 
@@ -161,14 +161,14 @@ char* serial_readString() {
 
 /** important - blocking! */
 char* serial_readLine() {
-    bool bufferContainsNewLine = FALSE;
+    bool bufferContainsNewLine = false;
 
     while(!bufferContainsNewLine) {
         uint32 ourBufferPos = serial_bufferReadIndex;
 
         while(ourBufferPos != serial_bufferWriteIndex) {
             if(serial_buffer[ourBufferPos] == '\n' || serial_buffer[ourBufferPos] == '\r') {
-                bufferContainsNewLine = TRUE;
+                bufferContainsNewLine = true;
                 break;
             }
             ourBufferPos++;
