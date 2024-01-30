@@ -4,6 +4,18 @@
 
 This is my operating system hobby project.
 
+The goal, as much as there is one, is to produce an operating system vaguely 
+similar to Windows 95 (if Windows 95 didn't inherit baggage from DOS and 3.1).
+A feature set might include:
+
+* Shell and Scripting Language
+* Support for FAT32/ISO9660/EXT2 filesystems on IDE/SCSI/USB devices
+* GUI Windowing System w. UI Toolkit
+* TCP/IP Networking Stack
+* GUI User-Mode Applications:
+    * Text Editor
+    * Terminal Emulator
+
 The system is currently being developed for x86-based PCs, but additional 
 platforms will be supported eventually. Eventual platforms will include:
 
@@ -11,8 +23,8 @@ platforms will be supported eventually. Eventual platforms will include:
 * 64-bit PCs (Architecture 'x86-64')
 * Raspberry Pi 5 (Architecture 'rpi-5')
 
-This repository contains the kernel, and is written in C/C++ with scatterings 
-of architecture-specific assembly.
+This repository contains the kernel and device drivers, and is written in C/C++ with scatterings 
+of architecture-specific assembly. THe user-mode applications will be in another repository when the time comes.
 
 ## Supported Platforms
 
@@ -28,7 +40,7 @@ The 'x86-32' architecture attempts to follow the [PC-97 design standard](https:/
 * PCI Bus
 * VGA-compatible Video card and Monitor
 
-Testing is done via Hyper-V, VirtualBox, QEMU, etc.
+Testing is done via Hyper-V, VirtualBox, QEMU, etc. Initial driver efforts will be focused on i440 northbridges and PIIX1/3/4 southbridges.
 
 ### Future Platforms
 
