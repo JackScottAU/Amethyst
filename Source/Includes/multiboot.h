@@ -29,6 +29,31 @@ extern "C" {
 		uint32 memoryMapLength; //44
 		struct multiboot_memoryMapNode* memoryMapAddress; //48
 		//More here.
+
+		uint32 drives_length;
+		uint32 drives_addr;
+
+		uint32 config_table;
+
+		uint32 boot_loader_name;
+
+		uint32 apm_table;
+
+		uint32 vbe_control_info;
+		uint32 vbe_mode_info;
+		uint16 vbe_mode;
+		uint16 vbe_interface_seg;
+		uint16 vbe_interface_off;
+		uint16 vbe_interface_len;
+
+		// offset 88
+		uint64 framebuffer_addr;
+		uint32 framebuffer_pitch;
+		uint32 framebuffer_width;
+		uint32 framebuffer_height;
+		uint8 framebuffer_bpp;
+		uint8 framebuffer_type;
+
 	};
 	
 	struct multiboot_memoryMapNode {

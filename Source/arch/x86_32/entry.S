@@ -1,16 +1,26 @@
 .global loader                          # making entry point visible to linker
 
 # setting up the Multiboot header - see GRUB docs for details
-.set ALIGN,    1<<0                     # align loaded modules on page boundaries
-.set MEMINFO,  1<<1                     # provide memory map
-.set FLAGS,    ALIGN | MEMINFO          # this is the Multiboot 'flag' field
-.set MAGIC,    0x1BADB002               # 'magic number' lets bootloader find the header
-.set CHECKSUM, -(MAGIC + FLAGS)         # checksum required
+.set ALIGN,    	1<<0                     # align loaded modules on page boundaries
+.set MEMINFO,  	1<<1                     # provide memory map
+.set VIDEO,		1<<2					 # set graphics
+.set FLAGS,    	ALIGN | MEMINFO          # this is the Multiboot 'flag' field
+.set MAGIC,    	0x1BADB002               # 'magic number' lets bootloader find the header
+.set CHECKSUM, 	-(MAGIC + FLAGS)         # checksum required
 
 .align 4
 .long MAGIC
 .long FLAGS
 .long CHECKSUM
+.long 0
+.long 0
+.long 0
+.long 0
+.long 0
+.long 0	#graphics modules
+.long 1024
+.long 768
+.long 32
 
 # reserve initial kernel stack space
 .set STACKSIZE, 0x4000                  # that is, 16k.

@@ -33,9 +33,10 @@ qemu-x86_32: image-x86_32
 
 cd-image: Build/kernel32
 	-@mkdir -p Build/boot/grub
-	@cp Resources/stage2_eltorito Build/boot/grub
-	@cp Resources/menu.lst Build/boot/grub
-	@$(MKISOFS) -quiet -R -b boot/grub/stage2_eltorito -no-emul-boot -boot-load-size 4 -boot-info-table -o Synergy-OS.iso Build
+#@cp Resources/stage2_eltorito Build/boot/grub
+	@cp Resources/grub.cfg Build/boot/grub
+#@$(MKISOFS) -quiet -R -b boot/grub/stage2_eltorito -no-emul-boot -boot-load-size 4 -boot-info-table -o Synergy-OS.iso Build
+	@grub-mkrescue -o Synergy-OS.iso Build
 
 #Custom file build targets:
 Build/kernel32: Source/kernel.o Source/arch/x86_32/entry.o Source/drivers/pci/deviceNames.o Source/arch/x86_32/rootDevice.o Source/stream.o Source/deviceTree.o Source/arch/x86_32/portIO.o Source/drivers/pciBus.o Source/drivers/keyboard.o Source/drivers/serial.o Source/drivers/vgaConsole.o Source/arch/x86_32/gdt.o Source/arch/x86_32/interrupts_setup.o Source/arch/x86_32/interrupts_handler.o Source/arch/x86_32/interrupts_stubs.o Source/Clock.o Source/memoryManager.o Source/string.o

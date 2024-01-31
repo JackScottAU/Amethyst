@@ -23,6 +23,18 @@
 //To shut GCC up.
 void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData);
 
+vga_putPixel(struct multiboot_info* data, uint32 x, uint32 y, uint32 colour) {
+	uint32* screen = data->framebuffer_addr;
+	screen[(y * data->framebuffer_width) + x] = colour;
+}
+
+vga_drawRect(struct multiboot_info* data, uint16 x, uint16 y, uint16 w, uint16 h, uint32 colour) {
+	for(uint16 i = 0; i < h; i++) {
+		for(uint16 j = 0; j < w; j++) {
+			vga_putPixel(data, x + j, y + i, colour);
+		}
+	}
+}
 
 /**
  * Initialises the core systems of the kernel and language runtime before launching a command interpreter.
@@ -75,6 +87,33 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	deviceTree_build();
 
 	deviceTree_print(vgaConsole_putChar, false);
+
+	stream_printf(serial_writeChar, "Framebuffer address: %h\n", multibootData->framebuffer_addr);
+	stream_printf(serial_writeChar, "Framebuffer pitch: %h\n", multibootData->framebuffer_pitch);
+	stream_printf(serial_writeChar, "Framebuffer width: %h\n", multibootData->framebuffer_width);
+	stream_printf(serial_writeChar, "Framebuffer height: %h\n", multibootData->framebuffer_height);
+	stream_printf(serial_writeChar, "Framebuffer bpp: %h\n", multibootData->framebuffer_bpp);
+	stream_printf(serial_writeChar, "Framebuffer type: %h\n", multibootData->framebuffer_type);
+
+	
+/*	uint32* screen = multibootData->framebuffer_addr;
+
+	for(int r = 0; r < multibootData->framebuffer_height; r++) {
+		for(int c = 0; c < multibootData->framebuffer_width; c++) {
+			//screen[(r * multibootData->framebuffer_width) + c] = 0x008888FF;
+		}
+	}
+
+	for(int i = 0; i < 100; i++) {
+		vga_putPixel(multibootData, 100 + i, 200, 0x008888FF);
+	}
+	
+	for(int i = 0; i < 100; i++) {
+		vga_putPixel(multibootData, 150, 150 + i, 0x008888FF);
+	}
+
+	vga_drawRect(multibootData, 300, 300, 100, 200, 0x00FF8800);*/
+	
 	
 	while(1)
 	{
