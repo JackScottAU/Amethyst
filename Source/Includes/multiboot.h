@@ -47,13 +47,20 @@ extern "C" {
 		uint16 vbe_interface_len;
 
 		// offset 88
-		uint64 framebuffer_addr;
+		void* framebuffer_addr;
+		uint32 framebuffer_addr_upper;
 		uint32 framebuffer_pitch;
 		uint32 framebuffer_width;
 		uint32 framebuffer_height;
 		uint8 framebuffer_bpp;
-		uint8 framebuffer_type;
+		uint8 framebuffer_type; // 0 = indexed colour, 1 = direct colour, 2 = ega text
 
+		uint8 framebuffer_red_field_position;
+		uint8 framebuffer_red_mask_size;
+		uint8 framebuffer_green_field_position;
+		uint8 framebuffer_green_mask_size;
+		uint8 framebuffer_blue_field_position;
+		uint8 framebuffer_blue_mask_size;
 	};
 	
 	struct multiboot_memoryMapNode {

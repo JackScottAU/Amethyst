@@ -18,21 +18,56 @@
 #include <stream.h>
 #include <string.h>
 #include <deviceTree.h>
+#include <Graphics/canvas.h>
+#include <Graphics/screenfont.h>
 
 
 //To shut GCC up.
 void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData);
 
-vga_putPixel(struct multiboot_info* data, uint32 x, uint32 y, uint32 colour) {
-	uint32* screen = data->framebuffer_addr;
-	screen[(y * data->framebuffer_width) + x] = colour;
+void vga_putPixel(Canvas* canvas, uint32 x, uint32 y, uint32 colour);
+void vga_drawRect(Canvas* canvas, uint16 x, uint16 y, uint16 w, uint16 h, uint32 colour);
+void vga_drawChar(Canvas* canvas, ScreenFont* font, uint16 x, uint16 y, uint32 colour, char a);
+void vga_drawWord(Canvas* canvas, ScreenFont* font, uint16 x, uint16 y, uint32 colour, char* a);
+
+void vga_putPixel(Canvas* canvas, uint32 x, uint32 y, uint32 colour) {
+	uint32* screen = canvas->framebuffer;
+	screen[(y * canvas->width) + x] = colour;
 }
 
-vga_drawRect(struct multiboot_info* data, uint16 x, uint16 y, uint16 w, uint16 h, uint32 colour) {
+void vga_drawRect(Canvas* canvas, uint16 x, uint16 y, uint16 w, uint16 h, uint32 colour) {
 	for(uint16 i = 0; i < h; i++) {
 		for(uint16 j = 0; j < w; j++) {
-			vga_putPixel(data, x + j, y + i, colour);
+			vga_putPixel(canvas, x + j, y + i, colour);
 		}
+	}
+}
+
+void vga_drawChar(Canvas* canvas, ScreenFont* font, uint16 x, uint16 y, uint32 colour, char a) {
+	// go to top level.
+	uint8* charData = font->characterData;
+	charData += a * font->height;
+
+	for(int r = 0; r < font->height; r++) {
+		// draw each row.
+
+		for(int c = 0; c < font->width; c++) {
+			// draw each column/pixel.
+			char yes = (charData[r] << c) & 0x80;
+
+			if(yes) {
+				vga_putPixel(canvas, x + c, y + r, colour);
+			}
+		}
+	}
+}
+
+void vga_drawWord(Canvas* canvas, ScreenFont* font, uint16 x, uint16 y, uint32 colour, char* a) {
+	int i = 0;
+
+	while(a[i]) {
+		vga_drawChar(canvas, font, x + (i*font->width), y, colour, a[i]);
+		i++;
 	}
 }
 
@@ -95,25 +130,33 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	stream_printf(serial_writeChar, "Framebuffer bpp: %h\n", multibootData->framebuffer_bpp);
 	stream_printf(serial_writeChar, "Framebuffer type: %h\n", multibootData->framebuffer_type);
 
-	
-/*	uint32* screen = multibootData->framebuffer_addr;
+	stream_printf(serial_writeChar, "Module start: %h\n", multibootData->modsAddr->start);
+	stream_printf(serial_writeChar, "Module end: %h\n", multibootData->modsAddr->end);
 
-	for(int r = 0; r < multibootData->framebuffer_height; r++) {
-		for(int c = 0; c < multibootData->framebuffer_width; c++) {
-			//screen[(r * multibootData->framebuffer_width) + c] = 0x008888FF;
-		}
-	}
+	Canvas* canvas = memoryManager_allocate(sizeof(Canvas));
+	canvas->framebuffer = (void*)multibootData->framebuffer_addr;
+	canvas->height = multibootData->framebuffer_height;
+	canvas->width = multibootData->framebuffer_width;
+
+	ScreenFont* font = memoryManager_allocate(sizeof(ScreenFont));
+	font->characterData = ((uint8*)(multibootData->modsAddr->start)) + 0x20;
+	font->width = 8;
+	font->height = 16;
 
 	for(int i = 0; i < 100; i++) {
-		vga_putPixel(multibootData, 100 + i, 200, 0x008888FF);
+		vga_putPixel(canvas, 100 + i, 200, 0x008888FF);
 	}
 	
 	for(int i = 0; i < 100; i++) {
-		vga_putPixel(multibootData, 150, 150 + i, 0x008888FF);
+		vga_putPixel(canvas, 150, 150 + i, 0x008888FF);
 	}
 
-	vga_drawRect(multibootData, 300, 300, 100, 200, 0x00FF8800);*/
+	vga_drawRect(canvas, 300, 300, 100, 200, 0x00FF8800);
 	
+	vga_drawWord(canvas, font, 0, 0, 0xCCCCFF, "Synergy OS");
+
+	vga_drawWord(canvas, font, 400, 400, 0xCCCCFF, "This is by far the worst operating system you've ever seen.");
+	vga_drawWord(canvas, font, 400, 416, 0xCCFFCC, "Ah... but you have heard of it.");
 	
 	while(1)
 	{
