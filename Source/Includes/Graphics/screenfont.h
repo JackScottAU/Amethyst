@@ -10,10 +10,21 @@
 #include <Types.h>
 
 typedef struct {
-    uint8 characterSize;
-    uint8 width;
-    uint8 height;
+    uint32 magicBytes;
+    uint32 version;
+    uint32 headerSize;
+    uint32 flags;
+    uint32 length; // number of glyphs
+    uint32 glyphSize; // bytes per glyph
+    uint32 height; // pixels
+    uint32 width; // pixels
+} ScreenFontHeader;
+
+typedef struct {
+    ScreenFontHeader* header;
     uint8* characterData;
 } ScreenFont;
+
+#define SCREENFONT_MAGIC 0x72B54A86
 
 #endif // INCLUDES_GRAPHICS_SCREENFONT_H_

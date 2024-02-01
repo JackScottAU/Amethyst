@@ -46,12 +46,12 @@ void vga_drawRect(Canvas* canvas, uint16 x, uint16 y, uint16 w, uint16 h, uint32
 void vga_drawChar(Canvas* canvas, ScreenFont* font, uint16 x, uint16 y, uint32 colour, char a) {
 	// go to top level.
 	uint8* charData = font->characterData;
-	charData += a * font->height;
+	charData += a * font->header->height;
 
-	for(int r = 0; r < font->height; r++) {
+	for(int r = 0; r < font->header->height; r++) {
 		// draw each row.
 
-		for(int c = 0; c < font->width; c++) {
+		for(int c = 0; c < font->header->width; c++) {
 			// draw each column/pixel.
 			char yes = (charData[r] << c) & 0x80;
 
@@ -66,7 +66,7 @@ void vga_drawWord(Canvas* canvas, ScreenFont* font, uint16 x, uint16 y, uint32 c
 	int i = 0;
 
 	while(a[i]) {
-		vga_drawChar(canvas, font, x + (i*font->width), y, colour, a[i]);
+		vga_drawChar(canvas, font, x + (i*font->header->width), y, colour, a[i]);
 		i++;
 	}
 }
@@ -139,24 +139,22 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	canvas->width = multibootData->framebuffer_width;
 
 	ScreenFont* font = memoryManager_allocate(sizeof(ScreenFont));
-	font->characterData = ((uint8*)(multibootData->modsAddr->start)) + 0x20;
-	font->width = 8;
-	font->height = 16;
+	font->header = multibootData->modsAddr->start;
+	font->characterData = (uint8*)(font->header) + font->header->headerSize;
 
-	for(int i = 0; i < 100; i++) {
-		vga_putPixel(canvas, 100 + i, 200, 0x008888FF);
-	}
+	stream_printf(serial_writeChar, "header: %h\n", font->header);
+	stream_printf(serial_writeChar, "header size: %h\n", font->header->headerSize);
+	stream_printf(serial_writeChar, "char data: %h\n", font->characterData);
+
+	vga_drawRect(canvas, 200, 200, 500, 300, 0x00888888);
+
+	vga_drawRect(canvas, 204, 224, 500 - 8, 300 - 28, 0x008888FF);
+	vga_drawRect(canvas, 200 + 500 - 20, 200 + 4, 16, 16, 0x00444444);
 	
-	for(int i = 0; i < 100; i++) {
-		vga_putPixel(canvas, 150, 150 + i, 0x008888FF);
-	}
+	vga_drawWord(canvas, font, 204, 204, 0xCCCCFF, "Synergy OS");
 
-	vga_drawRect(canvas, 300, 300, 100, 200, 0x00FF8800);
-	
-	vga_drawWord(canvas, font, 0, 0, 0xCCCCFF, "Synergy OS");
-
-	vga_drawWord(canvas, font, 400, 400, 0xCCCCFF, "This is by far the worst operating system you've ever seen.");
-	vga_drawWord(canvas, font, 400, 416, 0xCCFFCC, "Ah... but you have heard of it.");
+	vga_drawWord(canvas, font, 204, 224, 0xCCCCFF, "This is by far the worst operating system you've ever seen.");
+	vga_drawWord(canvas, font, 204, 240, 0xCCFFCC, "Ah... but you have seen it.");
 	
 	while(1)
 	{

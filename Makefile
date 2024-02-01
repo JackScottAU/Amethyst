@@ -10,7 +10,7 @@ CFLAGS		:= -nostdlib -fno-builtin -nostartfiles -nodefaultlibs -I Source/Include
 
 #Top-level targets:
 .DEFAULT_GOAL := x86_32
-.PHONY: all clean cd-image hdd-image floppy-image lint qemu x86_32 kernel-x86_32 image-x86_32 qemu-x86_32
+.PHONY: all clean cd-image hdd-image floppy-image lint qemu x86_32 kernel-x86_32 image-x86_32 qemu-x86_32 resources
 
 clean:
 	-@rm -rf Build
@@ -31,11 +31,13 @@ lint:
 qemu-x86_32: image-x86_32
 	@qemu-system-i386 -cpu pentium -m 16 -no-reboot -drive format=raw,media=cdrom,file=Synergy-OS.iso -vga std -serial stdio
 
-cd-image: Build/kernel32
+cd-image: Build/kernel32 resources
+	-@grub-mkrescue -o Synergy-OS.iso Build -quiet
+
+resources:
 	-@mkdir -p Build/boot/grub
 	@cp Resources/grub.cfg Build/boot/grub
 	@cp Resources/Fonts Build -r
-	-@grub-mkrescue -o Synergy-OS.iso Build -quiet
 
 #Custom file build targets:
 Build/kernel32: Source/kernel.o Source/arch/x86_32/entry.o Source/drivers/pci/deviceNames.o Source/arch/x86_32/rootDevice.o Source/stream.o Source/deviceTree.o Source/arch/x86_32/portIO.o Source/drivers/pciBus.o Source/drivers/keyboard.o Source/drivers/serial.o Source/drivers/vgaConsole.o Source/arch/x86_32/gdt.o Source/arch/x86_32/interrupts_setup.o Source/arch/x86_32/interrupts_handler.o Source/arch/x86_32/interrupts_stubs.o Source/Clock.o Source/memoryManager.o Source/string.o
