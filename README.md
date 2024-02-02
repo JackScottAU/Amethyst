@@ -15,6 +15,8 @@ A feature set might include:
 * GUI User-Mode Applications:
     * Text Editor
     * Terminal Emulator
+    * File Browser
+    * Calculator
 
 The system is currently being developed for x86-based PCs, but additional 
 platforms will be supported eventually. Eventual platforms will include:

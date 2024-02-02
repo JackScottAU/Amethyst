@@ -99,7 +99,7 @@ void pci_enumerateBuses(void) {
     pci_currentEntry = pci_busEntries;
     pci_currentEntry->next = 0x0; // set next to zero. this is added later.
 
-    for (bus = 0; bus <= 255; bus++) {
+    for (bus = 0; bus < PCI_BUSCOUNT; bus++) {
         pci_checkBus(bus);
     }
 }
@@ -108,14 +108,14 @@ void pci_checkBus(uint8 bus)
 {
     uint8 slot;
 
-    for (slot = 0; slot < 32; slot++)
+    for (slot = 0; slot < PCI_SLOTCOUNT; slot++)
         pci_checkSlot(bus, slot);
 }
 
 void pci_checkSlot(uint8 bus, uint8 slot) {
     uint8 function = 0;
 
-    for (function = 0; function < 8; function++) {
+    for (function = 0; function < PCI_FUNCCOUNT; function++) {
         uint32 deviceAndVendor = pci_readConfigurationRegister(bus, slot, function, 0x00);
 
         if ((deviceAndVendor & 0xFFFF) == 0xFFFF)

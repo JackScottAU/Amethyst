@@ -3,6 +3,7 @@
 #include <memoryManager.h>
 #include <portIO.h>
 #include <vgaConsole.h>
+#include <serial.h>
 
 char* keyboard_buffer;
 uint32 keyboard_bufferLocation;
@@ -14,7 +15,7 @@ void keyboard_interruptHandler(uint32 eventData) {
 
     keyboard_buffer[keyboard_bufferLocation] = portIO_read8(0x60);
 
-    vgaConsole_printf("%h", keyboard_buffer[keyboard_bufferLocation]);
+    stream_printf(serial_writeChar, "keyboard: %h\n", keyboard_buffer[keyboard_bufferLocation]);
 
     keyboard_bufferLocation++;
 }
