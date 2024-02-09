@@ -8,7 +8,7 @@ struct pci_deviceName {
 
 const struct pci_deviceName deviceNames[] = {
     { 0x8086, 0x100E, "82540EM Gigabit Ethernet Controller" },
-    { 0x8086, 0x1237, "i440FX Northbridge & PCI Root Hub" },
+    { 0x8086, 0x1237, "i440FX PCI Host Bridge" },
 
     { 0x8086, 0x7000, "PIIX3 PCI-to-ISA Bridge" },
     { 0x8086, 0x7010, "PIIX3 IDE Controller" },
@@ -19,7 +19,11 @@ const struct pci_deviceName deviceNames[] = {
     { 0x8086, 0x7112, "PIIX4 UHCI USB Controller" },
     { 0x8086, 0x7113, "PIIX4 ACPI" },
 
+    { 0x8086, 0x7192, "i440BX/ZX/DX PCI Host Bridge" },
+
     { 0x1234, 0x1111, "QEMU Standard VGA Graphics Adapter" },
+
+    { 0x1414, 0x5353, "Microsoft Hyper-V Graphics Adapter" },
 
     // The last entry in the table is a dummy entry to mark the end of the table.
     { 0xFFFF, 0xFFFF, "DUMMY ENTRY - END OF TABLE"}
