@@ -88,8 +88,8 @@ the operating system and launch it in the QEMU emulator:
 
 More documentation is in the documentation folder:
 
-* [General Notes](Documentation/Notes.md)
-* [Devices and Drivers](Documentation/devices-and-drivers.md)
+* [General Notes](Docs/Notes.md)
+* [Devices and Drivers](Docs/devices-and-drivers.md)
 
 ## Contributing
 
