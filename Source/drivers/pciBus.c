@@ -112,6 +112,12 @@ void pci_checkBus(uint8 bus)
         pci_checkSlot(bus, slot);
 }
 
+bool pci_isMultiFunctionDevice(uint8 bus, uint8 slot) {
+    uint32 header = pci_readConfigurationRegister(bus, slot, 0, 0x0C);
+
+    return header & 0x00800000;
+}
+
 void pci_checkSlot(uint8 bus, uint8 slot) {
     uint8 function = 0;
 
@@ -135,6 +141,11 @@ void pci_checkSlot(uint8 bus, uint8 slot) {
         pci_currentEntry->next = memoryManager_allocate(sizeof(pciBus_Entry));
         pci_currentEntry = pci_currentEntry->next;
         pci_currentEntry->next = 0x0;
+
+        if(!pci_isMultiFunctionDevice(bus, slot)) {
+            // If there are no more functions, leave.
+            break;
+        }
     }
 }
 
