@@ -11,9 +11,9 @@
 
 typedef struct {
     uint8* buffer;
-    uint32 bufferSize;
-    uint32 bufferReadIndex;
-    uint32 bufferWriteIndex;
+    uint32 size;
+    uint32 readIndex;
+    uint32 writeIndex;
 } FIFOBuffer;
 
 /**

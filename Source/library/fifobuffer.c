@@ -12,9 +12,9 @@ FIFOBuffer* FIFOBuffer_new(uint32 size) {
     FIFOBuffer* buffer = memoryManager_allocate(sizeof(FIFOBuffer));
 
     buffer->buffer = memoryManager_allocate(size);
-    buffer->bufferSize = size;
-    buffer->bufferReadIndex = 0;
-    buffer->bufferWriteIndex = 0;
+    buffer->size = size;
+    buffer->readIndex = 0;
+    buffer->writeIndex = 0;
 
     return buffer;
 }
@@ -25,14 +25,15 @@ uint32 FIFOBuffer_WriteBytes(FIFOBuffer* buffer, uint8* data, uint32 size) {
     p = data;
     for(i=0; i < size; i++){
         //first check to see if there is space in the buffer
-        if( (buffer->bufferWriteIndex + 1 == buffer->bufferReadIndex) ||
-            ( (buffer->bufferWriteIndex + 1 == buffer->bufferSize) && (buffer->bufferReadIndex == 0) )){
+        if( (buffer->writeIndex + 1 == buffer->readIndex) ||
+            ( (buffer->writeIndex + 1 == buffer->size) && (buffer->readIndex == 0) )){
                 return i; //no more room
         } else {
-            buffer->buffer[buffer->bufferWriteIndex] = *p++;
-            buffer->bufferWriteIndex++;  //increment the head
-            if( buffer->bufferWriteIndex == buffer->bufferSize ){  //check for wrap-around
-                buffer->bufferWriteIndex = 0;
+            buffer->buffer[buffer->writeIndex] = *p++;
+            buffer->writeIndex++;  //increment the head
+            
+            if( buffer->writeIndex == buffer->size ){  //check for wrap-around
+                buffer->writeIndex = 0;
             }
         }
     }
@@ -45,11 +46,11 @@ uint32 FIFOBuffer_ReadBytes(FIFOBuffer* buffer, uint8* data, uint32 size) {
     uint8 * p;
     p = data;
     for(i=0; i < size; i++){
-        if( buffer->bufferReadIndex != buffer->bufferWriteIndex ){ //see if any data is available
-            *p++ = buffer->buffer[buffer->bufferReadIndex];  //grab a byte from the buffer
-            buffer->bufferReadIndex++;  //increment the tail
-            if( buffer->bufferReadIndex == buffer->bufferSize ){  //check for wrap-around
-                buffer->bufferReadIndex = 0;
+        if( buffer->readIndex != buffer->writeIndex ){ //see if any data is available
+            *p++ = buffer->buffer[buffer->readIndex];  //grab a byte from the buffer
+            buffer->readIndex++;  //increment the tail
+            if( buffer->readIndex == buffer->size ){  //check for wrap-around
+                buffer->readIndex = 0;
             }
         } else {
             return i; //number of bytes read
@@ -60,14 +61,14 @@ uint32 FIFOBuffer_ReadBytes(FIFOBuffer* buffer, uint8* data, uint32 size) {
 }
 
 uint32 FIFOBuffer_ContentsSize(FIFOBuffer* buffer) {
-    if(buffer->bufferReadIndex == buffer->bufferWriteIndex) {
+    if(buffer->readIndex == buffer->writeIndex) {
         return 0;
     }
 
-    if(buffer->bufferReadIndex > buffer->bufferWriteIndex) {
-        return buffer->bufferReadIndex - buffer->bufferWriteIndex;
+    if(buffer->readIndex > buffer->writeIndex) {
+        return buffer->readIndex - buffer->writeIndex;
     }
 
     // Pretty sure there's a bug here. Will (might) fix later.
-    return buffer->bufferWriteIndex - buffer->bufferReadIndex;
+    return buffer->writeIndex - buffer->readIndex;
 }
