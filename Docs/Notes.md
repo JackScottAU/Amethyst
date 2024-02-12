@@ -2,11 +2,18 @@
 
 Immediate TODO list:
 
-1.  Finish a proper keyboard driver using 8042 controller properly etc.
-2.  Expand string and linked list functionality and put it in a library/ folder.
-     * Linked List
-     * FIFO Buffer for bytes
-3.  Fix PCI device bus enumeration so it's nice and pretty.
+1.  Keyboard driver:
+    1.  Generic FIFO Buffer
+    2.  Scancode to ASCII/ANSI Converter
+    3.  scanf()
+    4.  Finish PS/2 Controller initialisation routine (device detection and child init, device tree building, etc)
+2.  Migrate serial shell to use keyboard/VGA instead.
+3.  Expand string and data structures functionality and put it in the library/ folder:
+    1.  Linked list
+    2.  string_toLower() etc
+    3.  string_format() (sprintf)
+4.  Fix PCI device bus enumeration so it's nice and pretty.
+5.  Enable paging.
 
 ## Source Tree Layout
 
