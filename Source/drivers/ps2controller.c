@@ -10,12 +10,15 @@
 #include <portIO.h>
 #include <memoryManager.h>
 #include <deviceTree.h>
+#include <serial.h>
 
 #define PS2CONTROLLER_DATAPORT      0x60
 #define PS2CONTROLLER_CONTROLPORT   0x64    // reading = status register, writing = command register.
 
 #define PS2CONTROLLER_COMMAND_DISABLE_PORT1     0xAD
 #define PS2CONTROLLER_COMMAND_DISABLE_PORT2     0xA7
+#define PS2CONTROLLER_COMMAND_ENABLE_PORT1     0xAE
+#define PS2CONTROLLER_COMMAND_ENABLE_PORT2     0xA8
 
 #define PS2CONTROLLER_CONFIG_ENABLE_INTERRUPTS_PORT1    0x01
 #define PS2CONTROLLER_CONFIG_ENABLE_INTERRUPTS_PORT2    0x02
@@ -42,10 +45,12 @@ deviceTree_Entry* ps2controller_initialise()
     portIO_write8(PS2CONTROLLER_CONTROLPORT, 0x20);
     uint8 configByte = portIO_read8(PS2CONTROLLER_DATAPORT);
     bool haveDualChannelController = configByte & PS2CONTROLLER_CONFIG_DISABLE_PORT2;
-    configByte = configByte & !0x03;     // Disable interrupts on both devices.
-    configByte = configByte & !0xCF;     // Disable clocks of both devices (enabled = bits clear).
+    stream_printf(serial_writeChar, "ps2controller config: %h\n", configByte);
+    configByte = configByte | 0x03;     // Enable interrupts on both devices.
+    configByte = configByte & 0x3F;    // Disable emulation mode on first port.
+    stream_printf(serial_writeChar, "ps2controller config: %h\n", configByte);
 
-    portIO_write8(PS2CONTROLLER_CONTROLPORT, 0x20);
+    portIO_write8(PS2CONTROLLER_CONTROLPORT, 0x60);
     ps2controller_waitForWrite();
     portIO_write8(PS2CONTROLLER_DATAPORT, configByte);
 
@@ -54,6 +59,7 @@ deviceTree_Entry* ps2controller_initialise()
     ps2controller_waitForRead();
     uint8 ok = portIO_read8(PS2CONTROLLER_DATAPORT);
 
+    stream_printf(serial_writeChar, "ps2controller ok: %h\n", ok);
     if(ok != 0x55)
     {
         return NULL;
@@ -65,6 +71,10 @@ deviceTree_Entry* ps2controller_initialise()
     // TODO.
 
     // Step 9: Enable Devices.
+    portIO_write8(PS2CONTROLLER_CONTROLPORT, PS2CONTROLLER_COMMAND_ENABLE_PORT1);
+    if(haveDualChannelController) {
+        portIO_write8(PS2CONTROLLER_CONTROLPORT, PS2CONTROLLER_COMMAND_ENABLE_PORT2);
+    }
 }
 
 /**

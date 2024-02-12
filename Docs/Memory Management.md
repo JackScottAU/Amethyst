@@ -1,5 +1,7 @@
 # Memory Management
 
+IGNORE EVERYTHING BELOW - IT'S OUT OF DATE.
+
 Synergy OS uses amazingly simple memory management. Everything uses physical 
 addresses, and paging is not enabled at all, due to the single-address-space 
 requirements.
@@ -30,9 +32,3 @@ When the CPU is quiet, or when there are no free memory blocks of the required
 size, the kernel will go through and join together free memory blocks to make
 bigger ones.
 
-START		END		DESCRIPTION
-================================================================================
-0x00000000	Start of EBDA	Free Memory (RAM)
-Start of EBDA	0x00010000	Reserved for machine use
-0x00010000	End of Modules	Used by kernel & modules
-End of modules	End of RAM	Free Memory

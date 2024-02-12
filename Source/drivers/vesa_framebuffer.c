@@ -3,10 +3,7 @@
 #include <Graphics/screenfont.h>
 #include "vesa_framebuffer.h"
 
-void vga_putPixel(Canvas* canvas, uint32 x, uint32 y, uint32 colour);
-void vga_drawRect(Canvas* canvas, uint16 x, uint16 y, uint16 w, uint16 h, uint32 colour);
-void vga_drawChar(Canvas* canvas, ScreenFont* font, uint16 x, uint16 y, uint32 colour, char a);
-void vga_drawWord(Canvas* canvas, ScreenFont* font, uint16 x, uint16 y, uint32 colour, char* a);
+
 
 void vga_putPixel(Canvas* canvas, uint32 x, uint32 y, uint32 colour) {
 	uint32* screen = canvas->framebuffer;

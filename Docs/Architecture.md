@@ -18,3 +18,12 @@ Process is code/data/heap shared.
 Thread is instruction pointer and stack.
 
 Kernel will natively support threads.
+
+Threads have priorities, processes have priorities, sessions have priorities (driver session has highest priority, for example).
+
+## IPC
+
+ * messages
+ * shared memory
+
+drivers are allowed to request shared memory with the HAL for use with devices.

@@ -4,6 +4,8 @@ Immediate TODO list:
 
 1.  Finish a proper keyboard driver using 8042 controller properly etc.
 2.  Expand string and linked list functionality and put it in a library/ folder.
+     * Linked List
+     * FIFO Buffer for bytes
 3.  Fix PCI device bus enumeration so it's nice and pretty.
 
 ## Source Tree Layout

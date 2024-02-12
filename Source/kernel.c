@@ -18,6 +18,7 @@
 #include <stream.h>
 #include <string.h>
 #include <deviceTree.h>
+#include <ps2controller.h>
 
 //To shut GCC up.
 void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData);
@@ -60,6 +61,7 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	pci_printBuses();
 
 	vgaConsole_printf("Setting up the keyboard...\t\t\t\t\t\t");
+	ps2controller_initialise();
 	keyboard_registerHandler();
 	vgaConsole_printf("%s", 1);
 	

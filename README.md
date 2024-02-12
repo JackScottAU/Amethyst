@@ -5,7 +5,7 @@
 This is my operating system hobby project.
 
 The goal, as much as there is one, is to produce an operating system vaguely 
-similar to Windows 95 (if Windows 95 didn't inherit baggage from DOS and 3.1).
+similar to Windows 95/NT4 (if Windows 95 didn't inherit baggage from DOS and 3.1).
 A feature set might include:
 
 * Shell and Scripting Language
