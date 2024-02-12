@@ -3,7 +3,7 @@
 #include <stream.h>
 #include <serial.h>
 #include <pciBus.h>
-
+#include <keyboard.h>
 
 deviceTree_Entry* deviceTree_rootEntry = NULL;
 
@@ -29,4 +29,7 @@ void deviceTree_build(void) {
 
         deviceTree_addChild(deviceTree_rootEntry, serial);
     }
+
+    deviceTree_Entry* keyboard = keyboard_initialise();
+    deviceTree_addChild(deviceTree_rootEntry, keyboard);
 }

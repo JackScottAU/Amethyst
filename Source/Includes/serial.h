@@ -27,7 +27,6 @@ char serial_readByte(void);
 int serial_canRead(void);
 char serial_readChar(void);
 char* serial_readString(void);
-char* serial_readLine(void);
 
 void serial_writeChar(char a);
 

@@ -60,10 +60,6 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	vgaConsole_printf("%s",1);
 	pci_printBuses();
 
-	vgaConsole_printf("Setting up the keyboard...\t\t\t\t\t\t");
-	ps2controller_initialise();
-	keyboard_registerHandler();
-	vgaConsole_printf("%s", 1);
 	
 	serial_init(SERIAL_COM1, SERIAL_BAUD_38400);
 	serial_writeLine("Synergy OS.");
@@ -72,6 +68,7 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	clock_init();
 	vgaConsole_printf("%s",1);
 
+	ps2controller_initialise();
 	deviceTree_build();
 
 	deviceTree_print(vgaConsole_putChar, false);
@@ -111,18 +108,8 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	
 	while(1)
 	{
-		serial_writeString("# ");
-
-		// This is the beginning of the shell. In the future we will do things.
-		char* entered = serial_readLine();
-		vgaConsole_putString(entered);
-
-		if(string_compare(entered, "Get-Time") == 0) {
-			stream_printf(serial_writeChar, "Time: %h\n",clock_uptime());
-		}
-		
-		if(string_compare(entered, "Get-DeviceTree") == 0) {
-			deviceTree_print(serial_writeChar, false);
+		if(serial_canRead()) {
+			vgaConsole_putChar(serial_canRead());
 		}
 	};
 }

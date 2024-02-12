@@ -4,6 +4,7 @@
 #include <portIO.h>
 #include <vgaConsole.h>
 #include <serial.h>
+#include <Structures/fifobuffer.h>
 
 #define SERIAL_CLOCKSPEED 115200
 
@@ -71,10 +72,7 @@ int serial_testLoopBack(uint16 baseAddress) {
     return 0;
 }
 
-char* serial_buffer;
-uint32 serial_bufferSize;
-uint32 serial_bufferReadIndex;
-uint32 serial_bufferWriteIndex;
+FIFOBuffer* serial_readbuffer;
 
 bool serial_echoMode = true;
 
@@ -84,47 +82,26 @@ void serial_interruptHandler(uint32 eventData);
 
 void serial_interruptHandler(uint32 eventData) {
 
-    serial_buffer[serial_bufferWriteIndex] = portIO_read8(SERIAL_COM1);
+    uint8 data = portIO_read8(SERIAL_COM1);
+
+    FIFOBuffer_WriteBytes(serial_readbuffer, &data, 1);
 
     if(serial_echoMode) {
-        serial_writeChar(serial_buffer[serial_bufferWriteIndex]);
-    }
-
-    // vgaConsole_putChar(serial_buffer[serial_bufferWriteIndex]);
-
-    serial_bufferWriteIndex++;
-
-    if(serial_bufferWriteIndex >= serial_bufferSize) {
-        serial_bufferWriteIndex = 0;  // Overwriting is better than escaping into memory.
+        serial_writeChar(data);
     }
 }
 
 void serial_registerHandler() {
     interrupts_addHandler(0x24,0,(*serial_interruptHandler));
 
-    serial_bufferSize = 1024;
-    serial_buffer = memoryManager_allocate(sizeof(uint8) * serial_bufferSize);
-    serial_bufferWriteIndex = 0;
-    serial_bufferReadIndex = 0;
-
-    for(uint32 i = 0; i < serial_bufferSize; i++) {
-        serial_buffer[i] = 0;
-    }
+    serial_readbuffer = FIFOBuffer_new(1024);
 }
 
 /**
  * Whether the serial read buffer has data. 0 = no data. otherwise returns size of data waiting to be read in bytes.
 */
 int serial_canRead() {
-    int bufferSize = 0;
-
-    if(serial_bufferWriteIndex >= serial_bufferReadIndex) {
-        bufferSize =  serial_bufferWriteIndex - serial_bufferReadIndex;
-    } else {
-        bufferSize =  serial_bufferSize + serial_bufferWriteIndex - serial_bufferReadIndex;
-    }
-
-    return bufferSize;
+    return FIFOBuffer_ContentsSize(serial_readbuffer);
 }
 
 char serial_readChar() {
@@ -133,14 +110,11 @@ char serial_readChar() {
         return 0;
     }
 
-    char character = serial_buffer[serial_bufferReadIndex];
-    serial_bufferReadIndex++;
+    uint8 data;
 
-    if(serial_bufferReadIndex >= serial_bufferSize) {
-        serial_bufferReadIndex = 0;  // Overwriting is better than escaping into memory.
-    }
+    data = FIFOBuffer_ReadBytes(serial_readbuffer, &data, 1);
 
-    return character;
+    return (char)data;
 }
 
 /**
@@ -157,77 +131,6 @@ char* serial_readString() {
     string[stringSize] = 0;
 
     return string;
-}
-
-/** important - blocking! */
-char* serial_readLine() {
-    bool bufferContainsNewLine = false;
-
-    while(!bufferContainsNewLine) {
-        uint32 ourBufferPos = serial_bufferReadIndex;
-
-        while(ourBufferPos != serial_bufferWriteIndex) {
-            if(serial_buffer[ourBufferPos] == '\n' || serial_buffer[ourBufferPos] == '\r') {
-                bufferContainsNewLine = true;
-                break;
-            }
-            ourBufferPos++;
-
-            if(ourBufferPos >= serial_bufferSize) {
-                ourBufferPos = 0;
-            }
-        }
-    }
-
-    // We now have a newline in the buffer!
-    int stringSize = serial_canRead(); // bryte force! TODO: change this to use where the newline is and make it potentially smaller.
-    char* string = memoryManager_allocate(sizeof(uint8) * (stringSize + 1));
-
-    for(int i = 0; i < stringSize; i++) {
-        string[i] = serial_readChar();
-
-        if(string[i] == '\r' || string[i] == '\n') {
-            // We've reached the end of the line. But we still have a bit to do.
-            // A good terminal should have sent both \r and \n. Some don't. Angry face. We need to send the missing one back, if it is missing.
-
-            string[i+1] = serial_readChar(); // can return zero, may return a \r or a \n. Could in theory return something else, but shouldn't.
-
-            if(string[i] == '\r' && string[i+1] == '\n') {
-                // Correct behaviour.
-                string[i] = 0;
-                return string;
-            }
-            if(string[i] == '\n' && string[i+1] == '\r') {
-                // Correct behaviour.
-                string[i] = 0;
-                return string;
-            }
-
-            if(string[i] == '\r' && string[i+1] != '\n') {
-                if(serial_echoMode) {
-                    serial_writeChar('\n');
-                }
-
-                string[i] = 0;
-                return string;
-            }
-
-            if(string[i] == '\n' && string[i+1] != '\r') {
-                if(serial_echoMode) {
-                    serial_writeChar('\r');
-                }
-
-                string[i] = 0;
-                return string;
-            }
-
-            vgaConsole_printf("serial: shouldn't get here.");
-        }
-    }
-
-    string[stringSize] = 0;
-
-    return string; // we shouldn't get here.
 }
 
 int serial_received() {

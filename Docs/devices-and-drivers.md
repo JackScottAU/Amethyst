@@ -30,6 +30,8 @@ The platform driver lives in the architecture-specific folder. All other devices
 
 ## Node Devices & Drivers
  
+## Filter Devices
 
+For example, turns scancodes into ascii keys.
 
 ## Device Classes
