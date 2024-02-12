@@ -24,3 +24,5 @@ streams would be easier with C++ classes?
 
 STREAM_CANREAD = 0
 STREAM_CANWRITE =1
+
+ANSI streams: carriage return is idempotent, new line/line feed is not.

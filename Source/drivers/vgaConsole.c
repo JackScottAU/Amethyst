@@ -150,6 +150,10 @@ void vgaConsole_putChar(char c)
 		case 0x0D:	//Carriage Return
 			vgaConsole_cursorX = 0;
 			break;
+
+		case 0x1B:  // ANSI Escape Code Handling
+			// TODO
+			break;
 		
 		default:	//All other characters
 			if(c >= 0x20 && c <= 0x7E)	//If it smaller than a space, then it is a control char, and should be ignored. Or it's a delete (7E) or a UTF char.

@@ -2,11 +2,10 @@
 
 ## Virtual Platforms
 
-  * QEMU (PIIX3)
-  * VirtualBox (PIIX3)
-  * Hyper-V
+  * QEMU (440FX/PIIX3)
+  * VirtualBox (440FX/PIIX3)
+  * Hyper-V (440BX/PIIX4) 
 
 ## Real Platforms
 
-  * Jack's Test x86_32 PC - "Katmai"
-
+  * Jack's Test x86_32 PC - "Katmai" (440LX/PIIX4)

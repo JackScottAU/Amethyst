@@ -1,9 +1,8 @@
-/* 
- * File:   multiboot.h
- * Author: Jack Scott
- *
- * Created on 25 October 2011, 9:51 AM
- */
+/**
+ *  Synergy Operating System - Multiboot v1 Information Structure.
+ *  Copyright 2024 Jack Scott <jack@jackscott.id.au>.
+ *  Released under the terms of the ISC license.
+*/
 
 #ifndef MULTIBOOT_H
 #define	MULTIBOOT_H
@@ -13,6 +12,8 @@
 #ifdef	__cplusplus
 extern "C" {
 #endif
+
+#define MULTIBOOT_MAGIC_NUMBER	0x2BADB002
 
 	struct multiboot_info {
 		uint32 flags;
@@ -28,7 +29,6 @@ extern "C" {
 		uint32 syms4;
 		uint32 memoryMapLength; //44
 		struct multiboot_memoryMapNode* memoryMapAddress; //48
-		//More here.
 
 		uint32 drives_length;
 		uint32 drives_addr;
@@ -53,6 +53,7 @@ extern "C" {
 		uint32 framebuffer_width;
 		uint32 framebuffer_height;
 		uint8 framebuffer_bpp;
+
 		uint8 framebuffer_type; // 0 = indexed colour, 1 = direct colour, 2 = ega text
 
 		uint8 framebuffer_red_field_position;

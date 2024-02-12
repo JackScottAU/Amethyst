@@ -29,7 +29,7 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
  */
 void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 {
-	if(magicNumber != 0x2BADB002)
+	if(magicNumber != MULTIBOOT_MAGIC_NUMBER)
 	{
 		vgaConsole_printf("Multiboot error found. Halting...");
 		interrupts_disableInterrupts();
