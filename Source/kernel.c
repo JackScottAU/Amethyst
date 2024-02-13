@@ -108,8 +108,6 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	
 	while(1)
 	{
-		if(serial_canRead()) {
-			vgaConsole_putChar(serial_canRead());
-		}
+		vgaConsole_putChar(keyboard_readChar());
 	};
 }
