@@ -9,6 +9,8 @@
 #include <Types.h>
 #include <vgaConsole.h>
 #include <stdarg.h>
+#include <stream.h>
+#include <serial.h>
 
 //These are defined here and not in .h because they are only relevant to implementation.
 #define VGACONSOLE_HEIGHT	25	//Defines the height of the screen in characters.
@@ -26,6 +28,18 @@ uint8 vgaConsole_cursorY	= 0;
 /** Holds the current value of the VGA attribute byte (which controls the colour of the displayed text). */
 uint8 vgaConsole_colour		= VGACONSOLE_LIGHT_GREY;
 
+void vga_writeRegister(uint8 registerNo, uint8 data);
+void vga_writeRegister(uint8 registerNo, uint8 data) {
+	portIO_write8(0x3D4, registerNo);
+	portIO_write8(0x3D5, data);
+}
+
+void vga_initialise(void)
+{
+	// enable cursor
+	vga_writeRegister(0x0A, 0x00);
+	vga_writeRegister(0x0B, 0x1F);
+}
 
 /**
  * Clears the screen.
@@ -282,15 +296,26 @@ void vgaConsole_setColour(unsigned char foreColour, unsigned char backColour)
  */
 void vgaConsole_updateCursor(void)
 {
+	// QEMU doesn't like setting cursor to line 24 for some reason. No idea why.
+	vgaConsole_setCursor(vgaConsole_cursorX, vgaConsole_cursorY);
+}
+
+
+void vgaConsole_setCursor(uint8 x, uint8 y) {
 	//The offset, in characters, from the top-left of the screen.
 	unsigned short int offset;
 	
 	//Compute the offset from the current X and Y positions.
-	offset = (vgaConsole_cursorY * 80) + vgaConsole_cursorX;
+	offset = (y * 80) + x;
+
+	uint8 high = (offset >> 8);
+	uint8 low = offset & 0xFF;
+
+	stream_printf(serial_writeChar, "vga cursor: x:%d y:%d %h %h:%h\n", x, y, offset, high, low);
 	
 	//Write the values to the CRT control register indices 14 and 15.
-	portIO_write8(0x3D4, 14);
-	portIO_write8(0x3D5, offset >> 8);   //High byte.
-	portIO_write8(0x3D4, 15);
-	portIO_write8(0x3D5, offset & 0x08); //Low byte.
+	portIO_write8(0x3D4, 0x0F);
+	portIO_write8(0x3D5, low); //Low byte.
+	portIO_write8(0x3D4, 0x0E);
+	portIO_write8(0x3D5, high);   //High byte.
 }

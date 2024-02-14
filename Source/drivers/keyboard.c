@@ -11,7 +11,7 @@
 
 bool shift = false;
 bool capsActive = false;
-bool capsDown = false;
+bool commandMode = false;
 FIFOBuffer* keyboard_buffer;
 
 void keyboard_interruptHandler(uint32 eventData);
@@ -21,9 +21,15 @@ void keyboard_interruptHandler(uint32 eventData) {
 
     uint8 data = portIO_read8(0x60);
 
-    FIFOBuffer_WriteBytes(keyboard_buffer, &data, 1);
+    if(commandMode == true) {
+        // discard data for now.
+        stream_printf(serial_writeChar, "keyboard: %h\n", data);
+    } else {
 
-    stream_printf(serial_writeChar, "keyboard: %h\n", data);
+        FIFOBuffer_WriteBytes(keyboard_buffer, &data, 1);
+
+        stream_printf(serial_writeChar, "keyboard: %h\n", data);
+    }
 }
 
 deviceTree_Entry* keyboard_initialise() {
@@ -31,27 +37,27 @@ deviceTree_Entry* keyboard_initialise() {
 
     keyboard_buffer = FIFOBuffer_new(1024);
 
-    return deviceTree_createDevice("Generic PS/2 Keyboard", DEVICETREE_TYPE_OTHER, NULL);
-
     shift = false;
     capsActive = false;
-    capsDown = false;
+    commandMode = false;
+
+    return deviceTree_createDevice("Generic PS/2 Keyboard", DEVICETREE_TYPE_OTHER, NULL);
 }
 
 // 8 scancodes per line = 16 lines.
 uint8 keyboard_scanCodesNormal[128] = {
+    0, 0, '1', '2', '3', '4', '5', '6', 
+    '7', '8', '9', '0', '-', '=', 0/*bs*/, '\t', 
+    'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 
+    'o', 'p', '[', ']', '\n', 0, 'a', 's', 
+    'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', 
+    '\'', '`', 0, '\\', 'z', 'x', 'c', 'v', 
+    'b', 'n', 'm', ',', '.', '/', 0, 0, 
+    0, ' ', 0, 0, 0, 0, 0, 0, 
     0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, '`', 0, 
-    0, 0, 0, 0, 0, 'q', '1', 0, 
-    0, 0, 'z', 's', 'a', 'w', '2', 0, 
-    0, 'c', 'x', 'd', 'e', '4', '3', 0, 
-    0, ' ', 'v', 'f', 't', 'r', '5', 0, 
-    0, 'n', 'b', 'h', 'g', 'y', '6', 0, 
-    0, 0, 'm', 'j', 'u', '7', '8', 0, 
-    0, ',', 'k', 'i', 'o', '0', '9', 0, 
-    0, '.', '/', 'l', ';', 'p', '-', 0, 
-    0, 0, '\'', 0, '[', '=', 0, 0, 
-    0, 0, '\n', ']', 0, '\\', 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 
     0, 0, 0, 0, 0, 0, 0, 0, 
     0, 0, 0, 0, 0, 0, 0, 0, 
     0, 0, 0, 0, 0, 0, 0, 0, 
@@ -60,18 +66,18 @@ uint8 keyboard_scanCodesNormal[128] = {
 
 // 8 scancodes per line = 16 lines.
 uint8 keyboard_scanCodesShift[128] = {
+    0, 0, '!', '@', '#', '$', '%', '^', 
+    '&', '*', '(', ')', '_', '+', 0/*bs*/, '\t', 
+    'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 
+    'O', 'P', '{', '}', '\n', 0, 'A', 'S', 
+    'D', 'F', 'G', 'H', 'J', 'K', 'L', ':', 
+    '"', '~', 0, '|', 'Z', 'X', 'C', 'V', 
+    'B', 'N', 'M', '<', '>', '?', 0, 0, 
+    0, ' ', 0, 0, 0, 0, 0, 0, 
     0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, '~', 0, 
-    0, 0, 0, 0, 0, 'Q', '!', 0, 
-    0, 0, 'Z', 'S', 'A', 'W', '@', 0, 
-    0, 'C', 'X', 'D', 'E', '$', '#', 0, 
-    0, ' ', 'V', 'F', 'T', 'R', '%', 0, 
-    0, 'N', 'B', 'H', 'G', 'Y', '^', 0, 
-    0, 0, 'M', 'J', 'U', '&', '*', 0, 
-    0, '<', 'K', 'I', 'O', ')', '(', 0, 
-    0, '>', '?', 'L', ':', 'P', '_', 0, 
-    0, 0, '\'', 0, '{', '+', 0, 0, 
-    0, 0, '\n', '}', 0, '\\', 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 
     0, 0, 0, 0, 0, 0, 0, 0, 
     0, 0, 0, 0, 0, 0, 0, 0, 
     0, 0, 0, 0, 0, 0, 0, 0, 
@@ -90,15 +96,19 @@ char keyboard_readChar(void)
 
     stream_printf(serial_writeChar, "keyboard readchar: %h\n", data);
 
-    if(data == 0xF0) {
-        // Ignore release for now.
-        FIFOBuffer_ReadBytes(keyboard_buffer, &data, 1);
+    if(data & 0x80) {
+        // A key has been released.
 
-      //  if(data == 0x58) {
-      //      capsDown = false;
-      //  }
+        if(data == 0xBA) {
+            if(capsActive == true) {
+                capsActive = false;
+            }
+            else {
+                capsActive = true;
+            }
+        }
 
-        if(data == 0x59 || data == 0x12) {
+        if(data == 0xAA || data == 0xB6) {
             shift = false;
         }
 
@@ -106,7 +116,7 @@ char keyboard_readChar(void)
         return keyboard_readChar();
     }
 
-    if(data == 0x59 || data == 0x12) {
+    if(data == 0x2A || data == 0x36) {
         shift = true;
     }
 

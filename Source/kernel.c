@@ -37,6 +37,8 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 		haltCPU();
 	}
  
+	vga_initialise();
+
 	vgaConsole_clearScreen();
 	
 	vgaConsole_printf("Synergy is booting...\n\n");

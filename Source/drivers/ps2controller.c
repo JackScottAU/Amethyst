@@ -47,7 +47,7 @@ deviceTree_Entry* ps2controller_initialise()
     bool haveDualChannelController = configByte & PS2CONTROLLER_CONFIG_DISABLE_PORT2;
     stream_printf(serial_writeChar, "ps2controller config: %h\n", configByte);
     configByte = configByte | 0x03;     // Enable interrupts on both devices.
-    configByte = configByte & 0x3F;    // Disable emulation mode on first port.
+   // configByte = configByte & 0x3F;    // Disable emulation mode on first port. Commeneted out because Hyper-V doesnt support scancode set 2.
     stream_printf(serial_writeChar, "ps2controller config: %h\n", configByte);
 
     portIO_write8(PS2CONTROLLER_CONTROLPORT, 0x60);

@@ -18,6 +18,9 @@
 	void vgaConsole_setColour(uint8 foreColour, uint8 backColour);
 	void vgaConsole_updateCursor(void);
 
+	void vga_initialise(void);
+	void vgaConsole_setCursor(uint8 x, uint8 y);
+
 	//VGA Text Palette, in easy to use form :P.
 	#define VGACONSOLE_BLACK		0x0
 	#define VGACONSOLE_BLUE			0x1
