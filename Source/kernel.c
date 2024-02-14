@@ -73,7 +73,7 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	ps2controller_initialise();
 	deviceTree_build();
 
-	deviceTree_print(vgaConsole_putChar, false);
+//	deviceTree_print(vgaConsole_putChar, false);
 
 	stream_printf(serial_writeChar, "Framebuffer address: %h\n", multibootData->framebuffer_addr);
 	stream_printf(serial_writeChar, "Framebuffer pitch: %h\n", multibootData->framebuffer_pitch);
@@ -110,6 +110,21 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	
 	while(1)
 	{
-		vgaConsole_putChar(keyboard_readChar());
+		stream_printf(vgaConsole_putChar, "> ");
+
+		char* line = stream_readLine(true);
+
+		if(string_compare(line, "Get-DeviceTree") == 0) {
+			deviceTree_print(vgaConsole_putChar, true);
+			continue;
+		}
+		
+		if(string_compare(line, "Get-Time") == 0) {
+			stream_printf(vgaConsole_putChar, "Time: %h\n", clock_uptime());
+			continue;
+		}
+
+		// None of the built-in commands match the input. 
+		stream_printf(vgaConsole_putChar, "Unknown command.\n");
 	};
 }

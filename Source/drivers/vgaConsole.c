@@ -190,6 +190,8 @@ void vgaConsole_putChar(char c)
 	{
 		vgaConsole_scroll();
 	};
+
+	vgaConsole_updateCursor();
 }
 
 void vgaConsole_putHexadecimalInternal(uint32 arg);

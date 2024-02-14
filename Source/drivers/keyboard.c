@@ -120,10 +120,18 @@ char keyboard_readChar(void)
         shift = true;
     }
 
+    char key;
+
     if(shift || capsActive) {
-        return keyboard_scanCodesShift[data];
+        key = keyboard_scanCodesShift[data];
     } else{
-        return keyboard_scanCodesNormal[data];
+        key = keyboard_scanCodesNormal[data];
+    }
+
+    if(key != 0) {
+        return key;
+    } else {
+        return keyboard_readChar();
     }
 
 

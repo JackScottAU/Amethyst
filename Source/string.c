@@ -5,6 +5,8 @@
 */
 
 #include <string.h>
+#include <serial.h>
+#include <stream.h>
 
 void string_copy(char *dest, const char* src) {
     while (*src) {      // while source string isnt null, copy, then increase pointer.
@@ -15,9 +17,17 @@ void string_copy(char *dest, const char* src) {
 }
 
 int string_compare(const char* a, const char* b) {
+    stream_printf(serial_writeChar,"here\n");
+
     while (*a && *a == *b) {
+        stream_printf(serial_writeChar,"a: %h, b: %h\n",*a,*b);
          ++a; ++b;
     }
+
+    
+    stream_printf(serial_writeChar,"a: %h, b: %h\n",*a,*b);
+
+    stream_printf(serial_writeChar, "%d\n", (int)(unsigned char)(*a) - (int)(unsigned char)(*b));
 
     return (int)(unsigned char)(*a) - (int)(unsigned char)(*b);
 }

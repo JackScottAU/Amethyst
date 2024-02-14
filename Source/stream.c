@@ -7,10 +7,38 @@
 #include <stdarg.h>
 #include <stream.h>
 #include <Types.h>
+#include <memoryManager.h>
+#include <keyboard.h>
 
 void stream_putDecimal(void (*putChar)(char), uint32 arg);
 void stream_putHexadecimal(void (*putChar)(char), uint32 arg, uint8 leadingZeroes);
 void stream_putHexadecimalInternal(void (*putChar)(char), uint32 arg);
+
+char* stream_readLine(bool echoMode) {
+    // hopelessly naive implementation that ignores memory safety entirely!
+
+    char* data = memoryManager_allocate(100);
+
+    int i = 0;
+
+    data[i] = keyboard_readChar();
+    if(echoMode)
+    {
+        vgaConsole_putChar(data[i]);
+    }    
+
+    while(data[i] != '\n') {
+        i++;
+        data[i] = keyboard_readChar();
+        if(echoMode)
+        {
+            vgaConsole_putChar(data[i]);
+        }
+    }
+
+    data[i] = 0; // end string.
+    return data;
+}
 
 void stream_printf(void (*putChar)(char), const char* formatString, ...) {
     va_list args;

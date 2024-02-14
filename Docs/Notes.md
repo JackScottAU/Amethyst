@@ -3,17 +3,14 @@
 Immediate TODO list:
 
 1.  Keyboard driver:
-    1.  Generic FIFO Buffer
-    2.  Scancode to ASCII/ANSI Converter
-    3.  scanf()
+    3.  stream_readLine() - still needs to handle backspace at least.
     4.  Finish PS/2 Controller initialisation routine (device detection and child init, device tree building, etc)
-2.  Migrate serial shell to use keyboard/VGA instead.
-3.  Expand string and data structures functionality and put it in the library/ folder:
+2.  Expand string and data structures functionality and put it in the library/ folder:
     1.  Linked list
     2.  string_toLower() etc
     3.  string_format() (sprintf)
-4.  Fix PCI device bus enumeration so it's nice and pretty.
-5.  Enable paging.
+3.  Fix PCI device bus enumeration so it's nice and pretty.
+4.  Enable paging.
 
 ## Source Tree Layout
 
