@@ -52,8 +52,6 @@ void deviceTree_printInternal(void (*putChar)(char), deviceTree_Entry* device, u
         stream_printf(putChar, " +- ");
     }
 
-    
-
     stream_printf(putChar, "%s\n", device->name);
 
     // Print children, then come back here and print the next sibling to us.

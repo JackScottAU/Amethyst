@@ -125,6 +125,7 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 		}
 
 		// None of the built-in commands match the input. 
+		stream_printf(vgaConsole_putChar, line);
 		stream_printf(vgaConsole_putChar, "Unknown command.\n");
 	};
 }

@@ -47,7 +47,7 @@ deviceTree_Entry* keyboard_initialise() {
 // 8 scancodes per line = 16 lines.
 uint8 keyboard_scanCodesNormal[128] = {
     0, 0, '1', '2', '3', '4', '5', '6', 
-    '7', '8', '9', '0', '-', '=', 0/*bs*/, '\t', 
+    '7', '8', '9', '0', '-', '=', '\b', '\t', 
     'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 
     'o', 'p', '[', ']', '\n', 0, 'a', 's', 
     'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', 
@@ -67,7 +67,7 @@ uint8 keyboard_scanCodesNormal[128] = {
 // 8 scancodes per line = 16 lines.
 uint8 keyboard_scanCodesShift[128] = {
     0, 0, '!', '@', '#', '$', '%', '^', 
-    '&', '*', '(', ')', '_', '+', 0/*bs*/, '\t', 
+    '&', '*', '(', ')', '_', '+', '\b', '\t', 
     'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 
     'O', 'P', '{', '}', '\n', 0, 'A', 'S', 
     'D', 'F', 'G', 'H', 'J', 'K', 'L', ':', 

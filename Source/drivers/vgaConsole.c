@@ -150,6 +150,7 @@ void vgaConsole_putChar(char c)
 			{
 				vgaConsole_cursorX --;
 			};
+			vgaConsole_videoMemory[(vgaConsole_cursorY*VGACONSOLE_WIDTH)+vgaConsole_cursorX] = ' ' | (vgaConsole_colour << 8);
 			break;
 		
 		case 0x09:	//Tab

@@ -9,6 +9,7 @@
 #include <Types.h>
 #include <memoryManager.h>
 #include <keyboard.h>
+#include <serial.h>
 
 void stream_putDecimal(void (*putChar)(char), uint32 arg);
 void stream_putHexadecimal(void (*putChar)(char), uint32 arg, uint8 leadingZeroes);
@@ -25,10 +26,20 @@ char* stream_readLine(bool echoMode) {
     if(echoMode)
     {
         vgaConsole_putChar(data[i]);
-    }    
+    }
 
     while(data[i] != '\n') {
-        i++;
+
+        if(data[i] != '\b') {
+            i++;
+        } else {
+            // backspace handling.
+            i--;
+            if(i < 0) {
+                break;
+            }
+        }
+
         data[i] = keyboard_readChar();
         if(echoMode)
         {

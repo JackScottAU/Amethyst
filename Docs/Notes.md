@@ -3,8 +3,7 @@
 Immediate TODO list:
 
 1.  Keyboard driver:
-    3.  stream_readLine() - still needs to handle backspace at least.
-    4.  Finish PS/2 Controller initialisation routine (device detection and child init, device tree building, etc)
+    1.  Finish PS/2 Controller initialisation routine (device detection and child init, device tree building, etc)
 2.  Expand string and data structures functionality and put it in the library/ folder:
     1.  Linked list
     2.  string_toLower() etc
