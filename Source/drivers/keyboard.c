@@ -133,9 +133,4 @@ char keyboard_readChar(void)
     } else {
         return keyboard_readChar();
     }
-
-
-    // pseduocode: have two arrays (one for non-shift and one for shift) which have keycode:ascii mappings.
-    // keep track of modifier keys (caps, shift, etc), use these to choose the array to use.
-    // return array[scanocode];
 }
