@@ -30,12 +30,20 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
  */
 void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 {
+	
+	multibootData = ((uint32) multibootData) + 0xC0000000;
+	
+	vgaConsole_printf("Multiboot magic number: %h\n", magicNumber);
+	vgaConsole_printf("Multiboot data address: %h\n", multibootData);
+
+	//if(true)
 	if(magicNumber != MULTIBOOT_MAGIC_NUMBER)
 	{
 		vgaConsole_printf("Multiboot error found. Halting...");
 		interrupts_disableInterrupts();
 		haltCPU();
 	}
+
  
 	vga_initialise();
 
@@ -82,8 +90,8 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	stream_printf(serial_writeChar, "Framebuffer bpp: %h\n", multibootData->framebuffer_bpp);
 	stream_printf(serial_writeChar, "Framebuffer type: %h\n", multibootData->framebuffer_type);
 
-	stream_printf(serial_writeChar, "Module start: %h\n", multibootData->modsAddr->start);
-	stream_printf(serial_writeChar, "Module end: %h\n", multibootData->modsAddr->end);
+	//stream_printf(serial_writeChar, "Module start: %h\n", multibootData->modsAddr->start);
+	//stream_printf(serial_writeChar, "Module end: %h\n", multibootData->modsAddr->end);
 
 /*	Canvas* canvas = memoryManager_allocate(sizeof(Canvas));
 	canvas->framebuffer = (void*)multibootData->framebuffer_addr;

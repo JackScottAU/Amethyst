@@ -119,28 +119,59 @@ void memoryManager_free(void* mem)
  */
 void memoryManager_init(struct multiboot_memoryMapNode* memNode, uint32 length, uint32 endOfReservedMemory)
 {
+	// fake it for now!
+	memoryManager_firstFreeNode = 0xC0007C00;
+
+	memoryManager_firstFreeNode->address = 0xC0200000; // 2 megs.
+	memoryManager_firstFreeNode->length = 0x200000; // 2 megs.
+	memoryManager_firstFreeNode->next = END_OF_MEMORY_LIST;
+
+
+	/*memNode = (uint32) memNode + 0xC0000000;
+
+	vgaConsole_printf("memNode: %h\n", memNode);
+
 	//Loop through each of the memory map records. Each record is 24 bytes long.
 	for(uint32 i=0; i<length/24; i++)
 	{
+		
+			vgaConsole_printf("memnode size: %h\n", memNode[i].len);
+
+			vgaConsole_printf("memnode address: %h\n", memNode[i].addr);
+			vgaConsole_printf("memnode type: %h\n\n", memNode[i].type);
+
 		//We need to check if it is available RAM (type 1) and that the size is worth recording.
 		if(memNode[i].type==1 && memNode[i].len>sizeof(memoryManager_freeMemoryNode))
 		{
 			//We need to be able to address the free memory record somehow.
 			memoryManager_freeMemoryNode* node;
+
+			vgaConsole_printf("0: %h\n", memNode[i].addr);	
 				
 			//Check if we're overwriting kernels or modules.
 			if( (uint32)memNode[i].addr >= 0x00100000  && (uint32)memNode[i].addr <= endOfReservedMemory ) 
 			{
+				vgaConsole_printf("1: %h\n", memNode[i].addr);
+
+
 				//Move everything away from the kernel and modules.
-				node = (memoryManager_freeMemoryNode*) endOfReservedMemory;
+				node = (memoryManager_freeMemoryNode*) (((uint32) endOfReservedMemory));
+				vgaConsole_printf("4: %h\n", node);
 
-				node->address = (uint64) endOfReservedMemory + sizeof(memoryManager_freeMemoryNode);
+				node->address = (uint64) endOfReservedMemory + sizeof(memoryManager_freeMemoryNode) + 0xC0000000;
 				node->length = (uint64) memNode[i].len - sizeof(memoryManager_freeMemoryNode) - (endOfReservedMemory - 0x00100000);
-			} else {
-				//Don't need to move anything.
-				node = (memoryManager_freeMemoryNode*) (uint32) memNode[i].addr; //Put a free block in the start of this area.
 
-				node->address = (uint64) memNode[i].addr + sizeof(memoryManager_freeMemoryNode);
+				vgaConsole_printf("5: %h %h\n", node->address, node->length);
+
+			} else {
+				vgaConsole_printf("2: %h\n", memNode[i].addr);
+
+				//Don't need to move anything.
+				node = (memoryManager_freeMemoryNode*) (((uint32) memNode[i].addr) + 0xC0000000); //Put a free block in the start of this area.
+
+				vgaConsole_printf("3: %h\n", node);
+
+				node->address = (uint64) memNode[i].addr + sizeof(memoryManager_freeMemoryNode) + 0xC0000000;
 				node->length = (uint64) memNode[i].len - sizeof(memoryManager_freeMemoryNode);
 			}
 
@@ -158,12 +189,14 @@ void memoryManager_init(struct multiboot_memoryMapNode* memNode, uint32 length, 
 	}
 	
 	//Print this out, just for debugging purposes.
-	//memoryManager_debug_printFreeMemoryList();
+	//memoryManager_debug_printFreeMemoryList();*/
 }
 
 uint32 memoryManager_findEndOfReservedMemory(struct multiboot_moduleNode* module, uint32 count)
 {
-	uint32 endOfReservedMemory = (uint32) &kernel_end;
+	module = (uint8)module + 0xC0000000;
+
+	uint32 endOfReservedMemory = (uint32) &_kernel_end;
 	
 	for(uint32 i = 0; i < count; i++)
 	{

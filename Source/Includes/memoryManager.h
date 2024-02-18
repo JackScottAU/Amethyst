@@ -35,7 +35,7 @@ extern "C" {
 	
 	void memoryManager_debug_printFreeMemoryList(void);
 	
-	extern uint32 kernel_end;
+	extern uint32 _kernel_end;
 	uint32 memoryManager_findEndOfReservedMemory(struct multiboot_moduleNode* module, uint32 count);
 
 #ifdef	__cplusplus

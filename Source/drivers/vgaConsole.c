@@ -17,7 +17,7 @@
 #define VGACONSOLE_WIDTH	80	//Defines the width of the screen in characters.
 
 /** Holds the base address of the text area for the VGA controller. */
-uint16* vgaConsole_videoMemory	= (uint16*) 0xB8000;
+uint16* vgaConsole_videoMemory	= (uint16*) 0xC00B8000;
 
 /** Holds the horizontal offset in characters from the left of the screen. */
 uint8 vgaConsole_cursorX	= 0;
