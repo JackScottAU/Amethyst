@@ -48,8 +48,8 @@ _start:
 	#       1 MiB as it can be generally useful, and there's no need to
 	#       specially map the VGA buffer.
 	movl $0, %esi
-	# Map 1023 pages. The 1024th will be the VGA text buffer.
-	movl $1023, %ecx
+	# Map 1024 pages.
+	movl $1024, %ecx
 
 1:
 #	cmpl $(_kernel_end - 0xC0000000), %esi
@@ -70,9 +70,6 @@ _start:
 	loop 1b
 
 3:
-	# Map VGA video memory to 0xC03FF000 as "present, writable".
-	movl $(0x000B8000 | 0x003), boot_page_table1 - 0xC0000000 + 1023 * 4
-
 	# The page table is used at both page directory entry 0 (virtually from 0x0
 	# to 0x3FFFFF) (thus identity mapping the kernel) and page directory entry
 	# 768 (virtually from 0xC0000000 to 0xC03FFFFF) (thus mapping it in the

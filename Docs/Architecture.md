@@ -27,3 +27,7 @@ Threads have priorities, processes have priorities, sessions have priorities (dr
  * shared memory
 
 drivers are allowed to request shared memory with the HAL for use with devices.
+
+## Memory
+
+Paging is used. 0GB-3GB is userspace. 3GB-4GB is kernelspace. The first 4MB of physical memory is always mapped to the kernel.
