@@ -1,4 +1,6 @@
-# Synergy OS Kernel
+![Amethyst Operating System Logo](/Resources/amethyst-logotext.png)
+
+# Amethyst Operating System
 
 ## Introduction
 

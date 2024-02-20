@@ -9,7 +9,7 @@ Immediate TODO list:
     2.  string_toLower() etc
     3.  string_format() (sprintf)
 3.  Fix PCI device bus enumeration so it's nice and pretty.
-4.  Enable paging.
+4.  Write page-level memory manager, then heap allocator.
 
 ## Source Tree Layout
 
