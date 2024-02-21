@@ -6,6 +6,7 @@
 #include <serial.h>
 #include <Structures/fifobuffer.h>
 #include <deviceTree.h>
+#include <stream.h>
 
 
 

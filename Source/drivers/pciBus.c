@@ -11,6 +11,8 @@
 #include <deviceTree.h>
 #include "pci/deviceNames.h"
 
+bool pci_isMultiFunctionDevice(uint8 bus, uint8 slot);
+
 // PCI Bus Class names. If we can get these within 34 characters length we can use in display table below.
 const char* classNames[] = {
     "Unknown                           ",

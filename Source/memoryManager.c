@@ -120,11 +120,11 @@ void memoryManager_free(void* mem)
 void memoryManager_init(struct multiboot_memoryMapNode* memNode, uint32 length, uint32 endOfReservedMemory)
 {
 	// fake it for now!
-	memoryManager_firstFreeNode = 0xC0007C00;
+	memoryManager_firstFreeNode = (memoryManager_freeMemoryNode*)0xC0007C00;
 
 	memoryManager_firstFreeNode->address = 0xC0200000; // 2 megs.
 	memoryManager_firstFreeNode->length = 0x200000; // 2 megs.
-	memoryManager_firstFreeNode->next = END_OF_MEMORY_LIST;
+	memoryManager_firstFreeNode->next = (memoryManager_freeMemoryNode*)END_OF_MEMORY_LIST;
 
 
 	/*memNode = (uint32) memNode + 0xC0000000;
@@ -194,7 +194,7 @@ void memoryManager_init(struct multiboot_memoryMapNode* memNode, uint32 length, 
 
 uint32 memoryManager_findEndOfReservedMemory(struct multiboot_moduleNode* module, uint32 count)
 {
-	module = (uint8)module + 0xC0000000;
+	module = (struct multiboot_moduleNode*)((uint32)module + 0xC0000000);
 
 	uint32 endOfReservedMemory = (uint32) &_kernel_end;
 	
