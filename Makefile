@@ -16,8 +16,9 @@ clean:
 	-@rm -rf Build
 	-@rm -rf Source/*.o
 	-@rm -rf Source/drivers/*.o
+	-@rm -rf Source/library/*.o
 	-@rm -rf Source/arch/x86_32/*.o
-	-@rm -f  Synergy-OS.iso
+	-@rm -f  Amethyst.iso
 
 x86_32: clean qemu-x86_32
 
@@ -29,10 +30,10 @@ lint:
 	@cpplint --quiet --recursive --linelength=120 --filter=-readability/casting --root=Source Source
 
 qemu-x86_32: image-x86_32
-	@qemu-system-i386 -cpu pentium -m 16 -no-reboot -drive format=raw,media=cdrom,file=Synergy-OS.iso -vga std -serial stdio
+	@qemu-system-i386 -cpu pentium -m 16 -no-reboot -drive format=raw,media=cdrom,file=Amethyst.iso -vga std -serial stdio
 
 cd-image: Build/kernel32 resources
-	-@grub-mkrescue -o Synergy-OS.iso Build -quiet
+	-@grub-mkrescue -o Amethyst.iso Build -quiet
 
 resources:
 	-@mkdir -p Build/boot/grub

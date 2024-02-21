@@ -96,6 +96,6 @@ More documentation is in the documentation folder:
 ## Contributing
 
 The issue tracker as well as the primary mirror for the git repository are on
-[GitHub](https://github.com/JackScottAU/Synergy-OS).
+[GitHub](https://github.com/JackScottAU/Amethyst).
 
 <a href="https://www.flaticon.com/free-icons/amethyst" title="amethyst icons">Amethyst icons created by Kason Koo - Flaticon</a>
