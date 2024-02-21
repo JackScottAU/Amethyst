@@ -11,6 +11,8 @@
 #include <memoryManager.h>
 #include <deviceTree.h>
 #include <serial.h>
+#include <ps2controller.h>
+#include <stream.h>
 
 #define PS2CONTROLLER_DATAPORT      0x60
 #define PS2CONTROLLER_CONTROLPORT   0x64    // reading = status register, writing = command register.
@@ -28,7 +30,7 @@
 void ps2controller_waitForRead(void);
 void ps2controller_waitForWrite(void);
 
-deviceTree_Entry* ps2controller_initialise()
+deviceTree_Entry* ps2controller_initialise(void)
 {
     // Resource: https://wiki.osdev.org/%228042%22_PS/2_Controller
 
@@ -75,6 +77,8 @@ deviceTree_Entry* ps2controller_initialise()
     if(haveDualChannelController) {
         portIO_write8(PS2CONTROLLER_CONTROLPORT, PS2CONTROLLER_COMMAND_ENABLE_PORT2);
     }
+
+    return deviceTree_createDevice("PS/2 Controller", DEVICETREE_TYPE_OTHER, NULL);
 }
 
 /**

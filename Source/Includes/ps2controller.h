@@ -9,6 +9,6 @@
 
 #include <deviceTree.h>
 
-deviceTree_Entry* ps2controller_initialise();
+deviceTree_Entry* ps2controller_initialise(void);
 
 #endif // INCLUDES_PS2CONTROLLER_H_

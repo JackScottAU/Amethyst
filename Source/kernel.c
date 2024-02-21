@@ -31,7 +31,7 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 {
 	
-	multibootData = ((uint32) multibootData) + 0xC0000000;
+	multibootData = (struct multiboot_info*)(((uint32) multibootData) + 0xC0000000);
 	
 	vgaConsole_printf("Multiboot magic number: %h\n", magicNumber);
 	vgaConsole_printf("Multiboot data address: %h\n", multibootData);

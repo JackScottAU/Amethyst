@@ -10,6 +10,7 @@
 #include <memoryManager.h>
 #include <keyboard.h>
 #include <serial.h>
+#include <vgaConsole.h>
 
 void stream_putDecimal(void (*putChar)(char), uint32 arg);
 void stream_putHexadecimal(void (*putChar)(char), uint32 arg, uint8 leadingZeroes);
