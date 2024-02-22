@@ -30,6 +30,8 @@ platforms will be supported eventually. Eventual platforms will include:
 This repository contains the kernel and device drivers, and is written in C/C++ with scatterings 
 of architecture-specific assembly. THe user-mode applications will be in another repository when the time comes.
 
+![Screenshot of Amethyst Running in QEMU](/Resources/screenshot.png)
+
 ## Supported Platforms
 
 ### x86-32 Architecture
