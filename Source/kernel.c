@@ -22,6 +22,23 @@
 
 //To shut GCC up.
 void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData);
+struct multiboot_info* multiboot_correctDataStructureAddresses(struct multiboot_info* data);
+void kernel_printBanner(void (*putChar)(char));
+
+struct multiboot_info* multiboot_correctDataStructureAddresses(struct multiboot_info* data) {
+	data = (struct multiboot_info*)(((uint32) data) + 0xC0000000);
+
+	return data;
+}
+
+void kernel_printBanner(void (*putChar)(char)) {
+	stream_printf(putChar, "\n\t          _                   _   _               _   \n");
+	stream_printf(putChar, "\t         / \\   _ __ ___   ___| |_| |__  _   _ ___| |_ \n");
+	stream_printf(putChar, "\t        / _ \\ | '_ ` _ \\ / _ \\ __| '_ \\| | | / __| __|\n");
+	stream_printf(putChar, "\t       / ___ \\| | | | | |  __/ |_| | | | |_| \\__ \\ |_ \n");
+	stream_printf(putChar, "\t      /_/   \\_\\_| |_| |_|\\___|\\__|_| |_|\\__, |___/\\__|\n");
+	stream_printf(putChar, "\t                                        |___/         \n\n");
+}
 
 /**
  * Initialises the core systems of the kernel and language runtime before launching a command interpreter.
@@ -30,28 +47,21 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
  */
 void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 {
-	
-	multibootData = (struct multiboot_info*)(((uint32) multibootData) + 0xC0000000);
-	
-	vgaConsole_printf("Multiboot magic number: %h\n", magicNumber);
-	vgaConsole_printf("Multiboot data address: %h\n", multibootData);
+	vga_initialise();
+	vgaConsole_clearScreen();
 
-	//if(true)
+	kernel_printBanner(vgaConsole_putChar);
+	
+	vgaConsole_printf("Checking Multiboot data...\t\t\t\t\t\t");
 	if(magicNumber != MULTIBOOT_MAGIC_NUMBER)
 	{
-		vgaConsole_printf("Multiboot error found. Halting...");
+		vgaConsole_printf("\nMultiboot error found. Halting...");
 		interrupts_disableInterrupts();
 		haltCPU();
+	} else {
+		multibootData = multiboot_correctDataStructureAddresses(multibootData);
 	}
-
- 
-	vga_initialise();
-
-	vgaConsole_clearScreen();
-	
-	vgaConsole_printf("Synergy is booting...\n\n");
-	
-	vgaConsole_printf("Multiboot Flags: \t%h\n",multibootData->flags);
+	vgaConsole_printf("%s",1);
 	
 	vgaConsole_printf("Loading a GDT...\t\t\t\t\t\t\t");
 	gdt_install();
@@ -68,11 +78,10 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	vgaConsole_printf("Enumerating PCI buses...\t\t\t\t\t\t");
 	pci_enumerateBuses();
 	vgaConsole_printf("%s",1);
-	pci_printBuses();
 
 	
 	serial_init(SERIAL_COM1, SERIAL_BAUD_38400);
-	serial_writeLine("Synergy OS.");
+	serial_writeLine("Amethyst Debugging Information:");
 	
 	vgaConsole_printf("Setting up the clock...\t\t\t\t\t\t\t");
 	clock_init();
@@ -111,11 +120,13 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	vga_drawRect(canvas, 204, 224, 500 - 8, 300 - 28, 0x008888FF);
 	vga_drawRect(canvas, 200 + 500 - 20, 200 + 4, 16, 16, 0x00444444);
 	
-	vga_drawWord(canvas, font, 204, 204, 0xCCCCFF, "Synergy OS");
+	vga_drawWord(canvas, font, 204, 204, 0xCCCCFF, "Amethyst OS");
 
 	vga_drawWord(canvas, font, 204, 224, 0xCCCCFF, "This is by far the worst operating system you've ever seen.");
 	vga_drawWord(canvas, font, 204, 240, 0xCCFFCC, "Ah... but you have seen it.");*/
 	
+	stream_printf(vgaConsole_putChar, "\n");
+
 	while(1)
 	{
 		stream_printf(vgaConsole_putChar, "> ");
@@ -132,8 +143,20 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 			continue;
 		}
 
-		// None of the built-in commands match the input. 
-		stream_printf(vgaConsole_putChar, line);
+		if(string_compare(line, "Shutdown") == 0) {
+			stream_printf(vgaConsole_putChar, "Shutting down...\n");
+			interrupts_disableInterrupts();
+			stream_printf(vgaConsole_putChar, "It is now safe to turn off your PC.");
+			haltCPU();
+			break;
+		}
+
+		if(string_compare(line, "Get-PciDetails") == 0) {
+			pci_printBuses();
+			continue;
+		}
+
+		// None of the built-in commands match the input.
 		stream_printf(vgaConsole_putChar, "Unknown command.\n");
 	};
 }

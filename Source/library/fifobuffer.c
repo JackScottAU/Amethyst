@@ -21,7 +21,7 @@ FIFOBuffer* FIFOBuffer_new(uint32 size) {
 
 uint32 FIFOBuffer_WriteBytes(FIFOBuffer* buffer, uint8* data, uint32 size) {
     uint32 i;
-    const char * p;
+    const uint8 * p;
     p = data;
     for(i=0; i < size; i++){
         //first check to see if there is space in the buffer

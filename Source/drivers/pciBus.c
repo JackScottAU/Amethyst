@@ -11,6 +11,15 @@
 #include <deviceTree.h>
 #include "pci/deviceNames.h"
 
+
+#define PCIBUS_IOPORT_REQUEST   0x0CF8
+#define PCIBUS_IOPORT_DATA      0x0CFC
+
+#define PCIBUS_REGISTER_DEVICE_AND_VENDOR   0x00
+#define PCIBUS_REGISTER_STATUS_AND_COMMAND  0x04
+#define PCIBUS_REGISTER_CLASSCODES          0x08
+#define PCIBUS_REGISTER_HEADERTYPE          0x0C
+
 bool pci_isMultiFunctionDevice(uint8 bus, uint8 slot);
 
 // PCI Bus Class names. If we can get these within 34 characters length we can use in display table below.
@@ -115,21 +124,26 @@ void pci_checkBus(uint8 bus)
 }
 
 bool pci_isMultiFunctionDevice(uint8 bus, uint8 slot) {
-    uint32 header = pci_readConfigurationRegister(bus, slot, 0, 0x0C);
+    uint32 header = pci_readConfigurationRegister(bus, slot, 0, PCIBUS_REGISTER_HEADERTYPE);
 
     return header & 0x00800000;
 }
 
 void pci_checkSlot(uint8 bus, uint8 slot) {
-    uint8 function = 0;
+    uint8 numberOfFunctions = 1;
 
-    for (function = 0; function < PCI_FUNCCOUNT; function++) {
-        uint32 deviceAndVendor = pci_readConfigurationRegister(bus, slot, function, 0x00);
+    // Check whether we have a multi-function device and need to inspect all functions at this slot.
+    if(pci_isMultiFunctionDevice(bus, slot)) {
+        numberOfFunctions = PCI_FUNCCOUNT;
+    }
+
+    for (uint8 function = 0; function < numberOfFunctions; function++) {
+        uint32 deviceAndVendor = pci_readConfigurationRegister(bus, slot, function, PCIBUS_REGISTER_DEVICE_AND_VENDOR);
 
         if ((deviceAndVendor & 0xFFFF) == 0xFFFF)
             break;
 
-        uint32 classRegister = pci_readConfigurationRegister(bus, slot, function, 0x08);
+        uint32 classRegister = pci_readConfigurationRegister(bus, slot, function, PCIBUS_REGISTER_CLASSCODES);
         uint8 class = (uint8)(classRegister >> 24);
 
         pci_currentEntry->bus = bus;
@@ -143,11 +157,6 @@ void pci_checkSlot(uint8 bus, uint8 slot) {
         pci_currentEntry->next = memoryManager_allocate(sizeof(pciBus_Entry));
         pci_currentEntry = pci_currentEntry->next;
         pci_currentEntry->next = 0x0;
-
-        if(!pci_isMultiFunctionDevice(bus, slot)) {
-            // If there are no more functions, leave.
-            break;
-        }
     }
 }
 
@@ -162,16 +171,16 @@ uint32 pci_calculateRegisterAddress(uint8 bus, uint8 slot, uint8 function, uint8
 uint32 pci_readConfigurationRegister(uint8 bus, uint8 slot, uint8 function, uint8 registerNo) {
     
     //Write the address of the register we want to the access request I/O port.
-    portIO_write32(0xCF8, pci_calculateRegisterAddress(bus, slot, function, registerNo));
+    portIO_write32(PCIBUS_IOPORT_REQUEST, pci_calculateRegisterAddress(bus, slot, function, registerNo));
 
     //Read the contents of the register at that address back from the data I/O port.
-    return portIO_read32(0xCFC);
+    return portIO_read32(PCIBUS_IOPORT_DATA);
 }
 
 void pci_writeConfigurationRegister(uint8 bus, uint8 slot, uint8 function, uint8 registerNo, uint32 data) {
     
     //Write the address of the register we want to the access request I/O port.
-    portIO_write32(0xCF8, pci_calculateRegisterAddress(bus, slot, function, registerNo));
+    portIO_write32(PCIBUS_IOPORT_REQUEST, pci_calculateRegisterAddress(bus, slot, function, registerNo));
 
-    portIO_write32(0xCFC, data);
+    portIO_write32(PCIBUS_IOPORT_DATA, data);
 }
