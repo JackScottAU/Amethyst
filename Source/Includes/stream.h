@@ -2,6 +2,7 @@
 #define INCLUDES_STREAM_H_
 
 #include <Types.h>
+#include <Structures/fifobuffer.h>
 
 /**
  * Prints a formatted string to the specified putChar function (the putChar should take a single argument which is a char).
@@ -13,6 +14,14 @@
 void stream_printf(void (*putChar)(char), const char* formatString, ...);
 
 char* stream_readLine(bool echoMode);
+
+/**
+ * An input/output stream. If buffer is null, all writes are immediate.
+*/
+typedef struct {
+    FIFOBuffer* buffer;
+    void (*flush)(char);
+} Stream;
 
 #endif // INCLUDES_STREAM_H_
 

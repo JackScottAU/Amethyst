@@ -4,6 +4,7 @@
 */
 
 #include <Types.h>
+#include <stream.h>
 
 #ifndef __VGACONSOLE_H
 #define __VGACONSOLE_H
@@ -18,8 +19,10 @@
 	void vgaConsole_setColour(uint8 foreColour, uint8 backColour);
 	void vgaConsole_updateCursor(void);
 
-	void vga_initialise(void);
+	void vgaConsole_initialise(void);
 	void vgaConsole_setCursor(uint8 x, uint8 y);
+
+	Stream* vgaConsole_getStream(void);
 
 	//VGA Text Palette, in easy to use form :P.
 	#define VGACONSOLE_BLACK		0x0
