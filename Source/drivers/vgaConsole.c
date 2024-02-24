@@ -34,7 +34,7 @@ void vga_writeRegister(uint8 registerNo, uint8 data) {
 	portIO_write8(0x3D5, data);
 }
 
-void vga_initialise(void)
+void vgaConsole_initialise(void)
 {
 	// enable cursor
 	vga_writeRegister(0x0A, 0x00);
@@ -313,12 +313,8 @@ void vgaConsole_setCursor(uint8 x, uint8 y) {
 
 	uint8 high = (offset >> 8);
 	uint8 low = offset & 0xFF;
-
-	stream_printf(serial_writeChar, "vga cursor: x:%d y:%d %h %h:%h\n", x, y, offset, high, low);
 	
 	//Write the values to the CRT control register indices 14 and 15.
-	portIO_write8(0x3D4, 0x0F);
-	portIO_write8(0x3D5, low); //Low byte.
-	portIO_write8(0x3D4, 0x0E);
-	portIO_write8(0x3D5, high);   //High byte.
+	vga_writeRegister(0x0F, low);
+	vga_writeRegister(0x0E, high);
 }
