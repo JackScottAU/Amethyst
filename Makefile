@@ -2,7 +2,6 @@
 CC	:= i586-elf-gcc
 AS	:= i586-elf-gcc
 LD	:= i586-elf-gcc
-MKISOFS	:= genisoimage
 
 #Options:
 WARNINGS	:= -Wall -Wextra -pedantic -Wshadow -Wpointer-arith -Wcast-align -Wno-discarded-qualifiers -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wuninitialized -Wno-unused-parameter

@@ -62,7 +62,8 @@ Future work may include support for the following platforms:
 The following packages are needed:
 
 * build-essential
-* genisoimage
+* grub-pc-bin
+* xorriso
 * cpplint
 * qemu-system-x86
 
