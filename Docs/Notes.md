@@ -61,3 +61,63 @@ Thread:		Registers / Stack
 ## Shell Language
 
 Synergy will have a command/scripting language like Bash/Powershell.
+
+## Incoherent Ramblings
+
+I want it to be a platform for testing concepts
+
+Ignore POSIX
+
+User interface is important
+
+
+VGA console is ansi terminal sequences compliant
+Keyboard is ansi terminal as well?
+
+Keyboard has two modes: ansi mode (with optional echoing) and scancode mode where it passes raw make/break codes.
+
+Or migrate to serial port? Ansi in and out by default then.
+
+Make an interface in C, one function to write a ansi char, another function to read an ansi char (blocking), then can implement a class that can be a terminal with read/write in ansi. Then can choose terminal on the fly. Maybe have grub options to do serial?
+
+Need to revisit paging and see if that would be useful
+
+Multitasking would be cool.
+
+As would a shell... Which should talk to a terminal...
+
+Use shell to ask questions and get info.
+Use PowerShell like commands: Get-DeviceTree --Verbose
+
+Then start building up a device tree.
+
+We can get started on a shell quicker if we do serial.
+
+Current Priorities:
+1. Serial Port - done enough to move on
+2. Interactive Shell - needs string functions! Tolower() and split() mostly
+3. Link against libgcc
+4. Device Tree
+5. Higher half kernel. (Half of paging)
+6. Generic linked list and tree structures 
+7. Multitasking
+8. Client apps
+9. Device detector for IDE, floppy, etc
+10. Driver for IDE, driver for file system fat32
+11. Graphics driver
+
+Bus devices (including platform device) know about all their possible children and can ask them to detect and init. Some (pci, USB) have registration so child devices can add themselves to the list?
+
+
+
+Step 1: Platform Core Initialisation (CPU and Memory)
+Step 2: Kernel Core Initialisation (Scheduler, etc)
+Step 3: Platform Device Initialisation
+Step 4: Open for user sessions. Initialise services.
+
+
+
+User mode drivers
+I/O request packets
+Message passing
+Microkernel 
