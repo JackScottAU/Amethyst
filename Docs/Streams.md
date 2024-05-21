@@ -26,3 +26,18 @@ STREAM_CANREAD = 0
 STREAM_CANWRITE =1
 
 ANSI streams: carriage return is idempotent, new line/line feed is not.
+
+StreamReader has support functions more than ReadByte()/ReadBytes()
+StreamWriter ditto
+
+
+Classes:
+    Stream
+    StreamReader
+    StreamWriter
+
+    MemoryStream (FIFO Buffer)
+    SerialStream
+        new SerialStream(serialDevice);
+    ConsoleStream
+        new ConsoleStream(vgaDevice, keyboardDevice);
