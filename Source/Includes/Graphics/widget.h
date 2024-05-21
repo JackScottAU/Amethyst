@@ -11,6 +11,10 @@
 #include <Graphics/canvas.h>
 #include <Structures/list.h>
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 typedef struct Widget_s {
     Canvas* canvas;
     uint32 x;
@@ -21,5 +25,9 @@ typedef struct Widget_s {
     struct Widget_s* parent;
     List* children;
 } Widget;
+
+#ifdef	__cplusplus
+}
+#endif
 
 #endif // INCLUDES_GRAPHICS_WIDGET_H_

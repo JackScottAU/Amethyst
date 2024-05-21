@@ -4,6 +4,10 @@
 
 #include <Types.h>
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 	/**
 	 * This is the representation of time used throughout the entire 
 	 * operating system. It allows for approximately +/- 292.5 billion years
@@ -56,5 +60,9 @@
 	#define CLOCK_UTC_OFFSET 0
 	
 	//EPOCH: 2000-01-01 00:00:00.000
+
+	#ifdef	__cplusplus
+}
+#endif
 
 #endif

@@ -6,6 +6,10 @@
 
 #include <Types.h>
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 #ifndef INCLUDES_DEVICETREE_H_
 #define INCLUDES_DEVICETREE_H_
 
@@ -39,3 +43,7 @@ void deviceTree_addChild(deviceTree_Entry* parent, deviceTree_Entry* toAttach);
 #define DEVICETREE_TYPE_OTHER       0xFFFFFFFF
 
 #endif // INCLUDES_DEVICETREE_H_
+
+#ifdef	__cplusplus
+}
+#endif

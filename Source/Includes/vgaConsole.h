@@ -9,6 +9,10 @@
 #ifndef __VGACONSOLE_H
 #define __VGACONSOLE_H
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 	void vgaConsole_clearScreen(void);
 	void vgaConsole_printf(const char* formatString, ...);
 	void vgaConsole_putChar(char c);
@@ -41,5 +45,9 @@
 	#define VGACONSOLE_LIGHT_MAGENTA	0xD
 	#define VGACONSOLE_LIGHT_BROWN		0xE
 	#define VGACONSOLE_WHITE		0xF
+
+#ifdef	__cplusplus
+}
+#endif
 
 #endif // __VGACONSOLE_H

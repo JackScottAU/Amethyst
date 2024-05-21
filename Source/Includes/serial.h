@@ -9,6 +9,10 @@
 
 #include <Types.h>
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 #define SERIAL_COM1         0x03F8
 #define SERIAL_COM2         0x02F8
 
@@ -32,5 +36,9 @@ void serial_writeChar(char a);
 
 void serial_writeString(const char* string);
 void serial_writeLine(const char* string);
+
+#ifdef	__cplusplus
+}
+#endif
 
 #endif // INCLUDES_SERIAL_H_

@@ -4,6 +4,10 @@
 #ifndef _INTERRUPTS_H
 #define _INTERRUPTS_H
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 //-- Public Data Structures --//
 	typedef struct interrupts_handlerCallback_s {
 		void (* funcToCall)(uint32 arbitraryNumber);
@@ -178,5 +182,9 @@
 	void interrupts_ISR_7D();
 	void interrupts_ISR_7E();
 	void interrupts_ISR_7F();
+
+	#ifdef	__cplusplus
+}
+#endif
 
 #endif

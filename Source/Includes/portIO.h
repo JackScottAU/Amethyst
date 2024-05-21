@@ -9,6 +9,10 @@
 
 	#include <Types.h>
 
+	#ifdef	__cplusplus
+extern "C" {
+#endif
+
 	/**
 	* Reads an 8-bit value from the specified port.
 	* @param portNumber Port to read from.
@@ -55,5 +59,9 @@
 	* Halts the CPU.
 	*/
 	void haltCPU(void);
+
+	#ifdef	__cplusplus
+}
+#endif
 
 #endif /* __PORTIO_H */

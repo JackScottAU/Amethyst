@@ -120,4 +120,7 @@ Step 4: Open for user sessions. Initialise services.
 User mode drivers
 I/O request packets
 Message passing
+    Ports
+    Fixed message size for simplicity, plus attached page of memory if needed
+    Can share memory pages if needed
 Microkernel 

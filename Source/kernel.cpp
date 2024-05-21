@@ -19,6 +19,13 @@
 #include <string.h>
 #include <deviceTree.h>
 #include <ps2controller.h>
+#include <cppsupport.hpp>
+
+#include "test.hpp"
+
+#ifdef	__cplusplus
+extern "C" {
+#endif
 
 //To shut GCC up.
 void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData);
@@ -94,6 +101,12 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	ps2controller_initialise();
 	deviceTree_build();
 
+	A2DD foo = A2DD(1,2);
+	A2DD foo2 = A2DD(44,4);
+
+	vgaConsole_printf("%d\n", foo.getSum());
+	vgaConsole_printf("%d", foo2.getSum());
+
 //	deviceTree_print(vgaConsole_putChar, false);
 
 	stream_printf(serial_writeChar, "Framebuffer address: %h\n", multibootData->framebuffer_addr);
@@ -131,6 +144,10 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 	
 	stream_printf(vgaConsole_putChar, "\n");
 
+	cpp_entry();
+
+	foo::bar::bob2();
+
 	while(1)
 	{
 		stream_printf(vgaConsole_putChar, "> ");
@@ -164,3 +181,7 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 		stream_printf(vgaConsole_putChar, "Unknown command.\n");
 	};
 }
+
+#ifdef	__cplusplus
+}
+#endif

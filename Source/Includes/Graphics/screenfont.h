@@ -9,6 +9,10 @@
 
 #include <Types.h>
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 typedef struct {
     uint32 magicBytes;
     uint32 version;
@@ -26,5 +30,9 @@ typedef struct {
 } ScreenFont;
 
 #define SCREENFONT_MAGIC 0x72B54A86
+
+#ifdef	__cplusplus
+}
+#endif
 
 #endif // INCLUDES_GRAPHICS_SCREENFONT_H_

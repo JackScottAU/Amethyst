@@ -8,6 +8,10 @@
 #ifndef __PCIBUS_H
 #define	__PCIBUS_H
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 	#include <Types.h>
 	#include <deviceTree.h>
 
@@ -39,6 +43,10 @@ uint32 pci_calculateRegisterAddress(uint8 bus, uint8 slot, uint8 function, uint8
 		uint8 classID;
 		struct pciBus_Entry_s* next;
 	} pciBus_Entry;
+
+#ifdef	__cplusplus
+}
+#endif
 
 #endif	/* __PCIBUS_H */
 

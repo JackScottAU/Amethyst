@@ -4,6 +4,10 @@
 #include <Types.h>
 #include <Structures/fifobuffer.h>
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 /**
  * Prints a formatted string to the specified putChar function (the putChar should take a single argument which is a char).
  * %d - decimal
@@ -22,6 +26,10 @@ typedef struct {
     FIFOBuffer* buffer;
     void (*flush)(char);
 } Stream;
+
+#ifdef	__cplusplus
+}
+#endif
 
 #endif // INCLUDES_STREAM_H_
 

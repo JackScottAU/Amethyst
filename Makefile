@@ -6,6 +6,7 @@ LD	:= i586-elf-gcc
 #Options:
 WARNINGS	:= -Wall -Wextra -pedantic -Wshadow -Wpointer-arith -Wcast-align -Wno-discarded-qualifiers -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wuninitialized -Wno-unused-parameter
 CFLAGS		:= -nostdlib -fno-builtin -nostartfiles -nodefaultlibs -I Source/Includes -std=c99 $(WARNINGS)
+CPPFLAGS	:= -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -I Source/Includes -nostdlib -fno-builtin -nostartfiles -nodefaultlibs
 
 #Top-level targets:
 .DEFAULT_GOAL := x86_32
@@ -40,13 +41,16 @@ resources:
 	@cp Resources/Fonts Build -r
 
 #Custom file build targets:
-Build/kernel32: Source/kernel.o Source/arch/x86_32/entry.o Source/library/fifobuffer.o Source/drivers/pci/deviceNames.o Source/drivers/ps2controller.o Source/arch/x86_32/rootDevice.o Source/stream.o Source/deviceTree.o Source/arch/x86_32/portIO.o Source/drivers/pciBus.o Source/drivers/keyboard.o Source/drivers/serial.o Source/drivers/vgaConsole.o Source/arch/x86_32/gdt.o Source/arch/x86_32/interrupts_setup.o Source/arch/x86_32/interrupts_handler.o Source/arch/x86_32/interrupts_stubs.o Source/Clock.o Source/memoryManager.o Source/string.o
+Build/kernel32: Source/kernel.o Source/arch/x86_32/entry.o Source/test.o Source/library/fifobuffer.o Source/drivers/pci/deviceNames.o Source/drivers/ps2controller.o Source/arch/x86_32/rootDevice.o Source/stream.o Source/deviceTree.o Source/arch/x86_32/portIO.o Source/drivers/pciBus.o Source/drivers/keyboard.o Source/drivers/serial.o Source/drivers/vgaConsole.o Source/arch/x86_32/gdt.o Source/arch/x86_32/interrupts_setup.o Source/arch/x86_32/interrupts_handler.o Source/arch/x86_32/interrupts_stubs.o Source/Clock.o Source/memoryManager.o Source/string.o
 	-@mkdir -p Build
 	@$(LD) -T Resources/Linker-Script.ld -ffreestanding -nostdlib -lgcc -o $@ $^
 
 # Object-file compilation rules:
 %.o: %.c
 	@$(CC) $(CFLAGS) -c $< -o $@
+
+%.o: %.cpp
+	@$(CC) $(CPPFLAGS) -c $< -o $@
 
 %.o: %.S
 	@$(AS) $(CFLAGS) -c $< -o $@
