@@ -24,13 +24,12 @@ char* stream_readLine(bool echoMode) {
     int i = 0;
 
     data[i] = keyboard_readChar();
-    if(echoMode)
-    {
+
+    if(echoMode) {
         vgaConsole_putChar(data[i]);
     }
 
     while(data[i] != '\n') {
-
         if(data[i] != '\b') {
             i++;
         } else {

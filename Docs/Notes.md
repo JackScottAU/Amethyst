@@ -100,6 +100,7 @@ Current Priorities:
 4. Device Tree
 5. Higher half kernel. (Half of paging)
 6. Generic linked list and tree structures 
+More paging
 7. Multitasking
 8. Client apps
 9. Device detector for IDE, floppy, etc

@@ -96,7 +96,7 @@ void vgaConsole_printf(const char* formatString, ...)
 					
 					vgaConsole_colour = storedColour;
 				} else {
-					//false,fail.
+					// false,fail.
 					uint8 storedColour = vgaConsole_colour;
 					
 					vgaConsole_setColour(VGACONSOLE_WHITE,VGACONSOLE_BLACK);

@@ -8,4 +8,4 @@
 
 ## Real Platforms
 
-  * Jack's Test x86_32 PC - "Katmai" (440LX/PIIX4)
+  * Jack's Test x86_32 PC - "Gresley" (440LX/PIIX4)
