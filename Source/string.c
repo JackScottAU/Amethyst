@@ -17,15 +17,14 @@ void string_copy(char *dest, const char* src) {
 }
 
 int string_compare(const char* a, const char* b) {
-    stream_printf(serial_writeChar,"here\n");
+    stream_printf(serial_writeChar, "here\n");
 
     while (*a && *a == *b) {
-        stream_printf(serial_writeChar,"a: %h, b: %h\n",*a,*b);
+        stream_printf(serial_writeChar, "a: %h, b: %h\n", *a, *b);
          ++a; ++b;
     }
 
-    
-    stream_printf(serial_writeChar,"a: %h, b: %h\n",*a,*b);
+    stream_printf(serial_writeChar, "a: %h, b: %h\n", *a, *b);
 
     stream_printf(serial_writeChar, "%d\n", (int)(unsigned char)(*a) - (int)(unsigned char)(*b));
 

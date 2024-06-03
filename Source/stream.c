@@ -25,29 +25,29 @@ char* stream_readLine(bool echoMode) {
 
     data[i] = keyboard_readChar();
 
-    if(echoMode) {
+    if (echoMode) {
         vgaConsole_putChar(data[i]);
     }
 
-    while(data[i] != '\n') {
-        if(data[i] != '\b') {
+    while (data[i] != '\n') {
+        if (data[i] != '\b') {
             i++;
         } else {
             // backspace handling.
             i--;
-            if(i < 0) {
+            if (i < 0) {
                 break;
             }
         }
 
         data[i] = keyboard_readChar();
-        if(echoMode)
-        {
+
+        if (echoMode) {
             vgaConsole_putChar(data[i]);
         }
     }
 
-    data[i] = 0; // end string.
+    data[i] = 0;    // end string.
     return data;
 }
 

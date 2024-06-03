@@ -1,3 +1,9 @@
+/**
+ *  Synergy Operating System - List of PCI device names.
+ *  Copyright 2024 Jack Scott <jack@jackscott.id.au>.
+ *  Released under the terms of the ISC license.
+*/
+
 #include "deviceNames.h"
 
 struct pci_deviceName {

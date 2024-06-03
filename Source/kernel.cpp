@@ -163,6 +163,23 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 			stream_printf(vgaConsole_putChar, "Stepping: %h\n", cpuid.getStepping());
 			continue;
 		}
+		
+		if(string_compare(line, "Show-GDT") == 0) {
+			stream_printf(vgaConsole_putChar, "gdt address: %h\n", gdt_table);
+
+			for(int i = 0; i < 6; i++)
+			{
+				uint32 base = (gdt_table[i].base_high << 24) + gdt_table[i].base_low;
+				uint32 limit = (gdt_table[i].limit_high << 16) + gdt_table[i].limit_low;
+
+				stream_printf(vgaConsole_putChar, "Base: %h\n", base);
+				stream_printf(vgaConsole_putChar, "Limit: %h\n", limit);
+				
+				stream_printf(vgaConsole_putChar, "Code: %h\n", gdt_table[i].code);
+				stream_printf(vgaConsole_putChar, "DPL: %h\n\n", gdt_table[i].DPL);
+			}
+			continue;
+		}
 
 		if(string_compare(line, "Shutdown") == 0) {
 			stream_printf(vgaConsole_putChar, "Shutting down...\n");

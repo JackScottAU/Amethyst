@@ -26,21 +26,21 @@ memoryManager_freeMemoryNode* memoryManager_firstFreeNode = (memoryManager_freeM
 void* memoryManager_allocate(uint32 size)
 {
 	//TODO: Switch from a first-fit to a best-fit algorithm.
-	
+
 	//A pointer to the header that is before the allocated block.
 	//We allocate space for this header once we have found a free space for it.
 	memoryManager_allocatedHeader* memoryHeader;
-	
+
 	//A pointer to the list of free memory spaces.
 	memoryManager_freeMemoryNode* current = memoryManager_firstFreeNode;
-	
+
 	//Once we have traversed the list, this pointer holds the best free memory space.
 	memoryManager_freeMemoryNode* chosen = (memoryManager_freeMemoryNode*) END_OF_MEMORY_LIST;
-	
+
 	//If the size requested is small enough that it can't be freed safely, make it so it is.
 	if(size<(sizeof(memoryManager_freeMemoryNode)+4))
 		size = sizeof(memoryManager_freeMemoryNode) + 4;
-	
+
 	//Traverse the list.
 	while((uint32) current != END_OF_MEMORY_LIST)
 	{
@@ -212,17 +212,17 @@ uint32 memoryManager_findEndOfReservedMemory(struct multiboot_moduleNode* module
  */
 void memoryManager_debug_printFreeMemoryList(void)
 {
-	uint32 total = 0;
-	
-	memoryManager_freeMemoryNode* current = memoryManager_firstFreeNode;
-	while((uint32) current != END_OF_MEMORY_LIST)
-	{
-		vgaConsole_printf("Free memory block: %h (start) ... %h (length) (%h)\n",(uint32)current->address, (uint32)current->length, current);
-		
-		total += current->length;
-		
-		current = current->next;
-	}
-	
-	vgaConsole_printf("Available memory:\t%h\n",total);
+    uint32 total = 0;
+
+    memoryManager_freeMemoryNode* current = memoryManager_firstFreeNode;
+    while((uint32) current != END_OF_MEMORY_LIST)
+    {
+        vgaConsole_printf("Free memory block: %h (start) ... %h (length) (%h)\n",(uint32)current->address, (uint32)current->length, current);
+        
+        total += current->length;
+        
+        current = current->next;
+        }
+
+    vgaConsole_printf("Available memory:\t%h\n",total);
 }
