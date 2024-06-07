@@ -14,10 +14,7 @@ CPPFLAGS	:= -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -I Source
 
 clean:
 	-@rm -rf Build
-	-@rm -rf Source/*.o
-	-@rm -rf Source/drivers/*.o
-	-@rm -rf Source/library/*.o
-	-@rm -rf Source/arch/x86_32/*.o
+	-@find . -name \*.o -type f -delete
 	-@rm -f  Amethyst.iso
 
 x86_32: clean qemu-x86_32
@@ -41,7 +38,7 @@ resources:
 	@cp Resources/Fonts Build -r
 
 #Custom file build targets:
-Build/kernel32: Source/kernel.o Source/arch/x86_32/entry.o Source/cpuid.o Source/library/fifobuffer.o Source/drivers/pci/deviceNames.o Source/drivers/ps2controller.o Source/arch/x86_32/rootDevice.o Source/stream.o Source/deviceTree.o Source/arch/x86_32/portIO.o Source/drivers/pciBus.o Source/drivers/keyboard.o Source/drivers/serial.o Source/drivers/vgaConsole.o Source/arch/x86_32/gdt.o Source/arch/x86_32/interrupts_setup.o Source/arch/x86_32/interrupts_handler.o Source/arch/x86_32/interrupts_stubs.o Source/Clock.o Source/memoryManager.o Source/string.o
+Build/kernel32: Source/arch/x86_32/entry.o Source/kernel.o Source/cpuid.o Source/library/fifobuffer.o Source/drivers/pci/deviceNames.o Source/drivers/ps2controller.o Source/arch/x86_32/rootDevice.o Source/stream.o Source/deviceTree.o Source/arch/x86_32/portIO.o Source/drivers/pciBus.o Source/drivers/keyboard.o Source/drivers/serial.o Source/drivers/vgaConsole.o Source/arch/x86_32/gdt.o Source/arch/x86_32/interrupts_setup.o Source/arch/x86_32/interrupts_handler.o Source/arch/x86_32/interrupts_stubs.o Source/Clock.o Source/memoryManager.o Source/string.o
 	-@mkdir -p Build
 	@$(LD) -T Resources/Linker-Script.ld -ffreestanding -nostdlib -lgcc -o $@ $^
 

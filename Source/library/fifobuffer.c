@@ -23,16 +23,16 @@ uint32 FIFOBuffer_WriteBytes(FIFOBuffer* buffer, uint8* data, uint32 size) {
     uint32 i;
     const uint8 * p;
     p = data;
-    for(i=0; i < size; i++){
+    for (i = 0; i < size; i++) {
         //first check to see if there is space in the buffer
         if( (buffer->writeIndex + 1 == buffer->readIndex) ||
-            ( (buffer->writeIndex + 1 == buffer->size) && (buffer->readIndex == 0) )){
+            ( (buffer->writeIndex + 1 == buffer->size) && (buffer->readIndex == 0) )) {
                 return i; //no more room
         } else {
             buffer->buffer[buffer->writeIndex] = *p++;
             buffer->writeIndex++;  //increment the head
             
-            if( buffer->writeIndex == buffer->size ){  //check for wrap-around
+            if( buffer->writeIndex == buffer->size ) {  //check for wrap-around
                 buffer->writeIndex = 0;
             }
         }
@@ -45,8 +45,8 @@ uint32 FIFOBuffer_ReadBytes(FIFOBuffer* buffer, uint8* data, uint32 size) {
     uint32 i;
     uint8 * p;
     p = data;
-    for(i=0; i < size; i++){
-        if( buffer->readIndex != buffer->writeIndex ){ //see if any data is available
+    for (i = 0; i < size; i++) {
+        if( buffer->readIndex != buffer->writeIndex ) { //see if any data is available
             *p++ = buffer->buffer[buffer->readIndex];  //grab a byte from the buffer
             buffer->readIndex++;  //increment the tail
             if( buffer->readIndex == buffer->size ){  //check for wrap-around
