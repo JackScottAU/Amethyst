@@ -15,7 +15,7 @@ Immediate TODO list:
 
 * Docs/ - contains documentation.
 * Applications/ - Git submodules for user-mode applications.
-* Resources/ - third-party code like GRUB etc.
+* Resources/ - third-party code like GRUB etc, and other non-source files for the disk image.
 * Source/ - Source code files to build the kernel.
     * arch/ - architecture-dependent stuff
 	    * x86_32/ - files for x86
@@ -125,3 +125,9 @@ Message passing
     Fixed message size for simplicity, plus attached page of memory if needed
     Can share memory pages if needed
 Microkernel 
+
+## Config
+
+Config object model (like browser's document object model). 
+Base config set in header files or something, baked in to kernel.
+Config loaded from disk in xml format (hard to parse, but fully capable of s-expressions so can handle any arbitrary config) into COM.

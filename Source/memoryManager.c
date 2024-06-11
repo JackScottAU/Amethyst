@@ -185,8 +185,6 @@ void memoryManager_init(struct multiboot_memoryMapNode* memNode, uint32 length, 
 
 uint32 memoryManager_findEndOfReservedMemory(struct multiboot_moduleNode* module, uint32 count)
 {
-    module = (struct multiboot_moduleNode*)((uint32)module + 0xC0000000);
-
     uint32 endOfReservedMemory = (uint32) &_kernel_end;
     
     for(uint32 i = 0; i < count; i++)

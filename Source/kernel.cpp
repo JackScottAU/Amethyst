@@ -1,8 +1,8 @@
 /**
- * kernel.c - Kernel initialisation functions.
- * Part of the Synergy operating system.
- * Licensed under the ISC license.
- */
+ *  Amethyst Operating System - Core kernel initialisation.
+ *  Copyright 2024 Jack Scott <jack@jackscott.id.au>.
+ *  Released under the terms of the ISC license.
+*/
 
 #include <Clock.h>
 #include <GDT.h>
@@ -34,6 +34,15 @@ void kernel_printBanner(void);
 
 struct multiboot_info* multiboot_correctDataStructureAddresses(struct multiboot_info* data) {
 	data = (struct multiboot_info*)(((uint32) data) + 0xC0000000);
+	
+	data->modsAddr = (multiboot_moduleNode*)((uint32)(data->modsAddr) + (uint32)0xC0000000);
+
+	// For each multiboot module, update the provided (physical) address so it is in (logical) kernel memory according to our paging rules.
+	for (int i = 0; i < data->modsCount; i++) {
+		data->modsAddr[i].start = (void*)((uint32)data->modsAddr[i].start + 0xC0000000);
+		data->modsAddr[i].end = (void*)((uint32)data->modsAddr[i].end + 0xC0000000);
+		data->modsAddr[i].string = (char*)((uint32)data->modsAddr[i].string + 0xC0000000);
+	}
 
 	return data;
 }

@@ -1,5 +1,25 @@
 # Memory Management
 
+## Physical Memory Layout
+
+The first four megabytes (one page table) are always mapped into kernel space. 
+
+## Virtual Memory Layout
+
+0GB to 3GB is user space.
+3GB to 4GB is kernel space (and is the same in every process).
+
+### Boot Page Directory
+
+The first page directory loaded during boot maps 0MB to 4MB physical to both:
+	0MB to 4MB virtual
+	3GB to 3.004GB virtual
+
+
+
+
+## Old Notes
+
 IGNORE EVERYTHING BELOW - IT'S OUT OF DATE.
 
 Synergy OS uses amazingly simple memory management. Everything uses physical 

@@ -1,5 +1,5 @@
 /**
- *  Synergy Operating System - Stream input/output functions.
+ *  Amethyst Operating System - Stream input/output functions.
  *  Copyright 2024 Jack Scott <jack@jackscott.id.au>.
  *  Released under the terms of the ISC license.
 */
