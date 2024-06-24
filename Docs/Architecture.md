@@ -7,7 +7,7 @@ The kernel will be a microkernel. Drivers will exist in userland.
 The kernel will present three different APIs to the userland:
  - Driver API
  - POSIX API
- - Synergy Native API
+ - Amethyst Native API
 
 All three will use the same ABI (kernel will provide all calls for all processes) but statically linked library will be different.
 

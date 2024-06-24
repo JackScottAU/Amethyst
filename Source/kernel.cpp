@@ -23,41 +23,42 @@
 
 #include <cpuid.hpp>
 
-#ifdef	__cplusplus
+#ifdef    __cplusplus
 extern "C" {
 #endif
 
-//To shut GCC up.
+// To shut GCC up.
 void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData);
 struct multiboot_info* multiboot_correctDataStructureAddresses(struct multiboot_info* data);
 void kernel_printBanner(void);
 
 struct multiboot_info* multiboot_correctDataStructureAddresses(struct multiboot_info* data) {
-	data = (struct multiboot_info*)(((uint32) data) + 0xC0000000);
-	
-	data->modsAddr = (multiboot_moduleNode*)((uint32)(data->modsAddr) + (uint32)0xC0000000);
+    data = (struct multiboot_info*)(((uint32) data) + 0xC0000000);
 
-	// For each multiboot module, update the provided (physical) address so it is in (logical) kernel memory according to our paging rules.
-	for (int i = 0; i < data->modsCount; i++) {
-		data->modsAddr[i].start = (void*)((uint32)data->modsAddr[i].start + 0xC0000000);
-		data->modsAddr[i].end = (void*)((uint32)data->modsAddr[i].end + 0xC0000000);
-		data->modsAddr[i].string = (char*)((uint32)data->modsAddr[i].string + 0xC0000000);
-	}
+    data->modsAddr = (multiboot_moduleNode*)((uint32)(data->modsAddr) + (uint32)0xC0000000);
 
-	return data;
+    // For each multiboot module, update the provided (physical) address so it is in (logical) kernel memory according
+    // to our paging rules.
+    for (uint32 i = 0; i < data->modsCount; i++) {
+        data->modsAddr[i].start = (void*)((uint32)data->modsAddr[i].start + 0xC0000000);
+        data->modsAddr[i].end = (void*)((uint32)data->modsAddr[i].end + 0xC0000000);
+        data->modsAddr[i].string = (char*)((uint32)data->modsAddr[i].string + 0xC0000000);
+    }
+
+    return data;
 }
 
 void kernel_printBanner(void) {
-	vgaConsole_setColour(VGACONSOLE_MAGENTA, VGACONSOLE_BLACK);
+    vgaConsole_setColour(VGACONSOLE_MAGENTA, VGACONSOLE_BLACK);
 
-	vgaConsole_printf("\n\t          _                   _   _               _   \n");
-	vgaConsole_printf("\t         / \\   _ __ ___   ___| |_| |__  _   _ ___| |_ \n");
-	vgaConsole_printf("\t        / _ \\ | '_ ` _ \\ / _ \\ __| '_ \\| | | / __| __|\n");
-	vgaConsole_printf("\t       / ___ \\| | | | | |  __/ |_| | | | |_| \\__ \\ |_ \n");
-	vgaConsole_printf("\t      /_/   \\_\\_| |_| |_|\\___|\\__|_| |_|\\__, |___/\\__|\n");
-	vgaConsole_printf("\t                                        |___/         \n\n");
+    vgaConsole_printf("\n\t          _                   _   _               _   \n");
+    vgaConsole_printf("\t         / \\   _ __ ___   ___| |_| |__  _   _ ___| |_ \n");
+    vgaConsole_printf("\t        / _ \\ | '_ ` _ \\ / _ \\ __| '_ \\| | | / __| __|\n");
+    vgaConsole_printf("\t       / ___ \\| | | | | |  __/ |_| | | | |_| \\__ \\ |_ \n");
+    vgaConsole_printf("\t      /_/   \\_\\_| |_| |_|\\___|\\__|_| |_|\\__, |___/\\__|\n");
+    vgaConsole_printf("\t                                        |___/         \n\n");
 
-	vgaConsole_setColour(VGACONSOLE_LIGHT_GREY, VGACONSOLE_BLACK);
+    vgaConsole_setColour(VGACONSOLE_LIGHT_GREY, VGACONSOLE_BLACK);
 }
 
 /**
@@ -65,149 +66,145 @@ void kernel_printBanner(void) {
  * @param magicNumber The check number passed from the multiboot loader.
  * @param multibootData The info data structure passed from the multiboot loader.
  */
-void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
-{
-	vgaConsole_initialise();
-	vgaConsole_clearScreen();
+void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData) {
+    vgaConsole_initialise();
+    vgaConsole_clearScreen();
 
-	kernel_printBanner();
-	
-	vgaConsole_printf("Checking Multiboot data...\t\t\t\t\t\t");
-	if(magicNumber != MULTIBOOT_MAGIC_NUMBER)
-	{
-		vgaConsole_printf("\nMultiboot error found. Halting...");
-		interrupts_disableInterrupts();
-		haltCPU();
-	} else {
-		multibootData = multiboot_correctDataStructureAddresses(multibootData);
-	}
-	vgaConsole_printf("%s",1);
-	
-	vgaConsole_printf("Loading a GDT...\t\t\t\t\t\t\t");
-	gdt_install();
-	vgaConsole_printf("%s",1);
-	
-	vgaConsole_printf("Setting up interrupts...\t\t\t\t\t\t");
-	interrupts_initialise();
-	vgaConsole_printf("%s",1);
-	
-	vgaConsole_printf("Setting up the memory manager...\t\t\t\t\t");
-	memoryManager_init(multibootData->memoryMapAddress, multibootData->memoryMapLength, (uint32) memoryManager_findEndOfReservedMemory(multibootData->modsAddr, multibootData->modsCount));
-	vgaConsole_printf("%s",1);
-	
-	vgaConsole_printf("Enumerating PCI buses...\t\t\t\t\t\t");
-	pci_enumerateBuses();
-	vgaConsole_printf("%s",1);
+    kernel_printBanner();
 
-	
-	serial_init(SERIAL_COM1, SERIAL_BAUD_38400);
-	serial_writeLine("Amethyst Debugging Information:");
-	
-	vgaConsole_printf("Setting up the clock...\t\t\t\t\t\t\t");
-	clock_init();
-	vgaConsole_printf("%s",1);
+    vgaConsole_printf("Checking Multiboot data...\t\t\t\t\t\t");
+    if (magicNumber != MULTIBOOT_MAGIC_NUMBER) {
+        vgaConsole_printf("\nMultiboot error found. Halting...");
+        interrupts_disableInterrupts();
+        haltCPU();
+    } else {
+        multibootData = multiboot_correctDataStructureAddresses(multibootData);
+    }
+    vgaConsole_printf("%s", 1);
 
-	ps2controller_initialise();
-	deviceTree_build();
+    vgaConsole_printf("Loading a GDT...\t\t\t\t\t\t\t");
+    gdt_install();
+    vgaConsole_printf("%s", 1);
 
-//	deviceTree_print(vgaConsole_putChar, false);
+    vgaConsole_printf("Setting up interrupts...\t\t\t\t\t\t");
+    interrupts_initialise();
+    vgaConsole_printf("%s", 1);
 
-	stream_printf(serial_writeChar, "Framebuffer address: %h\n", multibootData->framebuffer_addr);
-	stream_printf(serial_writeChar, "Framebuffer pitch: %h\n", multibootData->framebuffer_pitch);
-	stream_printf(serial_writeChar, "Framebuffer width: %h\n", multibootData->framebuffer_width);
-	stream_printf(serial_writeChar, "Framebuffer height: %h\n", multibootData->framebuffer_height);
-	stream_printf(serial_writeChar, "Framebuffer bpp: %h\n", multibootData->framebuffer_bpp);
-	stream_printf(serial_writeChar, "Framebuffer type: %h\n", multibootData->framebuffer_type);
+    vgaConsole_printf("Setting up the memory manager...\t\t\t\t\t");
+    memoryManager_init(multibootData->memoryMapAddress, multibootData->memoryMapLength,
+        (uint32) memoryManager_findEndOfReservedMemory(multibootData->modsAddr, multibootData->modsCount));
+    vgaConsole_printf("%s", 1);
 
-	//stream_printf(serial_writeChar, "Module start: %h\n", multibootData->modsAddr->start);
-	//stream_printf(serial_writeChar, "Module end: %h\n", multibootData->modsAddr->end);
+    vgaConsole_printf("Enumerating PCI buses...\t\t\t\t\t\t");
+    pci_enumerateBuses();
+    vgaConsole_printf("%s", 1);
 
-/*	Canvas* canvas = memoryManager_allocate(sizeof(Canvas));
-	canvas->framebuffer = (void*)multibootData->framebuffer_addr;
-	canvas->height = multibootData->framebuffer_height;
-	canvas->width = multibootData->framebuffer_width;
+    serial_init(SERIAL_COM1, SERIAL_BAUD_38400);
+    serial_writeLine("Amethyst Debugging Information:");
 
-	ScreenFont* font = memoryManager_allocate(sizeof(ScreenFont));
-	font->header = multibootData->modsAddr->start;
-	font->characterData = (uint8*)(font->header) + font->header->headerSize;
+    vgaConsole_printf("Setting up the clock...\t\t\t\t\t\t\t");
+    clock_init();
+    vgaConsole_printf("%s", 1);
 
-	stream_printf(serial_writeChar, "header: %h\n", font->header);
-	stream_printf(serial_writeChar, "header size: %h\n", font->header->headerSize);
-	stream_printf(serial_writeChar, "char data: %h\n", font->characterData);
+    ps2controller_initialise();
+    deviceTree_build();
 
-	vga_drawRect(canvas, 200, 200, 500, 300, 0x00888888);
+//  deviceTree_print(vgaConsole_putChar, false);
 
-	vga_drawRect(canvas, 204, 224, 500 - 8, 300 - 28, 0x008888FF);
-	vga_drawRect(canvas, 200 + 500 - 20, 200 + 4, 16, 16, 0x00444444);
-	
-	vga_drawWord(canvas, font, 204, 204, 0xCCCCFF, "Amethyst OS");
+    stream_printf(serial_writeChar, "Framebuffer address: %h\n", multibootData->framebuffer_addr);
+    stream_printf(serial_writeChar, "Framebuffer pitch: %h\n", multibootData->framebuffer_pitch);
+    stream_printf(serial_writeChar, "Framebuffer width: %h\n", multibootData->framebuffer_width);
+    stream_printf(serial_writeChar, "Framebuffer height: %h\n", multibootData->framebuffer_height);
+    stream_printf(serial_writeChar, "Framebuffer bpp: %h\n", multibootData->framebuffer_bpp);
+    stream_printf(serial_writeChar, "Framebuffer type: %h\n", multibootData->framebuffer_type);
 
-	vga_drawWord(canvas, font, 204, 224, 0xCCCCFF, "This is by far the worst operating system you've ever seen.");
-	vga_drawWord(canvas, font, 204, 240, 0xCCFFCC, "Ah... but you have seen it.");*/
-	
-	stream_printf(vgaConsole_putChar, "\n");
+//  stream_printf(serial_writeChar, "Module start: %h\n", multibootData->modsAddr->start);
+//  stream_printf(serial_writeChar, "Module end: %h\n", multibootData->modsAddr->end);
 
-	CPUID cpuid = CPUID();
+/*    Canvas* canvas = memoryManager_allocate(sizeof(Canvas));
+    canvas->framebuffer = (void*)multibootData->framebuffer_addr;
+    canvas->height = multibootData->framebuffer_height;
+    canvas->width = multibootData->framebuffer_width;
 
-	while(1)
-	{
-		stream_printf(vgaConsole_putChar, "> ");
+    ScreenFont* font = memoryManager_allocate(sizeof(ScreenFont));
+    font->header = multibootData->modsAddr->start;
+    font->characterData = (uint8*)(font->header) + font->header->headerSize;
 
-		char* line = stream_readLine(true);
+    stream_printf(serial_writeChar, "header: %h\n", font->header);
+    stream_printf(serial_writeChar, "header size: %h\n", font->header->headerSize);
+    stream_printf(serial_writeChar, "char data: %h\n", font->characterData);
 
-		if(string_compare(line, "Get-DeviceTree") == 0) {
-			deviceTree_print(vgaConsole_putChar, true);
-			continue;
-		}
-		
-		if(string_compare(line, "Get-Time") == 0) {
-			stream_printf(vgaConsole_putChar, "Time: %h\n", clock_uptime());
-			continue;
-		}
-		
-		if(string_compare(line, "Get-CpuInformation") == 0) {
-			stream_printf(vgaConsole_putChar, "Manufacturer: %s\n", cpuid.getManufacturerString());
-			stream_printf(vgaConsole_putChar, "Family: %h\n", cpuid.getFamily());
-			stream_printf(vgaConsole_putChar, "Model: %h\n", cpuid.getModel());
-			stream_printf(vgaConsole_putChar, "Stepping: %h\n", cpuid.getStepping());
-			continue;
-		}
-		
-		if(string_compare(line, "Show-GDT") == 0) {
-			stream_printf(vgaConsole_putChar, "gdt address: %h\n", gdt_table);
+    vga_drawRect(canvas, 200, 200, 500, 300, 0x00888888);
 
-			for(int i = 0; i < 6; i++)
-			{
-				uint32 base = (gdt_table[i].base_high << 24) + gdt_table[i].base_low;
-				uint32 limit = (gdt_table[i].limit_high << 16) + gdt_table[i].limit_low;
+    vga_drawRect(canvas, 204, 224, 500 - 8, 300 - 28, 0x008888FF);
+    vga_drawRect(canvas, 200 + 500 - 20, 200 + 4, 16, 16, 0x00444444);
+    
+    vga_drawWord(canvas, font, 204, 204, 0xCCCCFF, "Amethyst OS");
 
-				stream_printf(vgaConsole_putChar, "Base: %h\n", base);
-				stream_printf(vgaConsole_putChar, "Limit: %h\n", limit);
-				
-				stream_printf(vgaConsole_putChar, "Code: %h\n", gdt_table[i].code);
-				stream_printf(vgaConsole_putChar, "DPL: %h\n\n", gdt_table[i].DPL);
-			}
-			continue;
-		}
+    vga_drawWord(canvas, font, 204, 224, 0xCCCCFF, "This is by far the worst operating system you've ever seen.");
+    vga_drawWord(canvas, font, 204, 240, 0xCCFFCC, "Ah... but you have seen it.");*/
 
-		if(string_compare(line, "Shutdown") == 0) {
-			stream_printf(vgaConsole_putChar, "Shutting down...\n");
-			interrupts_disableInterrupts();
-			stream_printf(vgaConsole_putChar, "It is now safe to turn off your PC.");
-			haltCPU();
-			break;
-		}
+    stream_printf(vgaConsole_putChar, "\n");
 
-		if(string_compare(line, "Get-PciDetails") == 0) {
-			pci_printBuses();
-			continue;
-		}
+    CPUID cpuid = CPUID();
 
-		// None of the built-in commands match the input.
-		stream_printf(vgaConsole_putChar, "Unknown command.\n");
-	};
+    while (1) {
+        stream_printf(vgaConsole_putChar, "> ");
+
+        char* line = stream_readLine(true);
+
+        if (string_compare(line, "Get-DeviceTree") == 0) {
+            deviceTree_print(vgaConsole_putChar, true);
+            continue;
+        }
+
+        if (string_compare(line, "Get-Time") == 0) {
+            stream_printf(vgaConsole_putChar, "Time: %h\n", clock_uptime());
+            continue;
+        }
+
+        if (string_compare(line, "Get-CpuInformation") == 0) {
+            stream_printf(vgaConsole_putChar, "Manufacturer: %s\n", cpuid.getManufacturerString());
+            stream_printf(vgaConsole_putChar, "Family: %h\n", cpuid.getFamily());
+            stream_printf(vgaConsole_putChar, "Model: %h\n", cpuid.getModel());
+            stream_printf(vgaConsole_putChar, "Stepping: %h\n", cpuid.getStepping());
+            continue;
+        }
+
+        if (string_compare(line, "Show-GDT") == 0) {
+            stream_printf(vgaConsole_putChar, "gdt address: %h\n", gdt_table);
+
+            for (int i = 0; i < 6; i++) {
+                uint32 base = (gdt_table[i].base_high << 24) + gdt_table[i].base_low;
+                uint32 limit = (gdt_table[i].limit_high << 16) + gdt_table[i].limit_low;
+
+                stream_printf(vgaConsole_putChar, "Base: %h\n", base);
+                stream_printf(vgaConsole_putChar, "Limit: %h\n", limit);
+
+                stream_printf(vgaConsole_putChar, "Code: %h\n", gdt_table[i].code);
+                stream_printf(vgaConsole_putChar, "DPL: %h\n\n", gdt_table[i].DPL);
+            }
+            continue;
+        }
+
+        if (string_compare(line, "Shutdown") == 0) {
+            stream_printf(vgaConsole_putChar, "Shutting down...\n");
+            interrupts_disableInterrupts();
+            stream_printf(vgaConsole_putChar, "It is now safe to turn off your PC.");
+            haltCPU();
+            break;
+        }
+
+        if (string_compare(line, "Get-PciDetails") == 0) {
+            pci_printBuses();
+            continue;
+        }
+
+        // None of the built-in commands match the input.
+        stream_printf(vgaConsole_putChar, "Unknown command.\n");
+    }
 }
 
-#ifdef	__cplusplus
+#ifdef    __cplusplus
 }
 #endif

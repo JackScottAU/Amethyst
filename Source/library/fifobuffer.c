@@ -24,15 +24,15 @@ uint32 FIFOBuffer_WriteBytes(FIFOBuffer* buffer, uint8* data, uint32 size) {
     const uint8 * p;
     p = data;
     for (i = 0; i < size; i++) {
-        //first check to see if there is space in the buffer
-        if( (buffer->writeIndex + 1 == buffer->readIndex) ||
+        // first check to see if there is space in the buffer
+        if ( (buffer->writeIndex + 1 == buffer->readIndex) ||
             ( (buffer->writeIndex + 1 == buffer->size) && (buffer->readIndex == 0) )) {
-                return i; //no more room
+                return i;  // no more room
         } else {
             buffer->buffer[buffer->writeIndex] = *p++;
-            buffer->writeIndex++;  //increment the head
-            
-            if( buffer->writeIndex == buffer->size ) {  //check for wrap-around
+            buffer->writeIndex++;  // increment the head
+
+            if ( buffer->writeIndex == buffer->size ) {  // check for wrap-around
                 buffer->writeIndex = 0;
             }
         }
@@ -46,14 +46,14 @@ uint32 FIFOBuffer_ReadBytes(FIFOBuffer* buffer, uint8* data, uint32 size) {
     uint8 * p;
     p = data;
     for (i = 0; i < size; i++) {
-        if( buffer->readIndex != buffer->writeIndex ) { //see if any data is available
-            *p++ = buffer->buffer[buffer->readIndex];  //grab a byte from the buffer
-            buffer->readIndex++;  //increment the tail
-            if( buffer->readIndex == buffer->size ){  //check for wrap-around
+        if ( buffer->readIndex != buffer->writeIndex ) {    // see if any data is available
+            *p++ = buffer->buffer[buffer->readIndex];  // grab a byte from the buffer
+            buffer->readIndex++;  // increment the tail
+            if (buffer->readIndex == buffer->size) {  // check for wrap-around
                 buffer->readIndex = 0;
             }
         } else {
-            return i; //number of bytes read
+            return i;   // number of bytes read
         }
     }
 
@@ -61,11 +61,11 @@ uint32 FIFOBuffer_ReadBytes(FIFOBuffer* buffer, uint8* data, uint32 size) {
 }
 
 uint32 FIFOBuffer_ContentsSize(FIFOBuffer* buffer) {
-    if(buffer->readIndex == buffer->writeIndex) {
+    if (buffer->readIndex == buffer->writeIndex) {
         return 0;
     }
 
-    if(buffer->readIndex > buffer->writeIndex) {
+    if (buffer->readIndex > buffer->writeIndex) {
         return buffer->readIndex - buffer->writeIndex;
     }
 

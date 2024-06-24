@@ -145,13 +145,13 @@ char serial_readByte() {
 
 int is_transmit_empty(void);
 int is_transmit_empty() {
-   return portIO_read8(SERIAL_COM1 + 5) & 0x20;
+    return portIO_read8(SERIAL_COM1 + 5) & 0x20;
 }
 
 void serial_writeChar(char a) {
-   while (is_transmit_empty() == 0);
+    while (is_transmit_empty() == 0) { }
  
-   portIO_write8(SERIAL_COM1,a);
+    portIO_write8(SERIAL_COM1,a);
 }
 
 void serial_writeString(const char* string) {

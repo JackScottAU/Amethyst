@@ -24,7 +24,7 @@ kernel-x86_32: Build/kernel32
 image-x86_32: cd-image
 
 lint:
-	@cpplint --quiet --recursive --linelength=120 --filter=-readability/casting --root=Source Source
+	@cpplint --quiet --recursive --linelength=120 --filter=-readability/casting,-build/include_order --root=Source Source
 
 qemu-x86_32: image-x86_32
 	@qemu-system-i386 -cpu pentium -m 16 -no-reboot -drive format=raw,media=cdrom,file=Amethyst.iso -vga std -serial stdio

@@ -68,11 +68,13 @@ void* memoryManager_allocate(uint32 size) {
  * @param mem The first usable byte (after the header) of the allocated memory block.
  */
 void memoryManager_free(void* mem) {
-    memoryManager_allocatedHeader* allocatedHeader = (memoryManager_allocatedHeader*) ((uint32)mem- sizeof(memoryManager_allocatedHeader));
+    memoryManager_allocatedHeader* allocatedHeader =
+        (memoryManager_allocatedHeader*) ((uint32)mem- sizeof(memoryManager_allocatedHeader));
 
     int size = allocatedHeader->size + sizeof(memoryManager_allocatedHeader);
 
-    memoryManager_freeMemoryNode* node = (memoryManager_freeMemoryNode*) ((uint32)mem- sizeof(memoryManager_allocatedHeader));
+    memoryManager_freeMemoryNode* node =
+        (memoryManager_freeMemoryNode*) ((uint32)mem- sizeof(memoryManager_allocatedHeader));
 
     node->address = (uint32) node + sizeof(memoryManager_freeMemoryNode);
     node->length = size - sizeof(memoryManager_freeMemoryNode);
@@ -201,7 +203,8 @@ void memoryManager_debug_printFreeMemoryList(void) {
 
     memoryManager_freeMemoryNode* current = memoryManager_firstFreeNode;
     while ((uint32) current != END_OF_MEMORY_LIST) {
-        vgaConsole_printf("Free memory block: %h (start) ... %h (length) (%h)\n", (uint32)current->address, (uint32)current->length, current);
+        vgaConsole_printf("Free memory block: %h (start) ... %h (length) (%h)\n",
+            (uint32)current->address, (uint32)current->length, current);
 
         total += current->length;
 
