@@ -19,8 +19,8 @@
 #include <serial.h>
 
 // These are defined here and not in .h because they are only relevant to implementation.
-#define VGACONSOLE_HEIGHT   25    	// Defines the height of the screen in characters.
-#define VGACONSOLE_WIDTH	80    	// Defines the width of the screen in characters.
+#define VGACONSOLE_HEIGHT   25    // Defines the height of the screen in characters.
+#define VGACONSOLE_WIDTH    80    // Defines the width of the screen in characters.
 
 /** Holds the base address of the text area for the VGA controller. */
 uint16* vgaConsole_videoMemory    = (uint16*) 0xC00B8000;
@@ -55,8 +55,9 @@ void vgaConsole_clearScreen(void) {
     uint16 blank = 0x20 | (vgaConsole_colour << 8);
 
     // Copy this repeatedly to video memory, to cover the whole screen.
-    for(int i = 0; i < VGACONSOLE_HEIGHT * VGACONSOLE_WIDTH; i++)
+    for (int i = 0; i < VGACONSOLE_HEIGHT * VGACONSOLE_WIDTH; i++) {
         vgaConsole_videoMemory[i] = blank;
+    }
 
     // Update the location of the cursor on screen.
     vgaConsole_cursorX = 0;
@@ -73,66 +74,66 @@ void vgaConsole_printf(const char* formatString, ...) {
     int i = 0;
     int arg;
 
-    va_start(args,formatString);
+    va_start(args, formatString);
 
     while (formatString[i]) {
-        if (formatString[i]=='%') {
+        if (formatString[i] == '%') {
             i++;
-            arg = va_arg(args,int);
+            arg = va_arg(args, int);
 
-            if (formatString[i]=='s') {
+            if (formatString[i] == 's') {
                 // Print a status in a pretty way.
-                if(arg) {
+                if (arg) {
                     // true,ok.
                     uint8 storedColour = vgaConsole_colour;
 
-                    vgaConsole_setColour(VGACONSOLE_WHITE,VGACONSOLE_BLACK);
+                    vgaConsole_setColour(VGACONSOLE_WHITE, VGACONSOLE_BLACK);
                     vgaConsole_putString("[ ");
-                    vgaConsole_setColour(VGACONSOLE_GREEN,VGACONSOLE_BLACK);
+                    vgaConsole_setColour(VGACONSOLE_GREEN, VGACONSOLE_BLACK);
                     vgaConsole_putString("PASS");
-                    vgaConsole_setColour(VGACONSOLE_WHITE,VGACONSOLE_BLACK);
+                    vgaConsole_setColour(VGACONSOLE_WHITE, VGACONSOLE_BLACK);
                     vgaConsole_putString(" ]");
-                    
+
                     vgaConsole_colour = storedColour;
                 } else {
                     // false,fail.
                     uint8 storedColour = vgaConsole_colour;
-                    
-                    vgaConsole_setColour(VGACONSOLE_WHITE,VGACONSOLE_BLACK);
+
+                    vgaConsole_setColour(VGACONSOLE_WHITE, VGACONSOLE_BLACK);
                     vgaConsole_putString("[ ");
-                    vgaConsole_setColour(VGACONSOLE_RED,VGACONSOLE_BLACK);
+                    vgaConsole_setColour(VGACONSOLE_RED, VGACONSOLE_BLACK);
                     vgaConsole_putString("FAIL");
-                    vgaConsole_setColour(VGACONSOLE_WHITE,VGACONSOLE_BLACK);
+                    vgaConsole_setColour(VGACONSOLE_WHITE, VGACONSOLE_BLACK);
                     vgaConsole_putString(" ]");
-                    
+
                     vgaConsole_colour = storedColour;
                 }
             }
 
-            if (formatString[i]=='d') {
+            if (formatString[i] == 'd') {
                 vgaConsole_putDecimal(arg);
             }
 
-            if (formatString[i]=='h') {
+            if (formatString[i] == 'h') {
                 vgaConsole_putHexadecimal(arg, 0);
             }
 
-            if (formatString[i]=='H') {
+            if (formatString[i] == 'H') {
                 vgaConsole_putHexadecimal(arg, 1);
             }
 
-            if(formatString[i]=='%') {
+            if (formatString[i] == '%') {
                 vgaConsole_putChar('%');
             }
         } else {
             vgaConsole_putChar(formatString[i]);
         }
-        
+
         i++;
     }
-    
+
     vgaConsole_updateCursor();
-    
+
     va_end(args);
 }
 
@@ -141,104 +142,102 @@ void vgaConsole_printf(const char* formatString, ...) {
  * @param c A single character.
  */
 void vgaConsole_putChar(char c) {
-    switch(c) {
-        case 0x08:    //Backspace
-            if(vgaConsole_cursorX != 0)
-            {
-                vgaConsole_cursorX --;
-            };
-            vgaConsole_videoMemory[(vgaConsole_cursorY*VGACONSOLE_WIDTH)+vgaConsole_cursorX] = ' ' | (vgaConsole_colour << 8);
+    switch (c) {
+        case 0x08:    // Backspace
+            if (vgaConsole_cursorX != 0) {
+                vgaConsole_cursorX--;
+            }
+            vgaConsole_videoMemory[(vgaConsole_cursorY*VGACONSOLE_WIDTH)+vgaConsole_cursorX] =
+                ' ' | (vgaConsole_colour << 8);
             break;
-        
-        case 0x09:    //Tab
+
+        case 0x09:    // Tab
             vgaConsole_cursorX = (vgaConsole_cursorX + 8) & ~(8 - 1);
             break;
-        
-        case 0x0A:    //New Line
+
+        case 0x0A:    // New Line
             vgaConsole_cursorX = 0;
-            vgaConsole_cursorY ++;
+            vgaConsole_cursorY++;
             break;
-            
-        case 0x0D:    //Carriage Return
+
+        case 0x0D:    //  Carriage Return
             vgaConsole_cursorX = 0;
             break;
 
         case 0x1B:  // ANSI Escape Code Handling
-            // TODO
+            // TODO(JackScottAU)
             break;
-        
-        default:    //All other characters
-            if(c >= 0x20 && c <= 0x7E)    //If it smaller than a space, then it is a control char, and should be ignored. Or it's a delete (7E) or a UTF char.
-            {
-                vgaConsole_videoMemory[(vgaConsole_cursorY*VGACONSOLE_WIDTH)+vgaConsole_cursorX] = c | (vgaConsole_colour << 8);
+
+        default:    // All other characters
+            if (c >= 0x20 && c <= 0x7E) {
+                // If it smaller than a space, then it is a control char,
+                // and should be ignored. Or it's a delete (7E) or a UTF char.
+
+                vgaConsole_videoMemory[(vgaConsole_cursorY*VGACONSOLE_WIDTH)+vgaConsole_cursorX] =
+                    c | (vgaConsole_colour << 8);
                 vgaConsole_cursorX++;
-            };
+            }
             break;
-    };
-    
-    //New Line if edge reached
-    if(vgaConsole_cursorX >= VGACONSOLE_WIDTH)
-    {
+    }
+
+    // New Line if edge reached
+    if (vgaConsole_cursorX >= VGACONSOLE_WIDTH) {
         vgaConsole_cursorX = 0;
         vgaConsole_cursorY++;
-    };
-    
-    //Scroll if needed.
-    if(vgaConsole_cursorY >= VGACONSOLE_HEIGHT)
-    {
+    }
+
+    // Scroll if needed.
+    if (vgaConsole_cursorY >= VGACONSOLE_HEIGHT) {
         vgaConsole_scroll();
-    };
+    }
 
     vgaConsole_updateCursor();
 }
 
 void vgaConsole_putHexadecimalInternal(uint32 arg);
-void vgaConsole_putHexadecimalInternal(uint32 arg)
-{
-    if(arg/16 >= 1)
+void vgaConsole_putHexadecimalInternal(uint32 arg) {
+    if (arg/16 >= 1) {
         vgaConsole_putHexadecimalInternal(arg/16);
-    
-    if((arg%16)<10)
-    {
+    }
+
+    if ((arg%16) < 10) {
         vgaConsole_putChar('0'+(arg%16));
     } else {
         vgaConsole_putChar('A'+((arg%16)-10));
     }
-    
+
     vgaConsole_updateCursor();
 }
 
 void vgaConsole_putHexadecimal(uint32 arg, uint8 leadingZeroes) {
     vgaConsole_putString("0x");
-    
-    if(leadingZeroes)
-    {
+
+    if (leadingZeroes) {
         int j;
 
-        for(int i=28;i>=0;i-=4)
-        {
-            j = (arg & (0xF<<i))>>i;
+        for (int i = 28; i >= 0; i -= 4) {
+            j = (arg & (0xF << i)) >> i;
 
-            if(j<10)
-            {
-                vgaConsole_putChar('0'+j);
+            if (j < 10) {
+                vgaConsole_putChar('0' + j);
             } else {
-                vgaConsole_putChar('A'+(j-10));
+                vgaConsole_putChar('A' + (j-10));
             }
         }
     } else {
         vgaConsole_putHexadecimalInternal(arg);
     }
-    
+
     vgaConsole_updateCursor();
 }
 
 void vgaConsole_putDecimal(uint32 arg) {
-    if(arg/10 >= 1)
+    if (arg/10 >= 1) {
         vgaConsole_putDecimal(arg/10);
-    
+    }
+
     vgaConsole_putChar((arg%10)+'0');
-    
+
     vgaConsole_updateCursor();
 }
 
@@ -246,7 +245,7 @@ void vgaConsole_putDecimal(uint32 arg) {
  * Uses PutChar to print a string to screen.
  * @param Text Text to output (Variable length)
  */
-void vgaConsole_putString(const char *Text) {    
+void vgaConsole_putString(const char *Text) {
     int i;
 
     for (i = 0; Text[i] != 0; i++) {
