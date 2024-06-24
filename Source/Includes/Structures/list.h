@@ -1,5 +1,5 @@
 /**
- *  Synergy Operating System - Linked List code.
+ *  Amethyst Operating System - Linked List code.
  *  Copyright 2024 Jack Scott <jack@jackscott.id.au>.
  *  Released under the terms of the ISC license.
 */

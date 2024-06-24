@@ -1,5 +1,5 @@
 /**
- *  Synergy Operating System - Driver for ISA 16550 UART.
+ *  Amethyst Operating System - Driver for ISA 16550 UART.
  *  Copyright 2024 Jack Scott <jack@jackscott.id.au>.
  *  Released under the terms of the ISC license.
 */

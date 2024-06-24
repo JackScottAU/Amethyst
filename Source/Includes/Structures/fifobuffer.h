@@ -1,5 +1,5 @@
 /**
- *  Synergy Operating System - Generic FIFO Buffer.
+ *  Amethyst Operating System - Generic FIFO Buffer.
  *  Copyright 2024 Jack Scott <jack@jackscott.id.au>.
  *  Released under the terms of the ISC license.
 */

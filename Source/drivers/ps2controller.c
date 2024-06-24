@@ -1,5 +1,5 @@
 /**
- *  Synergy Operating System - Driver for 8042 PS/2 Controller.
+ *  Amethyst Operating System - Driver for 8042 PS/2 Controller.
  *  Copyright 2024 Jack Scott <jack@jackscott.id.au>.
  *  Released under the terms of the ISC license.
  * 

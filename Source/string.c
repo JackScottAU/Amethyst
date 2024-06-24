@@ -1,5 +1,5 @@
 /**
- *  Synergy Operating System - String manipulation functions.
+ *  Amethyst Operating System - String manipulation functions.
  *  Copyright 2024 Jack Scott <jack@jackscott.id.au>.
  *  Released under the terms of the ISC license.
 */

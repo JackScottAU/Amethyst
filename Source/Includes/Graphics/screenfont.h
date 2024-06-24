@@ -1,5 +1,5 @@
 /**
- *  Synergy Operating System - PC Screen Font.
+ *  Amethyst Operating System - PC Screen Font.
  *  Copyright 2024 Jack Scott <jack@jackscott.id.au>.
  *  Released under the terms of the ISC license.
 */

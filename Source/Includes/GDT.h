@@ -1,6 +1,6 @@
 /**
  * GDT.h - Functions interacting with the system GDT table.
- * Part of the Synergy Operating System.
+ * Part of the Amethyst Operating System.
  * Licensed under the ISC license.
  */
 

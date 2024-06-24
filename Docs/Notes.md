@@ -60,7 +60,7 @@ Thread:		Registers / Stack
 
 ## Shell Language
 
-Synergy will have a command/scripting language like Bash/Powershell.
+Amethyst will have a command/scripting language like Bash/Powershell.
 
 ## Incoherent Ramblings
 

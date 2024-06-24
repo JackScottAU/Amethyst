@@ -1,5 +1,5 @@
 /**
- *  Synergy Operating System - Definitions for kernel device driver tree.
+ *  Amethyst Operating System - Definitions for kernel device driver tree.
  *  Copyright 2024 Jack Scott <jack@jackscott.id.au>.
  *  Released under the terms of the ISC license.
 */

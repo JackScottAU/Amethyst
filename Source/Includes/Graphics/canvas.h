@@ -1,5 +1,5 @@
 /**
- *  Synergy Operating System - Graphical drawing canvas.
+ *  Amethyst Operating System - Graphical drawing canvas.
  *  Copyright 2024 Jack Scott <jack@jackscott.id.au>.
  *  Released under the terms of the ISC license.
 */

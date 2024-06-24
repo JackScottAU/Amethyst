@@ -22,7 +22,7 @@ The first page directory loaded during boot maps 0MB to 4MB physical to both:
 
 IGNORE EVERYTHING BELOW - IT'S OUT OF DATE.
 
-Synergy OS uses amazingly simple memory management. Everything uses physical 
+Amethyst uses amazingly simple memory management. Everything uses physical 
 addresses, and paging is not enabled at all, due to the single-address-space 
 requirements.
 

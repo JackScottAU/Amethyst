@@ -1,6 +1,6 @@
 /*
  * portIO.h - Basic I/O port handling functions.
- * Part of the Synergy Operating System
+ * Part of the Amethyst Operating System
  * Licensed under the ISC license.
 */
 

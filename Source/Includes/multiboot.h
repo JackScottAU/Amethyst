@@ -1,5 +1,5 @@
 /**
- *  Synergy Operating System - Multiboot v1 Information Structure.
+ *  Amethyst Operating System - Multiboot v1 Information Structure.
  *  Copyright 2024 Jack Scott <jack@jackscott.id.au>.
  *  Released under the terms of the ISC license.
 */
