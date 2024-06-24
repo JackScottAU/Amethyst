@@ -30,7 +30,7 @@ extern "C" {
 // To shut GCC up.
 void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData);
 struct multiboot_info* multiboot_correctDataStructureAddresses(struct multiboot_info* data);
-void kernel_printBanner(void);
+void kernel_printBanner(void (*putChar)(char));
 
 struct multiboot_info* multiboot_correctDataStructureAddresses(struct multiboot_info* data) {
     data = (struct multiboot_info*)(((uint32) data) + 0xC0000000);
@@ -48,17 +48,18 @@ struct multiboot_info* multiboot_correctDataStructureAddresses(struct multiboot_
     return data;
 }
 
-void kernel_printBanner(void) {
-    vgaConsole_setColour(VGACONSOLE_MAGENTA, VGACONSOLE_BLACK);
+void kernel_printBanner(void (*putChar)(char)) {
 
-    vgaConsole_printf("\n\t          _                   _   _               _   \n");
-    vgaConsole_printf("\t         / \\   _ __ ___   ___| |_| |__  _   _ ___| |_ \n");
-    vgaConsole_printf("\t        / _ \\ | '_ ` _ \\ / _ \\ __| '_ \\| | | / __| __|\n");
-    vgaConsole_printf("\t       / ___ \\| | | | | |  __/ |_| | | | |_| \\__ \\ |_ \n");
-    vgaConsole_printf("\t      /_/   \\_\\_| |_| |_|\\___|\\__|_| |_|\\__, |___/\\__|\n");
-    vgaConsole_printf("\t                                        |___/         \n\n");
+    stream_printf(putChar, "\033[35m");
 
-    vgaConsole_setColour(VGACONSOLE_LIGHT_GREY, VGACONSOLE_BLACK);
+    stream_printf(putChar, "\n\t          _                   _   _               _   \n");
+    stream_printf(putChar, "\t         / \\   _ __ ___   ___| |_| |__  _   _ ___| |_ \n");
+    stream_printf(putChar, "\t        / _ \\ | '_ ` _ \\ / _ \\ __| '_ \\| | | / __| __|\n");
+    stream_printf(putChar, "\t       / ___ \\| | | | | |  __/ |_| | | | |_| \\__ \\ |_ \n");
+    stream_printf(putChar, "\t      /_/   \\_\\_| |_| |_|\\___|\\__|_| |_|\\__, |___/\\__|\n");
+    stream_printf(putChar, "\t                                        |___/         \n\n");
+
+    stream_printf(putChar, "\033[0m");
 }
 
 /**
@@ -70,7 +71,6 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
     vgaConsole_initialise();
     vgaConsole_clearScreen();
 
-    kernel_printBanner();
 
     vgaConsole_printf("Checking Multiboot data...\t\t\t\t\t\t");
     if (magicNumber != MULTIBOOT_MAGIC_NUMBER) {
@@ -101,6 +101,10 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 
     serial_init(SERIAL_COM1, SERIAL_BAUD_38400);
     serial_writeLine("Amethyst Debugging Information:");
+
+    // Testing SGR...
+    kernel_printBanner(vgaConsole_putChar);
+    kernel_printBanner(serial_writeChar);
 
     vgaConsole_printf("Setting up the clock...\t\t\t\t\t\t\t");
     clock_init();

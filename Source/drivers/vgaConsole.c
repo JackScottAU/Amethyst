@@ -17,6 +17,7 @@
 #include <stdarg.h>
 #include <stream.h>
 #include <serial.h>
+#include <memoryManager.h>
 
 // These are defined here and not in .h because they are only relevant to implementation.
 #define VGACONSOLE_HEIGHT   25    // Defines the height of the screen in characters.
@@ -40,10 +41,21 @@ void vga_writeRegister(uint8 registerNo, uint8 data) {
     portIO_write8(0x3D5, data);
 }
 
+void vgaConsole_handleControlSequenceIntroducer(char c);
+void vgaConsole_handleSelectGraphicsRendition();
+
+bool isInCSI;
+char* csiParameters;    // 32 bytes of control sequence storage.
+
+/**
+ * Initialises the VGA console ready for characters to be sent.
+ */
 void vgaConsole_initialise(void) {
     // enable cursor
     vga_writeRegister(0x0A, 0x00);
     vga_writeRegister(0x0B, 0x1F);
+
+    isInCSI = false;
 }
 
 /**
@@ -142,6 +154,11 @@ void vgaConsole_printf(const char* formatString, ...) {
  * @param c A single character.
  */
 void vgaConsole_putChar(char c) {
+    if(isInCSI) {
+        vgaConsole_handleControlSequenceIntroducer(c);
+        return;
+    }
+
     switch (c) {
         case 0x08:    // Backspace
             if (vgaConsole_cursorX != 0) {
@@ -165,7 +182,11 @@ void vgaConsole_putChar(char c) {
             break;
 
         case 0x1B:  // ANSI Escape Code Handling
-            // TODO(JackScottAU)
+            isInCSI = true;
+            csiParameters = memoryManager_allocate(32);
+            for(int i = 0; i < 32; i++){
+                csiParameters[i] = 0;
+            }
             break;
 
         default:    // All other characters
@@ -192,6 +213,74 @@ void vgaConsole_putChar(char c) {
     }
 
     vgaConsole_updateCursor();
+}
+
+void vgaConsole_handleControlSequenceIntroducer(char c) {
+    
+    // if we get a command, execute that and remove isInCSI.
+    // else store characters into parameter string.
+
+    int i = 0;
+
+    switch(c) {
+        case 'm':
+            vgaConsole_handleSelectGraphicsRendition();
+            isInCSI = false;
+            memoryManager_free(csiParameters);
+            return;
+
+        default:
+            while(csiParameters[i] != 0) {
+                i++;
+              //  stream_printf(serial_writeChar, "CSI(%d): %d\n", i, csiParameters[i]);
+            }
+
+            // now we are somewhere to store our parameter bit.
+            csiParameters[i] = c;
+            csiParameters[i+1] = 0;
+       //       serial_writeString("CSI: ");
+        //      serial_writeLine(csiParameters);
+            return;
+    }
+}
+
+void vgaConsole_decodeSGR(char first, char second);
+
+/** When given a parameter string,  */
+void vgaConsole_handleSelectGraphicsRendition() {
+    if(csiParameters[0] != '[') {
+        // CSI is bad.
+        return;
+    }
+
+    // Ok if we get here we have characters that need decoding.
+    vgaConsole_decodeSGR(csiParameters[1], csiParameters[2]);
+
+    if(csiParameters[1] == '0') {
+        vgaConsole_setColour(VGACONSOLE_LIGHT_GREY, VGACONSOLE_BLACK);
+    }
+
+    serial_writeLine(csiParameters);
+}
+
+void vgaConsole_decodeSGR(char first, char second) {
+    if(first == '3' && second == '0') vgaConsole_setForeColour(VGACONSOLE_BLACK);
+    if(first == '3' && second == '1') vgaConsole_setForeColour(VGACONSOLE_RED);
+    if(first == '3' && second == '2') vgaConsole_setForeColour(VGACONSOLE_GREEN);
+    if(first == '3' && second == '3') vgaConsole_setForeColour(VGACONSOLE_BROWN);
+    if(first == '3' && second == '4') vgaConsole_setForeColour(VGACONSOLE_BLUE);
+    if(first == '3' && second == '5') vgaConsole_setForeColour(VGACONSOLE_MAGENTA);
+    if(first == '3' && second == '6') vgaConsole_setForeColour(VGACONSOLE_CYAN);
+    if(first == '3' && second == '7') vgaConsole_setForeColour(VGACONSOLE_LIGHT_GREY);
+    
+    if(first == '4' && second == '0') vgaConsole_setBackColour(VGACONSOLE_BLACK);
+    if(first == '4' && second == '1') vgaConsole_setBackColour(VGACONSOLE_RED);
+    if(first == '4' && second == '2') vgaConsole_setBackColour(VGACONSOLE_GREEN);
+    if(first == '4' && second == '3') vgaConsole_setBackColour(VGACONSOLE_BROWN);
+    if(first == '4' && second == '4') vgaConsole_setBackColour(VGACONSOLE_BLUE);
+    if(first == '4' && second == '5') vgaConsole_setBackColour(VGACONSOLE_MAGENTA);
+    if(first == '4' && second == '6') vgaConsole_setBackColour(VGACONSOLE_CYAN);
+    if(first == '4' && second == '7') vgaConsole_setBackColour(VGACONSOLE_LIGHT_GREY);
 }
 
 void vgaConsole_putHexadecimalInternal(uint32 arg);
@@ -279,6 +368,18 @@ void vgaConsole_setColour(unsigned char foreColour, unsigned char backColour) {
     } else {
         /* INVALID COLOUR ARRANGEMENT */
     }
+}
+
+void vgaConsole_setForeColour(uint8 foreColour) {
+    uint8 backColour = vgaConsole_colour >> 4;
+
+    vgaConsole_colour = backColour << 4 | foreColour;
+}
+
+void vgaConsole_setBackColour(uint8 backColour) {
+    uint8 foreColour = vgaConsole_colour & 0xF;
+
+    vgaConsole_colour = backColour << 4 | foreColour;
 }
 
 /**
