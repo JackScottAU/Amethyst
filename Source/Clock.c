@@ -6,7 +6,6 @@
 
 #include <portIO.h>
 #include <Clock.h>
-#include <vgaConsole.h>
 #include <memoryManager.h>
 #include <interrupts.h>
 
@@ -62,8 +61,6 @@ clock_timerRequest* clock_addRepeatRequest(uint64 secGap, uint16 milGap, void (*
 		request->next = clock_timerRequestsList;
 		clock_timerRequestsList = request;
 	}
-	
-	vgaConsole_printf("Added repeat timer. \n");
 	
 	return(request);
 }

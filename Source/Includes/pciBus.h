@@ -16,7 +16,7 @@ extern "C" {
 	#include <deviceTree.h>
 
 	void pci_enumerateBuses(void);
-	void pci_printBuses(void);
+	void pci_printBuses(void (*putChar)(char));
 	void pci_checkBus(uint8 bus);
 	void pci_checkSlot(uint8 bus, uint8 slot);
 	deviceTree_Entry* pci_addDevicesToTree(void);

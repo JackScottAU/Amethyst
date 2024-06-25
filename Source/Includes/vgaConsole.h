@@ -13,18 +13,10 @@
 extern "C" {
 #endif
 
-	void vgaConsole_clearScreen(void);
-	void vgaConsole_printf(const char* formatString, ...);
-	void vgaConsole_putChar(char c);
-	void vgaConsole_putHexadecimal(uint32 arg, uint8 leadingZeroes);
-	void vgaConsole_putDecimal(uint32 arg);
-	void vgaConsole_putString(const char *Text);
-	void vgaConsole_scroll(void);
-	void vgaConsole_setColour(uint8 foreColour, uint8 backColour);
-	void vgaConsole_updateCursor(void);
-
 	void vgaConsole_initialise(void);
-	void vgaConsole_setCursor(uint8 x, uint8 y);
+
+	void vgaConsole_putChar(char c);
+
 
 	Stream* vgaConsole_getStream(void);
 

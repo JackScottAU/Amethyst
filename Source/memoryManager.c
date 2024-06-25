@@ -203,13 +203,13 @@ void memoryManager_debug_printFreeMemoryList(void) {
 
     memoryManager_freeMemoryNode* current = memoryManager_firstFreeNode;
     while ((uint32) current != END_OF_MEMORY_LIST) {
-        vgaConsole_printf("Free memory block: %h (start) ... %h (length) (%h)\n",
-            (uint32)current->address, (uint32)current->length, current);
+  //      vgaConsole_printf("Free memory block: %h (start) ... %h (length) (%h)\n",
+      //      (uint32)current->address, (uint32)current->length, current);
 
         total += current->length;
 
         current = current->next;
     }
 
-    vgaConsole_printf("Available memory:\t%h\n", total);
+ //   vgaConsole_printf("Available memory:\t%h\n", total);
 }

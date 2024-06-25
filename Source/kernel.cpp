@@ -69,35 +69,31 @@ void kernel_printBanner(void (*putChar)(char)) {
  */
 void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData) {
     vgaConsole_initialise();
-    vgaConsole_clearScreen();
+  //  vgaConsole_clearScreen();
 
+// Before we can use video or serial or any I/O, we need interrupts, GDT and memory manager set up.
 
-    vgaConsole_printf("Checking Multiboot data...\t\t\t\t\t\t");
+    stream_printf(vgaConsole_putChar, "Checking Multiboot data...\n");
     if (magicNumber != MULTIBOOT_MAGIC_NUMBER) {
-        vgaConsole_printf("\nMultiboot error found. Halting...");
+        stream_printf(vgaConsole_putChar, "\nMultiboot error found. Halting...");
         interrupts_disableInterrupts();
         haltCPU();
     } else {
         multibootData = multiboot_correctDataStructureAddresses(multibootData);
     }
-    vgaConsole_printf("%s", 1);
 
-    vgaConsole_printf("Loading a GDT...\t\t\t\t\t\t\t");
+    stream_printf(vgaConsole_putChar, "Loading a GDT...\n");
     gdt_install();
-    vgaConsole_printf("%s", 1);
 
-    vgaConsole_printf("Setting up interrupts...\t\t\t\t\t\t");
+    stream_printf(vgaConsole_putChar, "Setting up interrupts...\n");
     interrupts_initialise();
-    vgaConsole_printf("%s", 1);
 
-    vgaConsole_printf("Setting up the memory manager...\t\t\t\t\t");
+    stream_printf(vgaConsole_putChar, "Setting up the memory manager...\n");
     memoryManager_init(multibootData->memoryMapAddress, multibootData->memoryMapLength,
         (uint32) memoryManager_findEndOfReservedMemory(multibootData->modsAddr, multibootData->modsCount));
-    vgaConsole_printf("%s", 1);
 
-    vgaConsole_printf("Enumerating PCI buses...\t\t\t\t\t\t");
+    stream_printf(vgaConsole_putChar, "Enumerating PCI buses...\n");
     pci_enumerateBuses();
-    vgaConsole_printf("%s", 1);
 
     serial_init(SERIAL_COM1, SERIAL_BAUD_38400);
     serial_writeLine("Amethyst Debugging Information:");
@@ -106,9 +102,8 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
     kernel_printBanner(vgaConsole_putChar);
     kernel_printBanner(serial_writeChar);
 
-    vgaConsole_printf("Setting up the clock...\t\t\t\t\t\t\t");
+    stream_printf(vgaConsole_putChar, "Setting up the clock...\n");
     clock_init();
-    vgaConsole_printf("%s", 1);
 
     ps2controller_initialise();
     deviceTree_build();
@@ -200,7 +195,7 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
         }
 
         if (string_compare(line, "Get-PciDetails") == 0) {
-            pci_printBuses();
+            pci_printBuses(vgaConsole_putChar);
             continue;
         }
 

@@ -7,6 +7,7 @@
 #include <portIO.h>
 #include <vgaConsole.h>
 #include <pciBus.h>
+#include <stream.h>
 #include <memoryManager.h>
 #include <deviceTree.h>
 #include "pci/deviceNames.h"
@@ -79,25 +80,25 @@ deviceTree_Entry* pci_addDevicesToTree(void) {
 
 
 
-void pci_printBuses(void)
+void pci_printBuses(void (*putChar)(char))
 {
-    vgaConsole_printf("  +-----+------+------+--------+--------+------------------------------------+\n");
-    vgaConsole_printf("  | BUS | SLOT | FUNC | VENDOR | DEVICE | CLASS DESCRIPTION                  |\n");
-    vgaConsole_printf("  +-----+------+------+--------+--------+------------------------------------+\n");
+    stream_printf(putChar, "  +-----+------+------+--------+--------+------------------------------------+\n");
+    stream_printf(putChar, "  | BUS | SLOT | FUNC | VENDOR | DEVICE | CLASS DESCRIPTION                  |\n");
+    stream_printf(putChar, "  +-----+------+------+--------+--------+------------------------------------+\n");
 
     // Iterate through the bus entries stored.
     pci_currentEntry = pci_busEntries;
     while (pci_currentEntry->next != 0x0)
     {
         // Print entry.
-        vgaConsole_printf("  | %d   | %d    | %d    | %h | %h | ", pci_currentEntry->bus, pci_currentEntry->slot, pci_currentEntry->function, pci_currentEntry->vendorID, pci_currentEntry->deviceID);
-        vgaConsole_printf(classNames[pci_currentEntry->classID]);
-        vgaConsole_printf(" |\n");
+        stream_printf(putChar, "  | %d   | %d    | %d    | %h | %h | ", pci_currentEntry->bus, pci_currentEntry->slot, pci_currentEntry->function, pci_currentEntry->vendorID, pci_currentEntry->deviceID);
+        stream_printf(putChar, classNames[pci_currentEntry->classID]);
+        stream_printf(putChar, " |\n");
 
         pci_currentEntry = pci_currentEntry->next;
     }
 
-    vgaConsole_printf("  +-----+------+------+--------+--------+------------------------------------+\n");
+    stream_printf(putChar, "  +-----+------+------+--------+--------+------------------------------------+\n");
 }
 
 void pci_enumerateBuses(void) {
