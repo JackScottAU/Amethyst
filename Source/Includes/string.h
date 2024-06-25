@@ -6,12 +6,15 @@
 #ifndef STRING_H
 #define	STRING_H
 
+#include <Types.h>
+
 #ifdef	__cplusplus
 extern "C" {
 #endif
 	
 	void string_copy(char *dest, const char* src);
 	int string_compare(const char* a, const char* b);
+	uint32 string_parseInt(const char* string);
 
 	/**
 	 * Formats a string.

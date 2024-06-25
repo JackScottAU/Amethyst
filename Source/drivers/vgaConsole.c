@@ -42,7 +42,10 @@ void vga_writeRegister(uint8 registerNo, uint8 data) {
 }
 
 void vgaConsole_handleControlSequenceIntroducer(char c);
-void vgaConsole_handleSelectGraphicsRendition();
+void vgaConsole_handleSelectGraphicsRendition(void);
+
+void vgaConsole_setForeColour(uint8 foreColour);
+void vgaConsole_setBackColour(uint8 backColour);
 
 bool isInCSI;
 char* csiParameters;    // 32 bytes of control sequence storage.
@@ -244,43 +247,92 @@ void vgaConsole_handleControlSequenceIntroducer(char c) {
     }
 }
 
-void vgaConsole_decodeSGR(char first, char second);
+void vgaConsole_decodeSGR(uint32 parameter);
 
 /** When given a parameter string,  */
 void vgaConsole_handleSelectGraphicsRendition() {
-    if(csiParameters[0] != '[') {
-        // CSI is bad.
-        return;
+    int i = 0;
+    while(csiParameters[i] != '\0') {
+        if(csiParameters[i] == '[' || csiParameters[i] == ';') {
+            int sgr = string_parseInt(csiParameters + i + 1);
+
+            vgaConsole_decodeSGR(sgr);
+        }
+
+        i++;
     }
-
-    // Ok if we get here we have characters that need decoding.
-    vgaConsole_decodeSGR(csiParameters[1], csiParameters[2]);
-
-    if(csiParameters[1] == '0') {
-        vgaConsole_setColour(VGACONSOLE_LIGHT_GREY, VGACONSOLE_BLACK);
-    }
-
-    serial_writeLine(csiParameters);
 }
 
-void vgaConsole_decodeSGR(char first, char second) {
-    if(first == '3' && second == '0') vgaConsole_setForeColour(VGACONSOLE_BLACK);
-    if(first == '3' && second == '1') vgaConsole_setForeColour(VGACONSOLE_RED);
-    if(first == '3' && second == '2') vgaConsole_setForeColour(VGACONSOLE_GREEN);
-    if(first == '3' && second == '3') vgaConsole_setForeColour(VGACONSOLE_BROWN);
-    if(first == '3' && second == '4') vgaConsole_setForeColour(VGACONSOLE_BLUE);
-    if(first == '3' && second == '5') vgaConsole_setForeColour(VGACONSOLE_MAGENTA);
-    if(first == '3' && second == '6') vgaConsole_setForeColour(VGACONSOLE_CYAN);
-    if(first == '3' && second == '7') vgaConsole_setForeColour(VGACONSOLE_LIGHT_GREY);
-    
-    if(first == '4' && second == '0') vgaConsole_setBackColour(VGACONSOLE_BLACK);
-    if(first == '4' && second == '1') vgaConsole_setBackColour(VGACONSOLE_RED);
-    if(first == '4' && second == '2') vgaConsole_setBackColour(VGACONSOLE_GREEN);
-    if(first == '4' && second == '3') vgaConsole_setBackColour(VGACONSOLE_BROWN);
-    if(first == '4' && second == '4') vgaConsole_setBackColour(VGACONSOLE_BLUE);
-    if(first == '4' && second == '5') vgaConsole_setBackColour(VGACONSOLE_MAGENTA);
-    if(first == '4' && second == '6') vgaConsole_setBackColour(VGACONSOLE_CYAN);
-    if(first == '4' && second == '7') vgaConsole_setBackColour(VGACONSOLE_LIGHT_GREY);
+void vgaConsole_decodeSGR(uint32 parameter) {
+    switch(parameter) {
+        case 0:
+            vgaConsole_setColour(VGACONSOLE_LIGHT_GREY, VGACONSOLE_BLACK);
+            break;
+
+        case 30:
+            vgaConsole_setForeColour(VGACONSOLE_BLACK);
+            break;
+            
+        case 31:
+            vgaConsole_setForeColour(VGACONSOLE_RED);
+            break;
+
+        case 32:
+            vgaConsole_setForeColour(VGACONSOLE_GREEN);
+            break;
+
+        case 33:
+            vgaConsole_setForeColour(VGACONSOLE_BROWN);
+            break;
+
+        case 34:
+            vgaConsole_setForeColour(VGACONSOLE_BLUE);
+            break;
+            
+        case 35:
+            vgaConsole_setForeColour(VGACONSOLE_MAGENTA);
+            break;
+
+        case 36:
+            vgaConsole_setForeColour(VGACONSOLE_CYAN);
+            break;
+
+        case 37:
+            vgaConsole_setForeColour(VGACONSOLE_LIGHT_GREY);
+            break;
+
+        case 40:
+            vgaConsole_setBackColour(VGACONSOLE_BLACK);
+            break;
+            
+        case 41:
+            vgaConsole_setBackColour(VGACONSOLE_RED);
+            break;
+
+        case 42:
+            vgaConsole_setBackColour(VGACONSOLE_GREEN);
+            break;
+
+        case 43:
+            vgaConsole_setBackColour(VGACONSOLE_BROWN);
+            break;
+
+        case 44:
+            vgaConsole_setBackColour(VGACONSOLE_BLUE);
+            break;
+            
+        case 45:
+            vgaConsole_setBackColour(VGACONSOLE_MAGENTA);
+            break;
+
+        case 46:
+            vgaConsole_setBackColour(VGACONSOLE_CYAN);
+            break;
+
+        case 47:
+            vgaConsole_setBackColour(VGACONSOLE_LIGHT_GREY);
+            break;
+    }
 }
 
 void vgaConsole_putHexadecimalInternal(uint32 arg);
