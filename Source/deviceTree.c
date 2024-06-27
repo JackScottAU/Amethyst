@@ -1,3 +1,8 @@
+/**
+ *  Amethyst Operating System - Device and driver tree core functionality.
+ *  Copyright 2024 Jack Scott <jack@jackscott.id.au>.
+ *  Released under the terms of the ISC license.
+*/
 #include <deviceTree.h>
 #include <memoryManager.h>
 #include <stream.h>
@@ -17,7 +22,7 @@ deviceTree_Entry* deviceTree_createDevice(char* name, uint32 type, void* data) {
 }
 
 void deviceTree_addSibling(deviceTree_Entry* attached, deviceTree_Entry* toAttach) {
-    while(attached->next != NULL) {
+    while (attached->next != NULL) {
         attached = attached->next;
     }
 
@@ -27,7 +32,7 @@ void deviceTree_addSibling(deviceTree_Entry* attached, deviceTree_Entry* toAttac
 void deviceTree_addChild(deviceTree_Entry* parent, deviceTree_Entry* toAttach) {
     deviceTree_Entry* child = parent->child;
 
-    if(child != NULL) {
+    if (child != NULL) {
         deviceTree_addSibling(child, toAttach);
     } else {
         // Add first child.
@@ -40,12 +45,12 @@ void deviceTree_print(void (*putChar)(char), bool detailedInfo) {
 }
 
 void deviceTree_printInternal(void (*putChar)(char), deviceTree_Entry* device, uint8 depth, bool detailedInfo) {
-    if(device == NULL) {
+    if (device == NULL) {
         return;
     }
 
-    if(depth > 0) {
-        for(int i = 0; i < depth - 1; i++) {
+    if (depth > 0) {
+        for (int i = 0; i < depth - 1; i++) {
             stream_printf(putChar, " |  ");
         }
 

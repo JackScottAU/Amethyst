@@ -33,10 +33,10 @@ int string_compare(const char* a, const char* b) {
 
 uint32 string_parseInt(const char* string) {
     int result = 0;
- 
+
     for (int i = 0; string[i] <= '9' && string[i] >= '0'; ++i) {
         result = result * 10 + string[i] - '0';
     }
- 
+
     return result;
 }

@@ -1,3 +1,9 @@
+/**
+ *  Amethyst Operating System - PC Keyboard Driver.
+ *  Copyright 2024 Jack Scott <jack@jackscott.id.au>.
+ *  Released under the terms of the ISC license.
+*/
+
 #include <keyboard.h>
 #include <interrupts.h>
 #include <memoryManager.h>

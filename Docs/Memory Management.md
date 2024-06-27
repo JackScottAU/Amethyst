@@ -4,6 +4,12 @@
 
 The first four megabytes (one page table) are always mapped into kernel space. 
 
+0x00000000 to 0x0007FFFF	Kernel Essential Data Structures (IDT, GDT, etc)
+0x00080000 to 0x000FFFFF	Hardware Reserved (VGA RAM, BIOS ROM, etc)
+0x00100000 to 0x003FFFFF	Kernel Code and Modules, First Kernel Stack
+
+After that, the kernel retrieves the memory map from the bootloader (GRUB) and also from the PCI configuration space to find out what is usable memory and what is reserved.
+
 ## Virtual Memory Layout
 
 0GB to 3GB is user space.

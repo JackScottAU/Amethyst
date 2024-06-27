@@ -1,9 +1,10 @@
 #include <cpuid.hpp>
 #include <cpuid.h>
 #include <memoryManager.h>
+#include <Types.h>
 
 CPUID::CPUID() {
-    unsigned int eaxvar, ebxvar, ecxvar, edxvar;
+    unsigned int eaxvar = 0, ebxvar = 0, ecxvar = 0, edxvar = 0;
     __get_cpuid(0, &eaxvar, &ebxvar, &ecxvar, &edxvar);
 
     maxLevel = eaxvar;
@@ -14,7 +15,7 @@ uint8* CPUID::getManufacturerString()
     uint8* string = (uint8*) memoryManager_allocate(13);
     string[12] = 0; // null terminate.
 
-    unsigned int eaxvar, ebxvar, ecxvar, edxvar;
+    unsigned int eaxvar = 0, ebxvar = 0, ecxvar = 0, edxvar = 0;
     __get_cpuid(0, &eaxvar, &ebxvar, &ecxvar, &edxvar);
 
     string[0] = ((uint8*)&ebxvar)[0];
@@ -40,7 +41,7 @@ uint8 CPUID::getFamily()
     if(maxLevel < 1)
         return 0; // we don't have exception support yet.
 
-    unsigned int eaxvar, ebxvar, ecxvar, edxvar;
+    unsigned int eaxvar = 0, ebxvar = 0, ecxvar = 0, edxvar = 0;
     __get_cpuid(1, &eaxvar, &ebxvar, &ecxvar, &edxvar);
 
     uint32 family = (eaxvar >> 8) & 0xF;
@@ -61,7 +62,7 @@ uint8 CPUID::getModel()
     if(maxLevel < 1)
         return 0; // we don't have exception support yet.
 
-    unsigned int eaxvar, ebxvar, ecxvar, edxvar;
+    unsigned int eaxvar = 0, ebxvar = 0, ecxvar = 0, edxvar = 0;
     __get_cpuid(1, &eaxvar, &ebxvar, &ecxvar, &edxvar);
 
     uint32 family = (eaxvar >> 8) & 0xF;
@@ -83,7 +84,7 @@ uint8 CPUID::getStepping()
     if(maxLevel < 1)
         return 0; // we don't have exception support yet.
 
-    unsigned int eaxvar, ebxvar, ecxvar, edxvar;
+    unsigned int eaxvar = 0, ebxvar = 0, ecxvar = 0, edxvar = 0;
     __get_cpuid(1, &eaxvar, &ebxvar, &ecxvar, &edxvar);
 
     return eaxvar & 0x0F;

@@ -20,6 +20,8 @@
 #include <deviceTree.h>
 #include <ps2controller.h>
 #include <cppsupport.hpp>
+#include <debug.h>
+#include <amethyst.h>
 
 #include <cpuid.hpp>
 
@@ -49,17 +51,18 @@ struct multiboot_info* multiboot_correctDataStructureAddresses(struct multiboot_
 }
 
 void kernel_printBanner(void (*putChar)(char)) {
-
     stream_printf(putChar, "\033[35m");
 
-    stream_printf(putChar, "\n\t          _                   _   _               _   \n");
-    stream_printf(putChar, "\t         / \\   _ __ ___   ___| |_| |__  _   _ ___| |_ \n");
-    stream_printf(putChar, "\t        / _ \\ | '_ ` _ \\ / _ \\ __| '_ \\| | | / __| __|\n");
-    stream_printf(putChar, "\t       / ___ \\| | | | | |  __/ |_| | | | |_| \\__ \\ |_ \n");
-    stream_printf(putChar, "\t      /_/   \\_\\_| |_| |_|\\___|\\__|_| |_|\\__, |___/\\__|\n");
-    stream_printf(putChar, "\t                                        |___/         \n\n");
+    stream_printf(putChar, "\n\t           _                   _   _               _   \n");
+    stream_printf(putChar, "\t          / \\   _ __ ___   ___| |_| |__  _   _ ___| |_ \n");
+    stream_printf(putChar, "\t         / _ \\ | '_ ` _ \\ / _ \\ __| '_ \\| | | / __| __|\n");
+    stream_printf(putChar, "\t        / ___ \\| | | | | |  __/ |_| | | | |_| \\__ \\ |_ \n");
+    stream_printf(putChar, "\t       /_/   \\_\\_| |_| |_|\\___|\\__|_| |_|\\__, |___/\\__|\n");
+    stream_printf(putChar, "\t                                         |___/         \n");
 
     stream_printf(putChar, "\033[0m");
+
+    stream_printf(putChar, "\t\t\t\tVersion %d.%d.%d\n\n", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
 }
 
 /**
@@ -71,9 +74,13 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
     vgaConsole_initialise();
   //  vgaConsole_clearScreen();
 
-// Before we can use video or serial or any I/O, we need interrupts, GDT and memory manager set up.
+    // Before we can do anything else, we need to do three things:
+    // 1.  Check the multiboot data for a valid boot environment.
+    // 2.  Set up a basic IDT and GDT.
+    // 3.  Set up the kernel memory managers (page-level and heap-level).
+    // Once this has been done, we can begin using the debug() functionality and start setting up devices.
 
-    stream_printf(vgaConsole_putChar, "Checking Multiboot data...\n");
+    debug(LOGLEVEL_INFO, "Checking Multiboot data...\n");
     if (magicNumber != MULTIBOOT_MAGIC_NUMBER) {
         stream_printf(vgaConsole_putChar, "\nMultiboot error found. Halting...");
         interrupts_disableInterrupts();
@@ -96,13 +103,14 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
     pci_enumerateBuses();
 
     serial_init(SERIAL_COM1, SERIAL_BAUD_38400);
-    serial_writeLine("Amethyst Debugging Information:");
 
     // Testing SGR...
     kernel_printBanner(vgaConsole_putChar);
     kernel_printBanner(serial_writeChar);
 
-    stream_printf(vgaConsole_putChar, "Setting up the clock...\n");
+    serial_writeLine("Amethyst Debugging Information:\n");
+
+    debug(LOGLEVEL_INFO, "Setting up the clock...");
     clock_init();
 
     ps2controller_initialise();
@@ -110,12 +118,12 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 
 //  deviceTree_print(vgaConsole_putChar, false);
 
-    stream_printf(serial_writeChar, "Framebuffer address: %h\n", multibootData->framebuffer_addr);
-    stream_printf(serial_writeChar, "Framebuffer pitch: %h\n", multibootData->framebuffer_pitch);
-    stream_printf(serial_writeChar, "Framebuffer width: %h\n", multibootData->framebuffer_width);
-    stream_printf(serial_writeChar, "Framebuffer height: %h\n", multibootData->framebuffer_height);
-    stream_printf(serial_writeChar, "Framebuffer bpp: %h\n", multibootData->framebuffer_bpp);
-    stream_printf(serial_writeChar, "Framebuffer type: %h\n", multibootData->framebuffer_type);
+    debug(LOGLEVEL_DEBUG, "Framebuffer address: %h", multibootData->framebuffer_addr);
+    debug(LOGLEVEL_DEBUG, "Framebuffer pitch: %h", multibootData->framebuffer_pitch);
+    debug(LOGLEVEL_DEBUG, "Framebuffer width: %h", multibootData->framebuffer_width);
+    debug(LOGLEVEL_DEBUG, "Framebuffer height: %h", multibootData->framebuffer_height);
+    debug(LOGLEVEL_DEBUG, "Framebuffer bpp: %h", multibootData->framebuffer_bpp);
+    debug(LOGLEVEL_DEBUG, "Framebuffer type: %h", multibootData->framebuffer_type);
 
 //  stream_printf(serial_writeChar, "Module start: %h\n", multibootData->modsAddr->start);
 //  stream_printf(serial_writeChar, "Module end: %h\n", multibootData->modsAddr->end);

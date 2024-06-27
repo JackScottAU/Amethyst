@@ -92,7 +92,7 @@ void vgaConsole_clearScreen(void) {
  * @param c A single character.
  */
 void vgaConsole_putChar(char c) {
-    if(isInCSI) {
+    if (isInCSI) {
         vgaConsole_handleControlSequenceIntroducer(c);
         return;
     }
@@ -122,7 +122,7 @@ void vgaConsole_putChar(char c) {
         case 0x1B:  // ANSI Escape Code Handling
             isInCSI = true;
             csiParameters = memoryManager_allocate(32);
-            for(int i = 0; i < 32; i++){
+            for (int i = 0; i < 32; i++) {
                 csiParameters[i] = 0;
             }
             break;
@@ -154,13 +154,12 @@ void vgaConsole_putChar(char c) {
 }
 
 void vgaConsole_handleControlSequenceIntroducer(char c) {
-    
     // if we get a command, execute that and remove isInCSI.
     // else store characters into parameter string.
 
     int i = 0;
 
-    switch(c) {
+    switch (c) {
         case 'm':
             vgaConsole_handleSelectGraphicsRendition();
             isInCSI = false;
@@ -168,7 +167,7 @@ void vgaConsole_handleControlSequenceIntroducer(char c) {
             return;
 
         default:
-            while(csiParameters[i] != 0) {
+            while (csiParameters[i] != 0) {
                 i++;
               //  stream_printf(serial_writeChar, "CSI(%d): %d\n", i, csiParameters[i]);
             }
@@ -187,8 +186,8 @@ void vgaConsole_decodeSGR(uint32 parameter);
 /** When given a parameter string,  */
 void vgaConsole_handleSelectGraphicsRendition() {
     int i = 0;
-    while(csiParameters[i] != '\0') {
-        if(csiParameters[i] == '[' || csiParameters[i] == ';') {
+    while (csiParameters[i] != '\0') {
+        if (csiParameters[i] == '[' || csiParameters[i] == ';') {
             int sgr = string_parseInt(csiParameters + i + 1);
 
             vgaConsole_decodeSGR(sgr);
@@ -199,7 +198,7 @@ void vgaConsole_handleSelectGraphicsRendition() {
 }
 
 void vgaConsole_decodeSGR(uint32 parameter) {
-    switch(parameter) {
+    switch (parameter) {
         case 0:
             vgaConsole_setColour(VGACONSOLE_LIGHT_GREY, VGACONSOLE_BLACK);
             break;
@@ -207,7 +206,7 @@ void vgaConsole_decodeSGR(uint32 parameter) {
         case 30:
             vgaConsole_setForeColour(VGACONSOLE_BLACK);
             break;
-            
+
         case 31:
             vgaConsole_setForeColour(VGACONSOLE_RED);
             break;
@@ -223,7 +222,7 @@ void vgaConsole_decodeSGR(uint32 parameter) {
         case 34:
             vgaConsole_setForeColour(VGACONSOLE_BLUE);
             break;
-            
+
         case 35:
             vgaConsole_setForeColour(VGACONSOLE_MAGENTA);
             break;
@@ -239,7 +238,7 @@ void vgaConsole_decodeSGR(uint32 parameter) {
         case 40:
             vgaConsole_setBackColour(VGACONSOLE_BLACK);
             break;
-            
+
         case 41:
             vgaConsole_setBackColour(VGACONSOLE_RED);
             break;
@@ -255,7 +254,7 @@ void vgaConsole_decodeSGR(uint32 parameter) {
         case 44:
             vgaConsole_setBackColour(VGACONSOLE_BLUE);
             break;
-            
+
         case 45:
             vgaConsole_setBackColour(VGACONSOLE_MAGENTA);
             break;

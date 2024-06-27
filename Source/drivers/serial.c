@@ -1,3 +1,8 @@
+/**
+ *  Amethyst Operating System - Serial driver.
+ *  Copyright 2024 Jack Scott <jack@jackscott.id.au>.
+ *  Released under the terms of the ISC license.
+*/
 
 #include <interrupts.h>
 #include <memoryManager.h>
@@ -19,19 +24,18 @@ int serial_detect(uint16 baseAddress) {
 
     uint8 value = portIO_read8(baseAddress + 7);
 
-    if(value != 0xAE) {
+    if (value != 0xAE) {
         return 1;
     }
 
-    if(serial_testLoopBack(baseAddress)) {
+    if (serial_testLoopBack(baseAddress)) {
         return 1;
     }
 
     return 0;
 }
- 
+
 int serial_init(uint16 baseAddress, uint8 divisor) {
-    
     portIO_write8(baseAddress + 3, 0x80);    // Enable DLAB (set baud rate divisor)
     portIO_write8(baseAddress + 0, divisor);    // Set divisor to 3 (lo byte) 38400 baud
     portIO_write8(baseAddress + 1, 0x00);    //                  (hi byte)
@@ -41,12 +45,12 @@ int serial_init(uint16 baseAddress, uint8 divisor) {
     portIO_write8(baseAddress + 4, 0x0F);   // Data Terminal Ready, Request To Send, Out 1, Out 2 all enabled.
     portIO_write8(baseAddress + 1, 0x01);   // Enable data interrupts
 
-    if(serial_testLoopBack(baseAddress)) {
+    if (serial_testLoopBack(baseAddress)) {
         return 1;
     }
 
     serial_registerHandler();
-    
+
     return 0;
 }
 
@@ -56,13 +60,12 @@ int serial_init(uint16 baseAddress, uint8 divisor) {
 int serial_testLoopBack(uint16 baseAddress) {
     uint8 modemControlRegisterState = portIO_read8(baseAddress + 4);
     uint8 interruptControlRegisterState = portIO_read8(baseAddress + 1);
-    
 
     portIO_write8(baseAddress + 4, 0x1E);    // Set in loopback mode, test the serial chip
     portIO_write8(baseAddress + 0, 0xAE);    // Test serial chip (send byte 0xAE and check if serial returns same byte)
- 
+
     // Check if serial is faulty (i.e: not same byte as sent)
-    if(portIO_read8(baseAddress + 0) != 0xAE) {
+    if (portIO_read8(baseAddress + 0) != 0xAE) {
         return 1;
     }
 
@@ -81,18 +84,17 @@ int serial_received(void);
 void serial_interruptHandler(uint32 eventData);
 
 void serial_interruptHandler(uint32 eventData) {
-
     uint8 data = portIO_read8(SERIAL_COM1);
 
     FIFOBuffer_WriteBytes(serial_readbuffer, &data, 1);
 
-    if(serial_echoMode) {
+    if (serial_echoMode) {
         serial_writeChar(data);
     }
 }
 
 void serial_registerHandler() {
-    interrupts_addHandler(0x24,0,(*serial_interruptHandler));
+    interrupts_addHandler(0x24, 0, (*serial_interruptHandler));
 
     serial_readbuffer = FIFOBuffer_new(1024);
 }
@@ -106,7 +108,7 @@ int serial_canRead() {
 
 char serial_readChar() {
     // If there's nothing in the buffer, say so.
-    if(serial_canRead() == 0) {
+    if (serial_canRead() == 0) {
         return 0;
     }
 
@@ -124,7 +126,7 @@ char* serial_readString() {
     int stringSize = serial_canRead();
     char* string = memoryManager_allocate(sizeof(uint8) * (stringSize + 1));
 
-    for(int i = 0; i < stringSize; i++) {
+    for (int i = 0; i < stringSize; i++) {
         string[i] = serial_readChar();
     }
 
@@ -134,13 +136,13 @@ char* serial_readString() {
 }
 
 int serial_received() {
-   return portIO_read8(SERIAL_COM1 + 5) & 1;
+    return portIO_read8(SERIAL_COM1 + 5) & 1;
 }
- 
+
 char serial_readByte() {
-   while (serial_received() == 0);
- 
-   return portIO_read8(SERIAL_COM1);
+    while (serial_received() == 0) { }
+
+    return portIO_read8(SERIAL_COM1);
 }
 
 int is_transmit_empty(void);
@@ -150,14 +152,14 @@ int is_transmit_empty() {
 
 void serial_writeChar(char a) {
     while (is_transmit_empty() == 0) { }
- 
-    portIO_write8(SERIAL_COM1,a);
+
+    portIO_write8(SERIAL_COM1, a);
 }
 
 void serial_writeString(const char* string) {
     int i = 0;
 
-    while(string[i]) {
+    while (string[i]) {
         serial_writeChar(string[i]);
         i++;
     }
