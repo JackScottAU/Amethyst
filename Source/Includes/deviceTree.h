@@ -6,21 +6,21 @@
 
 #include <Types.h>
 
-#ifdef	__cplusplus
-extern "C" {
-#endif
-
 #ifndef INCLUDES_DEVICETREE_H_
 #define INCLUDES_DEVICETREE_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * An entry in the kernel device driver tree. Parents are responsible for detecting and initialising their children.
 */
 typedef struct deviceTree_Entry_S {
-    struct deviceTree_Entry_S* next; // pointer to next sibling of this device.
-    struct deviceTree_Entry_S* child; // pointer to first child.
+    struct deviceTree_Entry_S* next;    // pointer to next sibling of this device.
+    struct deviceTree_Entry_S* child;   // pointer to first child.
     char* name;
-    uint32 type; // determines what sort of struct data points to.
+    uint32 type;                        // determines what sort of struct data points to.
     void* data;
 } deviceTree_Entry;
 
@@ -42,8 +42,8 @@ void deviceTree_addChild(deviceTree_Entry* parent, deviceTree_Entry* toAttach);
 // ...
 #define DEVICETREE_TYPE_OTHER       0xFFFFFFFF
 
-#endif // INCLUDES_DEVICETREE_H_
-
-#ifdef	__cplusplus
+#ifdef __cplusplus
 }
 #endif
+
+#endif  // INCLUDES_DEVICETREE_H_

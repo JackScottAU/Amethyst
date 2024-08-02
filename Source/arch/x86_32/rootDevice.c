@@ -1,3 +1,9 @@
+/**
+ *  Amethyst Operating System - CPUID helper class.
+ *  Copyright 2024 Jack Scott <jack@jackscott.id.au>.
+ *  Released under the terms of the ISC license.
+*/
+
 #include <deviceTree.h>
 #include <memoryManager.h>
 #include <stream.h>
@@ -15,16 +21,16 @@ void deviceTree_build(void) {
     // We should handle what happens if this code gets called twice, but we don't.
 
     deviceTree_rootEntry = deviceTree_createDevice("x86_32 Root Platform Device", DEVICETREE_TYPE_OTHER, NULL);
-    
+
     deviceTree_addChild(deviceTree_rootEntry, pci_addDevicesToTree());
 
-    if(!serial_detect(SERIAL_COM1)) {
+    if (!serial_detect(SERIAL_COM1)) {
         deviceTree_Entry* serial = deviceTree_createDevice("ISA Serial Port - COM1", DEVICETREE_TYPE_OTHER, NULL);
 
         deviceTree_addChild(deviceTree_rootEntry, serial);
     }
 
-    if(!serial_detect(SERIAL_COM2)) {
+    if (!serial_detect(SERIAL_COM2)) {
         deviceTree_Entry* serial = deviceTree_createDevice("ISA Serial Port - COM2", DEVICETREE_TYPE_OTHER, NULL);
 
         deviceTree_addChild(deviceTree_rootEntry, serial);

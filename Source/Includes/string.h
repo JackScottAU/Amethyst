@@ -1,31 +1,32 @@
-/* 
- * File:   string.h
- * Author: Jack Scott
- */
+/**
+ *  Amethyst Operating System - String functions.
+ *  Copyright 2024 Jack Scott <jack@jackscott.id.au>.
+ *  Released under the terms of the ISC license.
+*/
 
-#ifndef STRING_H
-#define	STRING_H
+#ifndef INCLUDES_STRING_H_
+#define INCLUDES_STRING_H_
 
 #include <Types.h>
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
-	
-	void string_copy(char *dest, const char* src);
-	int string_compare(const char* a, const char* b);
-	uint32 string_parseInt(const char* string);
 
-	/**
-	 * Formats a string.
-	 * @param destination Destination for the string output. Must have sufficient size. Memory allocation is the responsibility of the caller.
-	 * @param formatString TODO.
-	*/
-	//void string_format(char* destination, const char* formatString, ...);
+    void string_copy(char *dest, const char* src);
+    int string_compare(const char* a, const char* b);
+    uint32 string_parseInt(const char* stringToParse);
 
-#ifdef	__cplusplus
+    /**
+     * Formats a string.
+     * @param destination Destination for the string output. Must have sufficient size. Memory allocation is the responsibility of the caller.
+     * @param formatString TODO.
+    */
+//  void string_format(char* destination, const char* formatString, ...);
+
+#ifdef __cplusplus
 }
 #endif
 
-#endif	/* STRING_H */
+#endif  // INCLUDES_STRING_H_
 

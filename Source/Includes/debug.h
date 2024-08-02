@@ -8,10 +8,10 @@
 
 
 
-#ifndef DEBUG_H_
-#define DEBUG_H_
+#ifndef INCLUDES_DEBUG_H_
+#define INCLUDES_DEBUG_H_
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -28,8 +28,8 @@ extern "C" {
     #define LOGLEVEL_INFO       3
     #define LOGLEVEL_DEBUG      4
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 }
 #endif
 
-#endif // DEBUG_H_
+#endif  // INCLUDES_DEBUG_H_

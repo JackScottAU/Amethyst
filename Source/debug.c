@@ -1,3 +1,9 @@
+/**
+ *  Amethyst Operating System - Debug functions.
+ *  Copyright 2024 Jack Scott <jack@jackscott.id.au>.
+ *  Released under the terms of the ISC license.
+*/
+
 #include <Types.h>
 #include <serial.h>
 #include <amethyst.h>
@@ -6,11 +12,11 @@
 #include <debug.h>
 
 void debug(uint8 logLevel, const char* formatString, ...) {
-    if(logLevel > DEBUG_LEVEL) {
+    if (logLevel > DEBUG_LEVEL) {
         return;
     }
 
-    switch(logLevel) {
+    switch (logLevel) {
         case 0:
             stream_printf(DEBUG_DEVICE, "CRIT:   ");
             break;
@@ -22,7 +28,7 @@ void debug(uint8 logLevel, const char* formatString, ...) {
         case 2:
             stream_printf(DEBUG_DEVICE, "WARN:   ");
             break;
-        
+
         case 3:
             stream_printf(DEBUG_DEVICE, "INFO:   ");
             break;

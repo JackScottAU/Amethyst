@@ -9,7 +9,7 @@
 
 #include <Types.h>
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -34,11 +34,11 @@ char* serial_readString(void);
 
 void serial_writeChar(char a);
 
-void serial_writeString(const char* string);
-void serial_writeLine(const char* string);
+void serial_writeString(const char* stringToOutput);
+void serial_writeLine(const char* stringToOutput);
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 }
 #endif
 
-#endif // INCLUDES_SERIAL_H_
+#endif  // INCLUDES_SERIAL_H_

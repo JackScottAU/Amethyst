@@ -1,10 +1,16 @@
+/**
+ *  Amethyst Operating System - Stream definition.
+ *  Copyright 2024 Jack Scott <jack@jackscott.id.au>.
+ *  Released under the terms of the ISC license.
+*/
+
 #ifndef INCLUDES_STREAM_H_
 #define INCLUDES_STREAM_H_
 
 #include <Types.h>
 #include <Structures/fifobuffer.h>
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -27,9 +33,8 @@ typedef struct {
     void (*flush)(char);
 } Stream;
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 }
 #endif
 
-#endif // INCLUDES_STREAM_H_
-
+#endif  // INCLUDES_STREAM_H_

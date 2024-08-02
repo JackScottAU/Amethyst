@@ -2,6 +2,8 @@
 
 Immediate TODO list:
 
+0.  blue screen of death
+
 1.  Keyboard driver:
     1.  Finish PS/2 Controller initialisation routine (device detection and child init, device tree building, etc)
 2.  Expand string and data structures functionality and put it in the library/ folder:

@@ -9,14 +9,14 @@
 
 #include <deviceTree.h>
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
 deviceTree_Entry* ps2controller_initialise(void);
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 }
 #endif
 
-#endif // INCLUDES_PS2CONTROLLER_H_
+#endif  // INCLUDES_PS2CONTROLLER_H_

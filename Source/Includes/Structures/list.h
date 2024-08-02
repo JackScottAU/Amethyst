@@ -22,4 +22,4 @@ typedef struct {
 List* List_new();
 void List_add(List* list, void* data);
 
-#endif // INCLUDES_STRUCTURES_LIST_H_
+#endif  // INCLUDES_STRUCTURES_LIST_H_

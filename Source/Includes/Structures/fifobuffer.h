@@ -33,4 +33,4 @@ uint32 FIFOBuffer_ReadBytes(FIFOBuffer* buffer, uint8* data, uint32 size);
 
 uint32 FIFOBuffer_ContentsSize(FIFOBuffer* buffer);
 
-#endif //INCLUDES_STRUCTURES_FIFOBUFFER_H_
+#endif  // INCLUDES_STRUCTURES_FIFOBUFFER_H_
