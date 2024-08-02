@@ -9,6 +9,8 @@
 #include <Registers.h>
 #include <interrupts.h>
 #include <memoryManager.h>
+#include <stream.h>
+#include <vgaConsole.h>
 
 interrupts_handlerCallback* interrupts_callbacks = (interrupts_handlerCallback*) 0x00;
 
@@ -21,6 +23,16 @@ void interrupts_handler(struct Registers_S *Registers) {
 
     // If it is an exception.
     if (Registers->IntNum <= 0x1F) {
+
+        stream_printf(vgaConsole_putChar, "\033[37m\033[41m\n");
+        stream_printf(vgaConsole_putChar, "                                                                                ");
+        stream_printf(vgaConsole_putChar, "                                ! SYSTEM PANIC !                                ");
+        stream_printf(vgaConsole_putChar, "                                                                                ");
+        stream_printf(vgaConsole_putChar, "\033[0m\n");
+
+        stream_printf(vgaConsole_putChar, "Interrupt number: %d\n", Registers->IntNum);
+        stream_printf(vgaConsole_putChar, "EAX: %h\tEBX: %h\tECX: %h\tEDX: %h\n", Registers->EAX, Registers->EBX, Registers->ECX, Registers->EDX);
+
         interrupts_disableInterrupts();
         haltCPU();
     }
@@ -53,7 +65,7 @@ void interrupts_handler(struct Registers_S *Registers) {
     }
 }
 
-interrupts_handlerCallback* interrupts_addHandler(uint8 interruptNumber, uint32 argument, void (* callback)(uint32, uint32)) {
+interrupts_handlerCallback* interrupts_addHandler(uint8 interruptNumber, uint32 argument, void (* callback)(uint32)) {
     interrupts_handlerCallback* request = memoryManager_allocate(sizeof(interrupts_handlerCallback));
 
     request->interruptNumber = interruptNumber;

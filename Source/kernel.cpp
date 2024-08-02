@@ -155,6 +155,11 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 
     CPUID cpuid = CPUID();
 
+stream_printf(vgaConsole_putChar, "before ");
+    uint16* vgaConsole_videoMemory    = (uint16*) 0xB00B8000;
+    stream_printf(vgaConsole_putChar, "asdf", vgaConsole_videoMemory[0]);
+stream_printf(vgaConsole_putChar, "after ");
+
     while (1) {
         stream_printf(vgaConsole_putChar, "> ");
 
