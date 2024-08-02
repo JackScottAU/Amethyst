@@ -13,8 +13,7 @@
 #include <Structures/fifobuffer.h>
 #include <deviceTree.h>
 #include <stream.h>
-
-
+#include <debug.h>
 
 bool shift = false;
 bool capsActive = false;
@@ -28,14 +27,12 @@ void keyboard_interruptHandler(uint32 eventData) {
 
     uint8 data = portIO_read8(0x60);
 
-    if(commandMode == true) {
+    debug(LOGLEVEL_DEBUG, "Keyboard data received: %h", data);
+
+    if (commandMode == true) {
         // discard data for now.
-        stream_printf(serial_writeChar, "keyboard: %h\n", data);
     } else {
-
         FIFOBuffer_WriteBytes(keyboard_buffer, &data, 1);
-
-        stream_printf(serial_writeChar, "keyboard: %h\n", data);
     }
 }
 
@@ -53,69 +50,67 @@ deviceTree_Entry* keyboard_initialise() {
 
 // 8 scancodes per line = 16 lines.
 uint8 keyboard_scanCodesNormal[128] = {
-    0, 0, '1', '2', '3', '4', '5', '6', 
-    '7', '8', '9', '0', '-', '=', '\b', '\t', 
-    'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 
-    'o', 'p', '[', ']', '\n', 0, 'a', 's', 
-    'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', 
-    '\'', '`', 0, '\\', 'z', 'x', 'c', 'v', 
-    'b', 'n', 'm', ',', '.', '/', 0, 0, 
-    0, ' ', 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, '1', '2', '3', '4', '5', '6',
+    '7', '8', '9', '0', '-', '=', '\b', '\t',
+    'q', 'w', 'e', 'r', 't', 'y', 'u', 'i',
+    'o', 'p', '[', ']', '\n', 0, 'a', 's',
+    'd', 'f', 'g', 'h', 'j', 'k', 'l', ';',
+    '\'', '`', 0, '\\', 'z', 'x', 'c', 'v',
+    'b', 'n', 'm', ',', '.', '/', 0, 0,
+    0, ' ', 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
 };
 
 // 8 scancodes per line = 16 lines.
 uint8 keyboard_scanCodesShift[128] = {
-    0, 0, '!', '@', '#', '$', '%', '^', 
-    '&', '*', '(', ')', '_', '+', '\b', '\t', 
-    'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 
-    'O', 'P', '{', '}', '\n', 0, 'A', 'S', 
-    'D', 'F', 'G', 'H', 'J', 'K', 'L', ':', 
-    '"', '~', 0, '|', 'Z', 'X', 'C', 'V', 
-    'B', 'N', 'M', '<', '>', '?', 0, 0, 
-    0, ' ', 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, '!', '@', '#', '$', '%', '^',
+    '&', '*', '(', ')', '_', '+', '\b', '\t',
+    'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I',
+    'O', 'P', '{', '}', '\n', 0, 'A', 'S',
+    'D', 'F', 'G', 'H', 'J', 'K', 'L', ':',
+    '"', '~', 0, '|', 'Z', 'X', 'C', 'V',
+    'B', 'N', 'M', '<', '>', '?', 0, 0,
+    0, ' ', 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-char keyboard_readChar(void)
-{
-    while(FIFOBuffer_ContentsSize(keyboard_buffer) == 0) {
-
-    }
+char keyboard_readChar(void) {
+    while (FIFOBuffer_ContentsSize(keyboard_buffer) == 0) { }
 
     uint8 data;
 
     FIFOBuffer_ReadBytes(keyboard_buffer, &data, 1);
 
+    debug(LOGLEVEL_DEBUG, "Keyboard readchar: %h", data);
+
     stream_printf(serial_writeChar, "keyboard readchar: %h\n", data);
 
-    if(data & 0x80) {
+    if (data & 0x80) {
         // A key has been released.
 
-        if(data == 0xBA) {
-            if(capsActive == true) {
+        if (data == 0xBA) {
+            if (capsActive == true) {
                 capsActive = false;
-            }
-            else {
+            } else {
                 capsActive = true;
             }
         }
 
-        if(data == 0xAA || data == 0xB6) {
+        if (data == 0xAA || data == 0xB6) {
             shift = false;
         }
 
@@ -123,19 +118,19 @@ char keyboard_readChar(void)
         return keyboard_readChar();
     }
 
-    if(data == 0x2A || data == 0x36) {
+    if (data == 0x2A || data == 0x36) {
         shift = true;
     }
 
     char key;
 
-    if(shift || capsActive) {
+    if (shift || capsActive) {
         key = keyboard_scanCodesShift[data];
-    } else{
+    } else {
         key = keyboard_scanCodesNormal[data];
     }
 
-    if(key != 0) {
+    if (key != 0) {
         return key;
     } else {
         return keyboard_readChar();

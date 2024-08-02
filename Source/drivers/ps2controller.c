@@ -30,8 +30,7 @@
 void ps2controller_waitForRead(void);
 void ps2controller_waitForWrite(void);
 
-deviceTree_Entry* ps2controller_initialise(void)
-{
+deviceTree_Entry* ps2controller_initialise(void) {
     // Resource: https://wiki.osdev.org/%228042%22_PS/2_Controller
 
     // Missing steps: 1 (usb init), 2 (determine controller exists) - these are done at the level above.
@@ -49,7 +48,6 @@ deviceTree_Entry* ps2controller_initialise(void)
     bool haveDualChannelController = configByte & PS2CONTROLLER_CONFIG_DISABLE_PORT2;
     stream_printf(serial_writeChar, "ps2controller config: %h\n", configByte);
     configByte = configByte | 0x03;     // Enable interrupts on both devices.
-   // configByte = configByte & 0x3F;    // Disable emulation mode on first port. Commeneted out because Hyper-V doesnt support scancode set 2.
     stream_printf(serial_writeChar, "ps2controller config: %h\n", configByte);
 
     portIO_write8(PS2CONTROLLER_CONTROLPORT, 0x60);
@@ -62,19 +60,18 @@ deviceTree_Entry* ps2controller_initialise(void)
     uint8 ok = portIO_read8(PS2CONTROLLER_DATAPORT);
 
     stream_printf(serial_writeChar, "ps2controller ok: %h\n", ok);
-    if(ok != 0x55)
-    {
+    if (ok != 0x55) {
         return NULL;
     }
 
     // Step 7: Determine if there are two channels.
 
     // Step 8: Perform Interface Tests
-    // TODO.
+    // TODO(JackScottAU)
 
     // Step 9: Enable Devices.
     portIO_write8(PS2CONTROLLER_CONTROLPORT, PS2CONTROLLER_COMMAND_ENABLE_PORT1);
-    if(haveDualChannelController) {
+    if (haveDualChannelController) {
         portIO_write8(PS2CONTROLLER_CONTROLPORT, PS2CONTROLLER_COMMAND_ENABLE_PORT2);
     }
 
@@ -84,15 +81,13 @@ deviceTree_Entry* ps2controller_initialise(void)
 /**
  *  Waits until the PS/2 Controller data port can be succesfully read from.
 */
-void ps2controller_waitForRead()
-{
-    while(!portIO_read8(PS2CONTROLLER_CONTROLPORT) & 0x01);
+void ps2controller_waitForRead() {
+    while (!portIO_read8(PS2CONTROLLER_CONTROLPORT) & 0x01) { }
 }
 
 /**
  *  Waits until the PS/2 Controller data port can be succesfully written to.
 */
-void ps2controller_waitForWrite()
-{
-    while(portIO_read8(PS2CONTROLLER_CONTROLPORT) & 0x02);
+void ps2controller_waitForWrite() {
+    while (portIO_read8(PS2CONTROLLER_CONTROLPORT) & 0x02) { }
 }

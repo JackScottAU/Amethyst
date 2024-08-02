@@ -1,7 +1,8 @@
 /**
- * Enumerates PCI buses. Will do more eventually.
- * The reference for most of the code within this file is http://wiki.osdev.org/PCI
- */
+ *  Amethyst Operating System - PCI Bus Enumeration
+ *  Copyright 2024 Jack Scott <jack@jackscott.id.au>.
+ *  Released under the terms of the ISC license.
+*/
 
 #include <Types.h>
 #include <portIO.h>
@@ -64,8 +65,7 @@ deviceTree_Entry* pci_addDevicesToTree(void) {
     root->name = pci_getNameFromVendorAndDevice(pci_currentEntry->vendorID, pci_currentEntry->deviceID);
 
     pci_currentEntry = pci_currentEntry->next;
-    while (pci_currentEntry->next != 0x0)
-    {
+    while (pci_currentEntry->next != 0x0) {
         char* name = pci_getNameFromVendorAndDevice(pci_currentEntry->vendorID, pci_currentEntry->deviceID);
 
         deviceTree_Entry* device = deviceTree_createDevice(name, DEVICETREE_TYPE_PCI, pci_currentEntry);
@@ -78,20 +78,18 @@ deviceTree_Entry* pci_addDevicesToTree(void) {
     return root;
 }
 
-
-
-void pci_printBuses(void (*putChar)(char))
-{
+void pci_printBuses(void (*putChar)(char)) {
     stream_printf(putChar, "  +-----+------+------+--------+--------+------------------------------------+\n");
     stream_printf(putChar, "  | BUS | SLOT | FUNC | VENDOR | DEVICE | CLASS DESCRIPTION                  |\n");
     stream_printf(putChar, "  +-----+------+------+--------+--------+------------------------------------+\n");
 
     // Iterate through the bus entries stored.
     pci_currentEntry = pci_busEntries;
-    while (pci_currentEntry->next != 0x0)
-    {
+    while (pci_currentEntry->next != NULL) {
         // Print entry.
-        stream_printf(putChar, "  | %d   | %d    | %d    | %h | %h | ", pci_currentEntry->bus, pci_currentEntry->slot, pci_currentEntry->function, pci_currentEntry->vendorID, pci_currentEntry->deviceID);
+        stream_printf(putChar, "  | %d   | %d    | %d    | %h | %h | ",
+        pci_currentEntry->bus, pci_currentEntry->slot, pci_currentEntry->function,
+        pci_currentEntry->vendorID, pci_currentEntry->deviceID);
         stream_printf(putChar, classNames[pci_currentEntry->classID]);
         stream_printf(putChar, " |\n");
 
@@ -104,20 +102,19 @@ void pci_printBuses(void (*putChar)(char))
 void pci_enumerateBuses(void) {
     uint16 bus;
 
-    //very brute force. need to fix this.
+    // very brute force. need to fix this.
 
     // Init the table.
     pci_busEntries = memoryManager_allocate(sizeof(pciBus_Entry));
     pci_currentEntry = pci_busEntries;
-    pci_currentEntry->next = 0x0; // set next to zero. this is added later.
+    pci_currentEntry->next = 0x0;   // set next to zero. this is added later.
 
     for (bus = 0; bus < PCI_BUSCOUNT; bus++) {
         pci_checkBus(bus);
     }
 }
 
-void pci_checkBus(uint8 bus)
-{
+void pci_checkBus(uint8 bus) {
     uint8 slot;
 
     for (slot = 0; slot < PCI_SLOTCOUNT; slot++)
@@ -134,7 +131,7 @@ void pci_checkSlot(uint8 bus, uint8 slot) {
     uint8 numberOfFunctions = 1;
 
     // Check whether we have a multi-function device and need to inspect all functions at this slot.
-    if(pci_isMultiFunctionDevice(bus, slot)) {
+    if (pci_isMultiFunctionDevice(bus, slot)) {
         numberOfFunctions = PCI_FUNCCOUNT;
     }
 
@@ -165,22 +162,22 @@ void pci_checkSlot(uint8 bus, uint8 slot) {
  * Calculates the address in the PCI configuration space for a given PCI bus:slot:function and register number.
 */
 uint32 pci_calculateRegisterAddress(uint8 bus, uint8 slot, uint8 function, uint8 registerNo) {
-    //Create the address of the register we want to read from. This is an address in "PCI configuration space", *not* I/O space or general memory space.
-    return 0x80000000 | (uint32)((bus & 0xFF) << 16) | (uint32)((slot & 0x1F) << 11) | (uint32)((function & 0x7) << 8) | (uint32)((registerNo & 0xFC));
+    // Create the address of the register we want to read from.
+    // This is an address in "PCI configuration space", *not* I/O space or general memory space.
+    return 0x80000000 | (uint32)((bus & 0xFF) << 16) | (uint32)((slot & 0x1F) << 11) |
+    (uint32)((function & 0x7) << 8) | (uint32)((registerNo & 0xFC));
 }
 
 uint32 pci_readConfigurationRegister(uint8 bus, uint8 slot, uint8 function, uint8 registerNo) {
-    
-    //Write the address of the register we want to the access request I/O port.
+    // Write the address of the register we want to the access request I/O port.
     portIO_write32(PCIBUS_IOPORT_REQUEST, pci_calculateRegisterAddress(bus, slot, function, registerNo));
 
-    //Read the contents of the register at that address back from the data I/O port.
+    // Read the contents of the register at that address back from the data I/O port.
     return portIO_read32(PCIBUS_IOPORT_DATA);
 }
 
 void pci_writeConfigurationRegister(uint8 bus, uint8 slot, uint8 function, uint8 registerNo, uint32 data) {
-    
-    //Write the address of the register we want to the access request I/O port.
+    // Write the address of the register we want to the access request I/O port.
     portIO_write32(PCIBUS_IOPORT_REQUEST, pci_calculateRegisterAddress(bus, slot, function, registerNo));
 
     portIO_write32(PCIBUS_IOPORT_DATA, data);

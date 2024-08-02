@@ -47,6 +47,6 @@ char* pci_getNameFromVendorAndDevice(uint16 vendor, uint16 device) {
 
         deviceNameEntry++;
     }
-    
+
     return "Unknown PCI Device";
 }
