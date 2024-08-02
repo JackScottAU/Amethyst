@@ -44,7 +44,7 @@ struct multiboot_info* multiboot_correctDataStructureAddresses(struct multiboot_
     for (uint32 i = 0; i < data->modsCount; i++) {
         data->modsAddr[i].start = (void*)((uint32)data->modsAddr[i].start + 0xC0000000);
         data->modsAddr[i].end = (void*)((uint32)data->modsAddr[i].end + 0xC0000000);
-        data->modsAddr[i].string = (char*)((uint32)data->modsAddr[i].string + 0xC0000000);
+        data->modsAddr[i].fileName = (char*)((uint32)data->modsAddr[i].fileName + 0xC0000000);
     }
 
     return data;
