@@ -20,10 +20,11 @@ bool capsActive = false;
 bool commandMode = false;
 FIFOBuffer* keyboard_buffer;
 
-void keyboard_interruptHandler(uint32 eventData);
+void keyboard_interruptHandler(uint32 intNumber, uint32 eventData);
 
-void keyboard_interruptHandler(uint32 eventData) {
-    eventData++;
+void keyboard_interruptHandler(uint32 intNumber, uint32 eventData) {
+    debug(LOGLEVEL_DEBUG, "int number: %h", intNumber);
+    debug(LOGLEVEL_DEBUG, "event data: %h", eventData);
 
     uint8 data = portIO_read8(0x60);
 

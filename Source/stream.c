@@ -53,11 +53,19 @@ char* stream_readLine(bool echoMode) {
 
 void stream_printf(void (*putChar)(char), const char* formatString, ...) {
     va_list args;
+    va_start(args, formatString);
+
+    stream_vprintf(putChar, formatString, args);
+    
+    va_end(args);
+}
+
+void stream_vprintf(void (*putChar)(char), const char* formatString, va_list args) {
+        
     int i = 0;
     int arg;
     char* sarg;
 
-    va_start(args, formatString);
 
 
 
@@ -105,7 +113,6 @@ void stream_printf(void (*putChar)(char), const char* formatString, ...) {
         i++;
     }
 
-    va_end(args);
 }
 
 void stream_putDecimal(void (*putChar)(char), uint32 arg) {

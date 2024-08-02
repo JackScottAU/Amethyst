@@ -53,7 +53,7 @@ void interrupts_handler(struct Registers_S *Registers) {
     }
 }
 
-interrupts_handlerCallback* interrupts_addHandler(uint8 interruptNumber, uint32 argument, void (* callback)(uint32)) {
+interrupts_handlerCallback* interrupts_addHandler(uint8 interruptNumber, uint32 argument, void (* callback)(uint32, uint32)) {
     interrupts_handlerCallback* request = memoryManager_allocate(sizeof(interrupts_handlerCallback));
 
     request->interruptNumber = interruptNumber;

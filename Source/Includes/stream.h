@@ -9,6 +9,7 @@
 
 #include <Types.h>
 #include <Structures/fifobuffer.h>
+#include <stdarg.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -22,6 +23,9 @@ extern "C" {
  * %s - string
 */
 void stream_printf(void (*putChar)(char), const char* formatString, ...);
+
+// Internal version of the above, mostly for use with debug etc.
+void stream_vprintf(void (*putChar)(char), const char* formatString, va_list args);
 
 char* stream_readLine(bool echoMode);
 

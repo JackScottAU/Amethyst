@@ -24,7 +24,7 @@ typedef struct interrupts_handlerCallback_s {
 
 //-- Public Interface --//
 void interrupts_initialise(void);
-interrupts_handlerCallback* interrupts_addHandler(uint8 interruptNumber, uint32 argument, void (* callback)(uint32));
+interrupts_handlerCallback* interrupts_addHandler(uint8 interruptNumber, uint32 argument, void (* callback)(uint32, uint32));
 void interrupts_removeHandler(interrupts_handlerCallback* request);
 
 //-- Private Interface --//
