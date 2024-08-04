@@ -2,8 +2,6 @@
 
 Immediate TODO list:
 
-0.  blue screen of death
-
 1.  Keyboard driver:
     1.  Finish PS/2 Controller initialisation routine (device detection and child init, device tree building, etc)
 2.  Expand string and data structures functionality and put it in the library/ folder:
@@ -29,6 +27,13 @@ Immediate TODO list:
 
 Milestone 1:
 A user program loaded from disk runs in userspace, accepts input from the keyboard, and outputs to a text console.
+Needs:
+ - IDE driver
+ - Filesystem drivers
+ - VFS
+ - Multitasking
+ - Ring 3
+ - Basic system calls
 
 Milestone 2:
 Multiple instances of that program can be run simultaneously in terminal emulators in a graphical gui
@@ -37,7 +42,6 @@ Multiple instances of that program can be run simultaneously in terminal emulato
 2. Interactive shell.
 4. Device tree.
 3. ANSI Terminal Support for keyboard and VGA.
-4. Higher half kernel.
 5. Expanding string and linked list/tree support functions.
 6. Multitasking
 7. Drivers for storage

@@ -128,12 +128,8 @@ bool pci_isMultiFunctionDevice(uint8 bus, uint8 slot) {
 }
 
 void pci_checkSlot(uint8 bus, uint8 slot) {
-    uint8 numberOfFunctions = 1;
-
     // Check whether we have a multi-function device and need to inspect all functions at this slot.
-    if (pci_isMultiFunctionDevice(bus, slot)) {
-        numberOfFunctions = PCI_FUNCCOUNT;
-    }
+    uint8 numberOfFunctions = pci_isMultiFunctionDevice(bus, slot) ? PCI_FUNCCOUNT: 1;
 
     for (uint8 function = 0; function < numberOfFunctions; function++) {
         uint32 deviceAndVendor = pci_readConfigurationRegister(bus, slot, function, PCIBUS_REGISTER_DEVICE_AND_VENDOR);
