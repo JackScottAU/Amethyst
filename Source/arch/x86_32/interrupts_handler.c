@@ -30,8 +30,11 @@ void interrupts_handler(struct Registers_S *Registers) {
         stream_printf(vgaConsole_putChar, "                                                                                ");
         stream_printf(vgaConsole_putChar, "\033[0m\n");
 
-        stream_printf(vgaConsole_putChar, "Interrupt number: %d\n", Registers->IntNum);
+        stream_printf(vgaConsole_putChar, "Interrupt number: %d\tError code: %h\n", Registers->IntNum, Registers->ErrorCode);
         stream_printf(vgaConsole_putChar, "EAX: %h\tEBX: %h\tECX: %h\tEDX: %h\n", Registers->EAX, Registers->EBX, Registers->ECX, Registers->EDX);
+        stream_printf(vgaConsole_putChar, "CS: %h\tDS: %h\tES: %h\tFS: %h\tGS: %h\t\n", Registers->CS, Registers->DS, Registers->ES, Registers->FS, Registers->GS);
+        stream_printf(vgaConsole_putChar, "EDI: %h\tESI: %h\tEBP: %h\tESP: %h\n", Registers->EDI, Registers->ESI, Registers->EBP, Registers->ESP);
+        stream_printf(vgaConsole_putChar, "EIP: %h\tEFlags: %h\tUserESP: %h\tSS: %h\n", Registers->EIP, Registers->EFlags, Registers->UserESP, Registers->SS);
 
         interrupts_disableInterrupts();
         haltCPU();

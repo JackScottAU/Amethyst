@@ -133,3 +133,11 @@ Microkernel
 Config object model (like browser's document object model). 
 Base config set in header files or something, baked in to kernel.
 Config loaded from disk in xml format (hard to parse, but fully capable of s-expressions so can handle any arbitrary config) into COM.
+
+# Platforms
+
+Each potential platform has a pair identifying it:
+First part is CPU architecture, second part is the machine type (and built in assumptions about booting and root device)
+    x86-pc
+    x64-pc
+    arm-pi5

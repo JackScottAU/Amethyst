@@ -155,11 +155,6 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 
     CPUID cpuid = CPUID();
 
-stream_printf(vgaConsole_putChar, "before ");
-    uint16* vgaConsole_videoMemory    = (uint16*) 0xB00B8000;
-    stream_printf(vgaConsole_putChar, "asdf", vgaConsole_videoMemory[0]);
-stream_printf(vgaConsole_putChar, "after ");
-
     while (1) {
         stream_printf(vgaConsole_putChar, "> ");
 
@@ -181,6 +176,12 @@ stream_printf(vgaConsole_putChar, "after ");
             stream_printf(vgaConsole_putChar, "Model: %h\n", cpuid.getModel());
             stream_printf(vgaConsole_putChar, "Stepping: %h\n", cpuid.getStepping());
             continue;
+        }
+
+        // Triggers a CPU exception for testing the kernel panic screen.
+        if(string_compare(line, "Trigger-Exception") == 0) {
+            uint16* vgaConsole_videoMemory    = (uint16*) 0xA00B8000;
+            stream_printf(vgaConsole_putChar, "asdf", vgaConsole_videoMemory[0]);
         }
 
         if (string_compare(line, "Show-GDT") == 0) {
