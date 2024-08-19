@@ -179,7 +179,7 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
         }
 
         // Triggers a CPU exception for testing the kernel panic screen.
-        if(string_compare(line, "Trigger-Exception") == 0) {
+        if (string_compare(line, "Trigger-Exception") == 0) {
             uint16* vgaConsole_videoMemory    = (uint16*) 0xA00B8000;
             stream_printf(vgaConsole_putChar, "asdf", vgaConsole_videoMemory[0]);
         }

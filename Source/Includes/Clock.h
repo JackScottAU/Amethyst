@@ -1,10 +1,15 @@
+/**
+ *  Amethyst Operating System - Time/Date and Timer Functions.
+ *  Copyright 2024 Jack Scott <jack@jackscott.id.au>.
+ *  Released under the terms of the ISC license.
+*/
 
-#ifndef CLOCK_H
-#define CLOCK_H
+#ifndef INCLUDES_CLOCK_H_
+#define INCLUDES_CLOCK_H_
 
 #include <Types.h>
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -22,7 +27,7 @@ extern "C" {
         sint64 seconds;
         uint16 milliSeconds;
     } time_t;
-    
+
     typedef struct clock_timerRequest_s {
         sint64 seconds;
         uint16 milliSeconds;
@@ -32,18 +37,18 @@ extern "C" {
         uint16 repeatMilliSecondsToAdd;
         struct clock_timerRequest_s* next;
     } clock_timerRequest;
-    
+
     void clock_init(void);
     void clock_shutdown(void);
     void clock_handler_PIC(uint32 arbitraryNumber);
-    unsigned long clock_uptime(void);
+    uint32 clock_uptime(void);
 
     void clock_setHertz(unsigned int Hertz);
-    
+
     uint8 clock_getRTCRegister(uint8 chosenRegister);
     void clock_updateTimeFromRTC(time_t* clock);
     uint8 clock_convertBCDtoNormal(uint8 value);
-    
+
     clock_timerRequest* clock_addOneShotRequest(time_t* requestedTime, void (*funcToCall)(void));
     clock_timerRequest* clock_addRepeatRequest(uint64 secGap, uint16 milGap, void (*funcToCall)(void));
     void clock_deleteTimerRequest(clock_timerRequest* request);
@@ -53,16 +58,16 @@ extern "C" {
     #define SECONDS_PER_MINUTE 60
     #define SECONDS_PER_HOUR 3600
     #define SECONDS_PER_DAY 86400
-    #define SECONDS_PER_YEAR 31556926 //According to Google. We ignore leap seconds in this approximate fix.
+    #define SECONDS_PER_YEAR 31556926   // According to Google. We ignore leap seconds in this approximate fix.
 
-    //If the RTC is in local time, this is the number that needs to be added in order to get UTC.
-    //Example: I am in UTC+11, so my value is -11 (11-11=0)
+    // If the RTC is in local time, this is the number that needs to be added in order to get UTC.
+    // Example: I am in UTC+11, so my value is -11 (11-11=0)
     #define CLOCK_UTC_OFFSET 0
-    
-    //EPOCH: 2000-01-01 00:00:00.000
 
-    #ifdef	__cplusplus
+    // EPOCH: 2000-01-01 00:00:00.000
+
+#ifdef __cplusplus
 }
 #endif
 
-#endif
+#endif  // INCLUDES_CLOCK_H_

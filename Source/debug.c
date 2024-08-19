@@ -12,10 +12,8 @@
 #include <debug.h>
 
 void debug(uint8 logLevel, const char* formatString, ...) {
-
     va_list args;
     va_start(args, formatString);
-
 
     if (logLevel > DEBUG_LEVEL) {
         return;

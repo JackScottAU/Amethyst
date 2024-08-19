@@ -56,18 +56,14 @@ void stream_printf(void (*putChar)(char), const char* formatString, ...) {
     va_start(args, formatString);
 
     stream_vprintf(putChar, formatString, args);
-    
+
     va_end(args);
 }
 
 void stream_vprintf(void (*putChar)(char), const char* formatString, va_list args) {
-        
     int i = 0;
     int arg;
     char* sarg;
-
-
-
 
     while (formatString[i]) {
         if (formatString[i] == '\n') {
@@ -112,7 +108,6 @@ void stream_vprintf(void (*putChar)(char), const char* formatString, va_list arg
 
         i++;
     }
-
 }
 
 void stream_putDecimal(void (*putChar)(char), uint32 arg) {

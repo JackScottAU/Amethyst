@@ -11,7 +11,7 @@
 #include <Graphics/canvas.h>
 #include <Structures/list.h>
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -26,8 +26,8 @@ typedef struct Widget_s {
     List* children;
 } Widget;
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 }
 #endif
 
-#endif // INCLUDES_GRAPHICS_WIDGET_H_
+#endif  // INCLUDES_GRAPHICS_WIDGET_H_

@@ -9,7 +9,7 @@
 
 #include <Types.h>
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -19,8 +19,8 @@ typedef struct {
     uint32 height;
 } Canvas;
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 }
 #endif
 
-#endif // INCLUDES_GRAPHICS_CANVAS_H_
+#endif  // INCLUDES_GRAPHICS_CANVAS_H_

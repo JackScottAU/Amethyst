@@ -18,12 +18,8 @@ interrupts_handlerCallback* interrupts_callbacks = (interrupts_handlerCallback*)
  * @param Registers The state of the registers on the stack provided by the ISR stub.
  */
 void interrupts_handler(struct Registers_S *Registers) {
-    // Variable Declarations.
-    // unsigned char temp = 0;
-
     // If it is an exception.
     if (Registers->IntNum <= 0x1F) {
-
         stream_printf(vgaConsole_putChar, "\033[37m\033[41m\n");
         stream_printf(vgaConsole_putChar, "                                                                                ");
         stream_printf(vgaConsole_putChar, "                                ! SYSTEM PANIC !                                ");

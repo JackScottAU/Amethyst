@@ -28,7 +28,7 @@ inline void operator delete[](void *p) {
 
 inline void *operator new(size_t, void *p)     throw() { return p; }
 inline void *operator new[](size_t, void *p)   throw() { return p; }
-inline void  operator delete  (void *, long unsigned int) throw() { }
-inline void  operator delete[](void *, long unsigned int) throw() { }
+inline void  operator delete  (void *, uint32) throw() { }
+inline void  operator delete[](void *, uint32) throw() { }
 
 #endif  // INCLUDES_CPPSUPPORT_HPP_
