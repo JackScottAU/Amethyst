@@ -12,7 +12,7 @@
 #include <stream.h>
 #include <vgaConsole.h>
 
-interrupts_handlerCallback* interrupts_callbacks = (interrupts_handlerCallback*) 0x00;
+interrupts_handlerCallback* interrupts_callbacks = (interrupts_handlerCallback*) NULL;
 
 /**
  * @param Registers The state of the registers on the stack provided by the ISR stub.
@@ -36,20 +36,18 @@ void interrupts_handler(struct Registers_S *Registers) {
         haltCPU();
     }
 
+    // Check all interrupt handler callbacks to see if any need to be processed.
     interrupts_handlerCallback* current = interrupts_callbacks;
-    interrupts_handlerCallback* oldCurrent = (interrupts_handlerCallback*) 0;
     while (current) {
-        // Perform check.
+        // Check to see if this callback is for the current interrupt number.
         if ((current->interruptNumber == Registers->IntNum)) {
-            // We have a shot!
-            void (*foo)();
-            foo = current->funcToCall;
+            // We need to process this interrupt callback by calling the stored function.
+            void (*foo)();                                          // Declare variable to store the function pointer.
+            foo = current->funcToCall;                              // Retrieve function pointer.
             (*foo)(Registers->IntNum, current->arbitraryNumber);    // Call the function.
         }
-        oldCurrent = current;
         current = current->next;
     }
-    oldCurrent++;
 
     // If it is an IRQ.
     if ((Registers->IntNum >= 0x20) && (Registers->IntNum <= 0x2F)) {
@@ -71,16 +69,9 @@ interrupts_handlerCallback* interrupts_addHandler(uint8 interruptNumber, uint32 
     request->arbitraryNumber = argument;
     request->funcToCall = callback;
 
-    // Add to queue.
-    // Do magic to try and find where to place this in the list.
-    if (!interrupts_callbacks) {
-        request->next = (interrupts_handlerCallback*) 0x00;
-        interrupts_callbacks = request;
-    } else {
-        // Add it to the front of the list. We'll figure out sorting it later.
-        request->next = interrupts_callbacks;
-        interrupts_callbacks = request;
-    }
+    // Add it to the front of the list. We'll figure out sorting it later.
+    request->next = interrupts_callbacks;
+    interrupts_callbacks = request;
 
     return(request);
 }

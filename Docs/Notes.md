@@ -1,16 +1,3 @@
-## TODO
-
-Immediate TODO list:
-
-1.  Keyboard driver:
-    1.  Finish PS/2 Controller initialisation routine (device detection and child init, device tree building, etc)
-2.  Expand string and data structures functionality and put it in the library/ folder:
-    1.  Linked list
-    2.  string_toLower() etc
-    3.  string_format() (sprintf)
-3.  Fix PCI device bus enumeration so it's nice and pretty.
-4.  Write page-level memory manager, then heap allocator.
-
 ## Source Tree Layout
 
 * Docs/ - contains documentation.
