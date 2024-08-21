@@ -10,7 +10,16 @@
 #include <deviceTree.h>
 #include <Types.h>
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 deviceTree_Entry* keyboard_initialise(void);
 char keyboard_readChar(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif  // INCLUDES_KEYBOARD_H_

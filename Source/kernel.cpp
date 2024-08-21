@@ -23,6 +23,7 @@
 #include <debug.h>
 #include <amethyst.h>
 
+#include <shell.hpp>
 #include <cpuid.hpp>
 
 #ifdef    __cplusplus
@@ -153,69 +154,8 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 
     stream_printf(vgaConsole_putChar, "\n");
 
-    CPUID cpuid = CPUID();
-
-    while (1) {
-        stream_printf(vgaConsole_putChar, "> ");
-
-        char* line = stream_readLine(true);
-
-        if (string_compare(line, "Get-DeviceTree") == 0) {
-            deviceTree_print(vgaConsole_putChar, true);
-            continue;
-        }
-
-        if (string_compare(line, "Get-Time") == 0) {
-            stream_printf(vgaConsole_putChar, "Time: %h\n", clock_uptime());
-            continue;
-        }
-
-        if (string_compare(line, "Get-CpuInformation") == 0) {
-            stream_printf(vgaConsole_putChar, "Manufacturer: %s\n", cpuid.getManufacturerString());
-            stream_printf(vgaConsole_putChar, "Family: %h\n", cpuid.getFamily());
-            stream_printf(vgaConsole_putChar, "Model: %h\n", cpuid.getModel());
-            stream_printf(vgaConsole_putChar, "Stepping: %h\n", cpuid.getStepping());
-            continue;
-        }
-
-        // Triggers a CPU exception for testing the kernel panic screen.
-        if (string_compare(line, "Trigger-Exception") == 0) {
-            uint16* vgaConsole_videoMemory    = (uint16*) 0xA00B8000;
-            stream_printf(vgaConsole_putChar, "asdf", vgaConsole_videoMemory[0]);
-        }
-
-        if (string_compare(line, "Show-GDT") == 0) {
-            stream_printf(vgaConsole_putChar, "gdt address: %h\n", gdt_table);
-
-            for (int i = 0; i < 6; i++) {
-                uint32 base = (gdt_table[i].base_high << 24) + gdt_table[i].base_low;
-                uint32 limit = (gdt_table[i].limit_high << 16) + gdt_table[i].limit_low;
-
-                stream_printf(vgaConsole_putChar, "Base: %h\n", base);
-                stream_printf(vgaConsole_putChar, "Limit: %h\n", limit);
-
-                stream_printf(vgaConsole_putChar, "Code: %h\n", gdt_table[i].code);
-                stream_printf(vgaConsole_putChar, "DPL: %h\n\n", gdt_table[i].DPL);
-            }
-            continue;
-        }
-
-        if (string_compare(line, "Shutdown") == 0) {
-            stream_printf(vgaConsole_putChar, "Shutting down...\n");
-            interrupts_disableInterrupts();
-            stream_printf(vgaConsole_putChar, "It is now safe to turn off your PC.");
-            haltCPU();
-            break;
-        }
-
-        if (string_compare(line, "Get-PciDetails") == 0) {
-            pci_printBuses(vgaConsole_putChar);
-            continue;
-        }
-
-        // None of the built-in commands match the input.
-        stream_printf(vgaConsole_putChar, "Unknown command.\n");
-    }
+    Shell shell = Shell(vgaConsole_putChar, keyboard_readChar);
+    shell.Main();
 }
 
 #ifdef    __cplusplus
