@@ -2,6 +2,8 @@
  *  Amethyst Operating System - C++ Support
  *  Copyright 2024 Jack Scott <jack@jackscott.id.au>.
  *  Released under the terms of the ISC license.
+ * 
+ *  This file is automatically included in compilation for all C++ files by the Makefile/GCC.
 */
 
 #ifndef INCLUDES_CPPSUPPORT_HPP_

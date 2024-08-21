@@ -42,9 +42,9 @@ void interrupts_handler(struct Registers_S *Registers) {
         // Check to see if this callback is for the current interrupt number.
         if ((current->interruptNumber == Registers->IntNum)) {
             // We need to process this interrupt callback by calling the stored function.
-            void (*foo)();                                          // Declare variable to store the function pointer.
+            void (*foo)(uint32);                                          // Declare variable to store the function pointer.
             foo = current->funcToCall;                              // Retrieve function pointer.
-            (*foo)(Registers->IntNum, current->arbitraryNumber);    // Call the function.
+            (*foo)(current->arbitraryNumber);    // Call the function.
         }
         current = current->next;
     }

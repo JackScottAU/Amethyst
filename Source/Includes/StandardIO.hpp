@@ -14,10 +14,17 @@
 extern "C" {
 #endif
 
+/// @brief Represents the standard I/O streams and provides access to them.
 class StandardIO {
  public:
+    /// @brief Creates a new StandardIO instance using the specified stdin and stdout character devices.
+    /// @param stdout A function that takes a single character.
+    /// @param stdin A function that returns a single character.
     StandardIO(void (*stdout)(char), char (*stdin)(void));
 
+    /// @brief Formatted printing.
+    /// @param formatString 
+    /// @param  
     void Print(const char* formatString, ...);
 
     char* ReadLine(bool echo);

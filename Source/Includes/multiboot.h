@@ -15,6 +15,12 @@ extern "C" {
 
 #define MULTIBOOT_MAGIC_NUMBER  0x2BADB002
 
+typedef enum : uint8 {
+    IndexedColour = 0,
+    DirectColour = 1,
+    EGA = 2,
+} multiboot_framebufferType;
+
 struct multiboot_info {
     uint32 flags;
     uint32 memoryLower;
@@ -46,7 +52,6 @@ struct multiboot_info {
     uint16 vbe_interface_off;
     uint16 vbe_interface_len;
 
-    // offset 88
     void* framebuffer_addr;
     uint32 framebuffer_addr_upper;
     uint32 framebuffer_pitch;
@@ -54,7 +59,8 @@ struct multiboot_info {
     uint32 framebuffer_height;
     uint8 framebuffer_bpp;
 
-    uint8 framebuffer_type;     // 0 = indexed colour, 1 = direct colour, 2 = ega text
+    multiboot_framebufferType framebuffer_type;
+    //uint8 framebuffer_type;     // 0 = indexed colour, 1 = direct colour, 2 = ega text
 
     uint8 framebuffer_red_field_position;
     uint8 framebuffer_red_mask_size;
@@ -64,13 +70,19 @@ struct multiboot_info {
     uint8 framebuffer_blue_mask_size;
 };
 
+typedef enum : uint32 {
+    Available = 1,
+    Reserved = 2,
+} memorytype;
+
 struct multiboot_memoryMapNode {
     uint32 size;
     uint64 addr;
     uint64 len;
-    #define MULTIBOOT_MEMORY_AVAILABLE  1
-    #define MULTIBOOT_MEMORY_RESERVED   2
-    uint32 type;
+  //  #define MULTIBOOT_MEMORY_AVAILABLE  1
+  //  #define MULTIBOOT_MEMORY_RESERVED   2
+  //  uint32 type;
+    memorytype type;
 } __attribute__((packed));
 
 struct multiboot_moduleNode {

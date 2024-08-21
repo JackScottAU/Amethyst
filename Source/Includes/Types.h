@@ -8,6 +8,7 @@
 #define INCLUDES_TYPES_H_
 
 #include <stdbool.h>
+#include <stddef.h>
 
     // Basic Type Definitions.
     typedef signed      char        sint8;
@@ -19,6 +20,6 @@
     typedef signed      long long   sint64;
     typedef unsigned    long long   uint64;
 
-    #define NULL ((void*) 0x00000000)
+  //  #define NULL ((void*) 0x00000000)
 
 #endif  // INCLUDES_TYPES_H_

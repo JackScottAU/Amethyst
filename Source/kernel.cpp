@@ -19,7 +19,6 @@
 #include <string.h>
 #include <deviceTree.h>
 #include <ps2controller.h>
-#include <cppsupport.hpp>
 #include <debug.h>
 #include <amethyst.h>
 
@@ -116,41 +115,6 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 
     ps2controller_initialise();
     deviceTree_build();
-
-//  deviceTree_print(vgaConsole_putChar, false);
-
-    debug(LOGLEVEL_DEBUG, "Framebuffer address: %h", multibootData->framebuffer_addr);
-    debug(LOGLEVEL_DEBUG, "Framebuffer pitch: %h", multibootData->framebuffer_pitch);
-    debug(LOGLEVEL_DEBUG, "Framebuffer width: %h", multibootData->framebuffer_width);
-    debug(LOGLEVEL_DEBUG, "Framebuffer height: %h", multibootData->framebuffer_height);
-    debug(LOGLEVEL_DEBUG, "Framebuffer bpp: %h", multibootData->framebuffer_bpp);
-    debug(LOGLEVEL_DEBUG, "Framebuffer type: %h", multibootData->framebuffer_type);
-
-//  stream_printf(serial_writeChar, "Module start: %h\n", multibootData->modsAddr->start);
-//  stream_printf(serial_writeChar, "Module end: %h\n", multibootData->modsAddr->end);
-
-/*    Canvas* canvas = memoryManager_allocate(sizeof(Canvas));
-    canvas->framebuffer = (void*)multibootData->framebuffer_addr;
-    canvas->height = multibootData->framebuffer_height;
-    canvas->width = multibootData->framebuffer_width;
-
-    ScreenFont* font = memoryManager_allocate(sizeof(ScreenFont));
-    font->header = multibootData->modsAddr->start;
-    font->characterData = (uint8*)(font->header) + font->header->headerSize;
-
-    stream_printf(serial_writeChar, "header: %h\n", font->header);
-    stream_printf(serial_writeChar, "header size: %h\n", font->header->headerSize);
-    stream_printf(serial_writeChar, "char data: %h\n", font->characterData);
-
-    vga_drawRect(canvas, 200, 200, 500, 300, 0x00888888);
-
-    vga_drawRect(canvas, 204, 224, 500 - 8, 300 - 28, 0x008888FF);
-    vga_drawRect(canvas, 200 + 500 - 20, 200 + 4, 16, 16, 0x00444444);
-    
-    vga_drawWord(canvas, font, 204, 204, 0xCCCCFF, "Amethyst OS");
-
-    vga_drawWord(canvas, font, 204, 224, 0xCCCCFF, "This is by far the worst operating system you've ever seen.");
-    vga_drawWord(canvas, font, 204, 240, 0xCCFFCC, "Ah... but you have seen it.");*/
 
     stream_printf(vgaConsole_putChar, "\n");
 
