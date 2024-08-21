@@ -42,22 +42,50 @@ void Shell::Main() {
 
         // Triggers a CPU exception for testing the kernel panic screen.
         if (string_compare(line, "Trigger-Exception") == 0) {
-            uint16* vgaConsole_videoMemory    = (uint16*) 0xA00B8000;
-            stream_printf(stdout, "asdf", vgaConsole_videoMemory[0]);
+            uint8* invalidMemoryAddress = (uint8*) 0xA00B8000;
+            invalidMemoryAddress[0] = 0x00;
         }
 
         if (string_compare(line, "Show-GDT") == 0) {
-            stream_printf(stdout, "gdt address: %h\n", gdt_table);
+            stream_printf(stdout, "GDT Address:\t%h\n\n", gdt_table);
 
             for (int i = 0; i < 6; i++) {
+
                 uint32 base = (gdt_table[i].base_high << 24) + gdt_table[i].base_low;
                 uint32 limit = (gdt_table[i].limit_high << 16) + gdt_table[i].limit_low;
 
-                stream_printf(stdout, "Base: %h\n", base);
-                stream_printf(stdout, "Limit: %h\n", limit);
+                if (gdt_table[i].gran) {
+                    // 4K page granularity.
+                    limit = limit << 12 | 0xFFF;
+                }
 
-                stream_printf(stdout, "Code: %h\n", gdt_table[i].code);
-                stream_printf(stdout, "DPL: %h\n\n", gdt_table[i].DPL);
+                stream_printf(stdout, "GDT Entry #%d:\t", i);
+
+                if(limit == 0) {
+                    stream_printf(stdout, "NULL Segment\n\n");
+                    continue;
+                }
+
+                stream_printf(stdout, "Ring-%d ", gdt_table[i].DPL);
+                if(gdt_table[i].code_data_segment) {
+                    if(gdt_table[i].gran) {
+                        stream_printf(stdout, "Page-Aligned ");
+                    } else {
+                        stream_printf(stdout, "Byte-Aligned ");
+                    }
+
+                    if(gdt_table[i].code) {
+                        stream_printf(stdout, "Code Segment\n");
+                    } else {
+                        stream_printf(stdout, "Data Segment\n");
+                    }
+                } else {
+                    stream_printf(stdout, "TSS Segment\n");
+                }
+                
+
+                stream_printf(stdout, "\t\tBase:  %H\t", base);
+                stream_printf(stdout, "Limit: %H\n\n", limit);
             }
             continue;
         }
