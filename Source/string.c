@@ -25,8 +25,8 @@ int string_compare(const char* a, const char* b) {
 }
 
 void string_toLower(char* string) {
-    while(*string) {
-        if(*string >= 0x41 && *string <= 0x5A) {
+    while (*string) {
+        if (*string >= 0x41 && *string <= 0x5A) {
             *string += 0x20;
         }
         string++;
@@ -34,8 +34,8 @@ void string_toLower(char* string) {
 }
 
 void string_toUpper(char* string) {
-    while(*string) {
-        if(*string >= 0x61 && *string <= 0x6A) {
+    while (*string) {
+        if (*string >= 0x61 && *string <= 0x6A) {
             *string -= 0x20;
         }
         string++;

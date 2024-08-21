@@ -24,7 +24,7 @@
 #include <amethyst.h>
 
 #include <shell.hpp>
-#include <cpuid.hpp>
+#include <StandardIO.hpp>
 
 #ifdef    __cplusplus
 extern "C" {
@@ -154,8 +154,12 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 
     stream_printf(vgaConsole_putChar, "\n");
 
-    Shell shell = Shell(vgaConsole_putChar, keyboard_readChar);
-    shell.Main();
+    // Initialise the standard I/O streams for use by the shell.
+    StandardIO* console = new StandardIO(vgaConsole_putChar, keyboard_readChar);
+
+    // Launch the kernel shell.
+    Shell* shell = new Shell(console);
+    shell->Main();
 }
 
 #ifdef    __cplusplus

@@ -9,22 +9,20 @@
 #ifndef INCLUDES_SHELL_HPP_
 #define INCLUDES_SHELL_HPP_
 
+#include <StandardIO.hpp>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 class Shell {
  public:
-    /// @brief Initialises the shell.
-    /// @param stdout The output stream to use.
-    /// @param stdin The input stream to use.
-    Shell(void (*stdout)(char), char (*stdin)(void));
+    Shell(StandardIO* stdio);
 
     /// @brief Main shell loop.
     void Main();
  private:
-    void (*stdout)(char);
-    char (*stdin)(void);
+    StandardIO* stdio;
 };
 
 #ifdef __cplusplus

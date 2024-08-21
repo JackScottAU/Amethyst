@@ -8,35 +8,35 @@
 #include <interrupts.h>
 #include <pciBus.h>
 #include <GDT.h>
+#include <vgaConsole.h>
 
-Shell::Shell(void (*stdout)(char), char (*stdin)(void)) {
-    this->stdin = stdin;
-    this->stdout = stdout;
+Shell::Shell(StandardIO* stdio) {
+    this->stdio = stdio;
 }
 
 void Shell::Main() {
     while (1) {
-        stream_printf(stdout, "> ");
+        stdio->Print("> ");
 
-        char* line = stream_readLine(true);
+        char* line = stdio->ReadLine(true);
 
         if (string_compare(line, "Get-DeviceTree") == 0) {
-            deviceTree_print(stdout, true);
+            deviceTree_print(vgaConsole_putChar, true);
             continue;
         }
 
         if (string_compare(line, "Get-Time") == 0) {
-            stream_printf(stdout, "Time: %h\n", clock_uptime());
+            stdio->Print("Time: %h\n", clock_uptime());
             continue;
         }
 
         if (string_compare(line, "Get-CpuInformation") == 0) {
             CPUID cpuid = CPUID();
 
-            stream_printf(stdout, "Manufacturer: %s\n", cpuid.getManufacturerString());
-            stream_printf(stdout, "Family: %h\n", cpuid.getFamily());
-            stream_printf(stdout, "Model: %h\n", cpuid.getModel());
-            stream_printf(stdout, "Stepping: %h\n", cpuid.getStepping());
+            stdio->Print("Manufacturer: %s\n", cpuid.getManufacturerString());
+            stdio->Print("Family: %h\n", cpuid.getFamily());
+            stdio->Print("Model: %h\n", cpuid.getModel());
+            stdio->Print("Stepping: %h\n", cpuid.getStepping());
             continue;
         }
 
@@ -56,15 +56,15 @@ void Shell::Main() {
             continue;
         }
 
-        if (string_compare(line, "show-gdt") == 0) {
-            stream_printf(stdout, "GDT Pointer:\t%h\n", &gdt_pointer);
-            stream_printf(stdout, "GDT Address:\t%h\n", gdt_table);
+        if (string_compare(line, "Show-GDT") == 0) {
+            stdio->Print("GDT Pointer:\t%h\n", &gdt_pointer);
+            stdio->Print("GDT Address:\t%h\n", gdt_table);
 
             uint16 size = gdt_pointer.size;
 
             uint8 entries = (gdt_pointer.size + 1) / 8;
 
-            stream_printf(stdout, "GDT Size:\t%d (%h bytes)\n\n", entries, size);
+            stdio->Print("GDT Size:\t%d (%h bytes)\n\n", entries, size);
 
 
             for (int i = 0; i < entries; i++) {
@@ -77,51 +77,51 @@ void Shell::Main() {
                     limit = limit << 12 | 0xFFF;
                 }
 
-                stream_printf(stdout, "GDT Entry #%d:\t", i);
+                stdio->Print("GDT Entry #%d:\t", i);
 
-                if(limit == 0) {
-                    stream_printf(stdout, "NULL Segment\n\n");
+                if (limit == 0) {
+                    stdio->Print("NULL Segment\n\n");
                     continue;
                 }
 
-                stream_printf(stdout, "Ring-%d ", gdt_table[i].DPL);
-                if(gdt_table[i].code_data_segment) {
-                    if(gdt_table[i].gran) {
-                        stream_printf(stdout, "Page-Aligned ");
+                stdio->Print("Ring-%d ", gdt_table[i].DPL);
+                if (gdt_table[i].code_data_segment) {
+                    if (gdt_table[i].gran) {
+                        stdio->Print("Page-Aligned ");
                     } else {
-                        stream_printf(stdout, "Byte-Aligned ");
+                        stdio->Print("Byte-Aligned ");
                     }
 
-                    if(gdt_table[i].access & 0x8) {
-                        stream_printf(stdout, "Code Segment\n");
+                    if (gdt_table[i].access & 0x8) {
+                        stdio->Print("Code Segment\n");
                     } else {
-                        stream_printf(stdout, "Data Segment\n");
+                        stdio->Print("Data Segment\n");
                     }
                 } else {
-                    stream_printf(stdout, "TSS Segment\n");
+                    stdio->Print("TSS Segment\n");
                 }
                 
 
-                stream_printf(stdout, "\t\tBase:  %H\t", base);
-                stream_printf(stdout, "Limit: %H\n\n", limit);
+                stdio->Print("\t\tBase:  %H\t", base);
+                stdio->Print("Limit: %H\n\n", limit);
             }
             continue;
         }
 
         if (string_compare(line, "Shutdown") == 0) {
-            stream_printf(stdout, "Shutting down...\n");
+            stdio->Print("Shutting down...\n");
             interrupts_disableInterrupts();
-            stream_printf(stdout, "It is now safe to turn off your PC.");
+            stdio->Print("It is now safe to turn off your PC.");
             haltCPU();
             break;
         }
 
         if (string_compare(line, "Get-PciDetails") == 0) {
-            pci_printBuses(stdout);
+            pci_printBuses(vgaConsole_putChar);
             continue;
         }
 
         // None of the built-in commands match the input.
-        stream_printf(stdout, "Unknown command.\n");
+        stdio->Print("Unknown command.\n");
     }
 }
