@@ -46,7 +46,17 @@ void Shell::Main() {
             invalidMemoryAddress[0] = 0x00;
         }
 
-        if (string_compare(line, "Show-GDT") == 0) {
+        if(string_compare(line, "Fix-GDT") == 0) {
+            gdt_table[5].base_low = 0x10;
+            gdt_table[5].limit_low = 0x68;
+            gdt_table[5].gran = 0;
+            gdt_table[5].present = 1;
+            gdt_table[5].big = 1;
+            gdt_table[5].access = 0x9;
+            continue;
+        }
+
+        if (string_compare(line, "show-gdt") == 0) {
             stream_printf(stdout, "GDT Pointer:\t%h\n", &gdt_pointer);
             stream_printf(stdout, "GDT Address:\t%h\n", gdt_table);
 
@@ -57,7 +67,7 @@ void Shell::Main() {
             stream_printf(stdout, "GDT Size:\t%d (%h bytes)\n\n", entries, size);
 
 
-            for (int i = 0; i < 6; i++) {
+            for (int i = 0; i < entries; i++) {
 
                 uint32 base = (gdt_table[i].base_high << 24) + gdt_table[i].base_low;
                 uint32 limit = (gdt_table[i].limit_high << 16) + gdt_table[i].limit_low;
@@ -82,7 +92,7 @@ void Shell::Main() {
                         stream_printf(stdout, "Byte-Aligned ");
                     }
 
-                    if(gdt_table[i].code) {
+                    if(gdt_table[i].access & 0x8) {
                         stream_printf(stdout, "Code Segment\n");
                     } else {
                         stream_printf(stdout, "Data Segment\n");

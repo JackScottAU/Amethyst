@@ -17,6 +17,9 @@ extern "C" {
     int string_compare(const char* a, const char* b);
     uint32 string_parseInt(const char* stringToParse);
 
+    void string_toLower(char* string);
+    void string_toUpper(char* string);
+
     /**
      * Formats a string.
      * @param destination Destination for the string output. Must have sufficient size. Memory allocation is the responsibility of the caller.

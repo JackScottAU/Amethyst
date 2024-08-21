@@ -24,6 +24,24 @@ int string_compare(const char* a, const char* b) {
     return (int)(unsigned char)(*a) - (int)(unsigned char)(*b);
 }
 
+void string_toLower(char* string) {
+    while(*string) {
+        if(*string >= 0x41 && *string <= 0x5A) {
+            *string += 0x20;
+        }
+        string++;
+    }
+}
+
+void string_toUpper(char* string) {
+    while(*string) {
+        if(*string >= 0x61 && *string <= 0x6A) {
+            *string -= 0x20;
+        }
+        string++;
+    }
+}
+
 uint32 string_parseInt(const char* string) {
     int result = 0;
 
