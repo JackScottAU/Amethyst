@@ -34,6 +34,31 @@ extern "C" {
         unsigned int base_high              :  8;
     } __attribute__((packed)) gdt_entry;
 
+    typedef struct {
+        unsigned int accessed               :  1;
+        unsigned int read_write             :  1;   // readable for code, writable for data
+        unsigned int conforming_expand_down :  1;   // conforming for code, expand down for data
+        unsigned int code                   :  1;   // 1 for code, 0 for data
+        unsigned int code_data_segment      :  1;   // should be 1 for everything but TSS and LDT
+        unsigned int DPL                    :  2;   // privilege level
+        unsigned int present                :  1;
+    } __attribute__((packed)) gdt_accessbyte_codedata;
+
+    typedef struct {
+        unsigned int type                   :  4;   // 1 for code, 0 for data
+        unsigned int code_data_segment      :  1;   // should be 1 for everything but TSS and LDT
+        unsigned int DPL                    :  2;   // privilege level
+        unsigned int present                :  1;
+    } __attribute__((packed)) gdt_accessbyte_system;
+
+    /// @brief Information about the Global Descriptor Table, loadable by LGDT.
+    typedef struct {
+        uint16 size;
+        uint32 offset;
+    } __attribute__((packed)) gdt_descriptor;
+
+    extern gdt_descriptor gdt_pointer;
+
     extern gdt_entry gdt_table[6];
 
 #ifdef __cplusplus

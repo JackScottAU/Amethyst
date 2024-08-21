@@ -2,6 +2,7 @@
 
 .global gdt_install
 .global gdt_table
+.global gdt_pointer
 
 gdt_install:     #Installs a new GDT and reloads segment registers.
 	lgdt gdt_pointer

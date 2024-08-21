@@ -47,7 +47,15 @@ void Shell::Main() {
         }
 
         if (string_compare(line, "Show-GDT") == 0) {
-            stream_printf(stdout, "GDT Address:\t%h\n\n", gdt_table);
+            stream_printf(stdout, "GDT Pointer:\t%h\n", &gdt_pointer);
+            stream_printf(stdout, "GDT Address:\t%h\n", gdt_table);
+
+            uint16 size = gdt_pointer.size;
+
+            uint8 entries = (gdt_pointer.size + 1) / 8;
+
+            stream_printf(stdout, "GDT Size:\t%d (%h bytes)\n\n", entries, size);
+
 
             for (int i = 0; i < 6; i++) {
 
