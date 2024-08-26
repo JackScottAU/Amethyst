@@ -46,16 +46,6 @@ void Shell::Main() {
             invalidMemoryAddress[0] = 0x00;
         }
 
-        if(string_compare(line, "Fix-GDT") == 0) {
-            gdt_table[5].base_low = 0x10;
-            gdt_table[5].limit_low = 0x68;
-            gdt_table[5].gran = 0;
-            gdt_table[5].present = 1;
-            gdt_table[5].big = 1;
-            gdt_table[5].access = 0x9;
-            continue;
-        }
-
         if (string_compare(line, "Show-GDT") == 0) {
             stdio->Print("GDT Pointer:\t%h\n", &gdt_pointer);
             stdio->Print("GDT Address:\t%h\n", gdt_table);

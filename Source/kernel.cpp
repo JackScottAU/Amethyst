@@ -124,6 +124,9 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
     // Launch the kernel shell.
     Shell* shell = new Shell(console);
     shell->Main();
+
+    delete shell;
+    delete console;
 }
 
 #ifdef    __cplusplus
