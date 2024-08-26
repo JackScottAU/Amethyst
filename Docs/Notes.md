@@ -132,3 +132,24 @@ First part is CPU architecture, second part is the machine type (and built in as
     x86-pc
     x64-pc
     arm-pi5
+
+# Time
+
+Unix time isn't worth following, suffers from many issues with leap seconds and also the epoch not making any sense due to UTC not existing in 1970.
+
+An epoch of 2000-01-01 would make sense?
+
+How to store values? In ticks of 65536ths of a second. That way 64 bits can hold +/- 4 million years of ticks.
+
+Could also have a high-precision variant that is a 128-bit number.
+
+Big ticks are 1/2^16
+Small ticks are 1/2^64
+
+Class LowPrecisionTime = 64 bits: 48 bits for seconds and 16 bits for ticks - enough for modern cpu and system clock
+Class HighPrecisionTime = 256 bits: 128 bits for seconds and 128 bits for ticks - provided to be useful for ultra-performance work
+
+Can convert between the two by using sign extension etc.
+
+128 bits for ticks (roughly 10^39) is more than enough to store at less than a quectosecond, and very near to planck time.
+
