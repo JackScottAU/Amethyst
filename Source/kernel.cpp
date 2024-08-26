@@ -22,6 +22,8 @@
 #include <debug.h>
 #include <amethyst.h>
 
+#include <Structures/linkedlist.hpp>
+
 #include <shell.hpp>
 #include <StandardIO.hpp>
 
@@ -120,6 +122,16 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 
     // Initialise the standard I/O streams for use by the shell.
     StandardIO* console = new StandardIO(vgaConsole_putChar, keyboard_readChar);
+
+    LinkedList<int>* list = new LinkedList<int>();
+
+    list->Add(1);
+    list->Add(2);
+    list->Add(3);
+
+    do {
+   //     console->Print("%d, ", list->Current());
+    } while(list->Next());
 
     // Launch the kernel shell.
     Shell* shell = new Shell(console);

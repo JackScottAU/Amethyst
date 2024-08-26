@@ -6,7 +6,7 @@ LD	:= i586-elf-gcc
 #Options:
 WARNINGS	:= -Wall -Wextra -pedantic -Wshadow -Wpointer-arith -Wcast-align -Wno-discarded-qualifiers -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wuninitialized -Wno-unused-parameter
 CFLAGS		:= -nostdlib -fno-builtin -nostartfiles -nodefaultlibs -I Source/Includes -std=c2x $(WARNINGS)
-CPPFLAGS	:= -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -I Source/Includes -nostdlib -fno-builtin -nostartfiles -nodefaultlibs -include ./Source/Includes/cppsupport.hpp
+CPPFLAGS	:= -nostdlib -fno-builtin -nostartfiles -nodefaultlibs -I Source/Includes -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti  -include ./Source/Includes/cppsupport.hpp
 
 #Top-level targets:
 .DEFAULT_GOAL := x86_32
