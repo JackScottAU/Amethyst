@@ -35,11 +35,13 @@ extern "C" {
 void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData);
 struct multiboot_info* multiboot_correctDataStructureAddresses(struct multiboot_info* data);
 void kernel_printBanner(void (*putChar)(char));
+uint32 memoryManager_printPhysicalMemoryMap(StandardIO* stdio);
 
 struct multiboot_info* multiboot_correctDataStructureAddresses(struct multiboot_info* data) {
     data = (struct multiboot_info*)(((uint32) data) + 0xC0000000);
 
     data->modsAddr = (multiboot_moduleNode*)((uint32)(data->modsAddr) + (uint32)0xC0000000);
+    data->memoryMapAddress = (multiboot_memoryMapNode*)((uint32)(data->memoryMapAddress) + (uint32)0xC0000000);
 
     // For each multiboot module, update the provided (physical) address so it is in (logical) kernel memory according
     // to our paging rules.
@@ -67,6 +69,8 @@ void kernel_printBanner(void (*putChar)(char)) {
     stream_printf(putChar, "\t\t\t\tVersion %d.%d.%d\n\n", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
 }
 
+multiboot_info* multiBootDataP;
+
 /**
  * Initialises the core systems of the kernel and language runtime before launching a command interpreter.
  * @param magicNumber The check number passed from the multiboot loader.
@@ -90,6 +94,8 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
     } else {
         multibootData = multiboot_correctDataStructureAddresses(multibootData);
     }
+
+    multiBootDataP = multibootData;
 
     stream_printf(vgaConsole_putChar, "Loading a GDT...\n");
     gdt_install();
@@ -123,22 +129,30 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
     // Initialise the standard I/O streams for use by the shell.
     StandardIO* console = new StandardIO(vgaConsole_putChar, keyboard_readChar);
 
-    LinkedList<int>* list = new LinkedList<int>();
-
-    list->Add(1);
-    list->Add(2);
-    list->Add(3);
-
-    do {
-   //     console->Print("%d, ", list->Current());
-    } while(list->Next());
-
     // Launch the kernel shell.
     Shell* shell = new Shell(console);
+    shell->RegisterCommand("Print-PhysicalMemoryMap", memoryManager_printPhysicalMemoryMap);
     shell->Main();
 
     delete shell;
     delete console;
+}
+
+uint32 memoryManager_printPhysicalMemoryMap(StandardIO* stdio) {
+    for(uint32 i = 0; i < (multiBootDataP->memoryMapLength / 20); i++) {
+        multiboot_memoryMapNode mem = (multiBootDataP->memoryMapAddress[i]);
+
+        uint64 end = mem.addr + mem.len - 1;
+
+        stdio->Print("addrl: %H\tlen: %H\tend: %H\ttype: %d\n"
+        , (uint32) mem.addr
+        , (uint32) mem.len
+        , (uint32) end
+        , mem.type);
+        
+    }
+
+    return 42;
 }
 
 #ifdef    __cplusplus

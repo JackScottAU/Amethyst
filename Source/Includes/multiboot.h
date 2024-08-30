@@ -70,19 +70,31 @@ struct multiboot_info {
     uint8 framebuffer_blue_mask_size;
 };
 
+/// @brief Types of memory, provided by GRUB.
 typedef enum : uint32 {
     Available = 1,
     Reserved = 2,
-} memorytype;
+    ACPI = 3,
+
+    /// @brief reserved memory which needs to be preserved on hibernation
+    Hibernation = 4,
+
+    /// @brief memory which is occupied by defective RAM modules
+    Defective = 5,
+} multiboot_memoryType;
 
 struct multiboot_memoryMapNode {
+    /// @brief Size of this memory map node entry. Nothing to do with the actual memory itself.
     uint32 size;
+
+    /// @brief Start address of the memory.
     uint64 addr;
+
+    /// @brief Length of the memory.
     uint64 len;
-  //  #define MULTIBOOT_MEMORY_AVAILABLE  1
-  //  #define MULTIBOOT_MEMORY_RESERVED   2
-  //  uint32 type;
-    memorytype type;
+
+    /// @brief Type of the memory.
+    multiboot_memoryType type;
 } __attribute__((packed));
 
 struct multiboot_moduleNode {

@@ -4,8 +4,8 @@
  *  Released under the terms of the ISC license.
 */
 
-#ifndef INCLUDES_STRUCTURES_LIST_HPP_
-#define INCLUDES_STRUCTURES_LIST_HPP_
+#ifndef INCLUDES_STRUCTURES_LINKEDLIST_HPP_
+#define INCLUDES_STRUCTURES_LINKEDLIST_HPP_
 
 #include <Types.h>
 
@@ -14,13 +14,19 @@ class LinkedListItem {
     public:
         T data;
         LinkedListItem* next;
+        LinkedListItem* prev;
 };
 
 template <typename T>
 class LinkedList {
     public:
-        LinkedList();
+        LinkedList() {
+            head = nullptr;
+            current = nullptr;
+        };
 
+        /// @brief Moves to the next item, if it exists.
+        /// @return True if there was an item to move to. False if there is no item here.
         bool Next() {
             if(current == nullptr) {
                 return false;
@@ -31,11 +37,29 @@ class LinkedList {
             return current != nullptr;
         };
 
+        /// @brief Moves to the previous item, if it exists.
+        /// @return True if there was an item to move to. False if there is no item here.
+        bool Previous() {
+            if(current == nullptr) {
+                return false;
+            }
+
+            current = current->prev;
+
+            return current != nullptr;
+        };
+
+        /// @brief Returns the data at the current location in the list.
+        /// @return 
         T Current() {
             return current->data;
         }
 
+        /// @brief Adds data to the end of the list.
+        /// @param data 
         void Add(T data);
+
+        /// @brief Resets the seek position to the head of the list.
         void Reset();
     
     private:
@@ -43,24 +67,20 @@ class LinkedList {
         LinkedListItem<T>* current;
 };
 
-
-template <typename T>
-LinkedList<T>::LinkedList() {
-    head = nullptr;
-    current = nullptr;
-}
-
 template <typename T>
 void LinkedList<T>::Add(T data) {
     if(head == nullptr) {
+        // special case first item in list.
         LinkedListItem<T>* item = new LinkedListItem<T>();
         item->data = data;
         item->next = head;
+        item->prev = nullptr;
 
         head = item;
 
         current = head;
     } else {
+        // add to end
         LinkedListItem<T>* ocurrent = head;
 
         while(ocurrent->next != nullptr) {
@@ -70,14 +90,15 @@ void LinkedList<T>::Add(T data) {
         LinkedListItem<T>* item = new LinkedListItem<T>();
         item->data = data;
         item->next = nullptr;
+        item->prev = ocurrent;
         ocurrent->next = item;
     }
 }
 
 template <typename T>
 void LinkedList<T>::Reset() {
-    this.current = head;
+    current = head;
 }
 
 
-#endif  // INCLUDES_STRUCTURES_LIST_HPP_
+#endif  // INCLUDES_STRUCTURES_LINKEDLIST_HPP_

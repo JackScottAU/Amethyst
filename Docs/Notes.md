@@ -141,10 +141,10 @@ An epoch of 2000-01-01 would make sense?
 
 How to store values? In ticks of 65536ths of a second. That way 64 bits can hold +/- 4 million years of ticks.
 
-Could also have a high-precision variant that is a 128-bit number.
+Could also have a high-precision variant that is a 256-bit number.
 
 Big ticks are 1/2^16
-Small ticks are 1/2^64
+Small ticks are 1/2^128
 
 Class LowPrecisionTime = 64 bits: 48 bits for seconds and 16 bits for ticks - enough for modern cpu and system clock
 Class HighPrecisionTime = 256 bits: 128 bits for seconds and 128 bits for ticks - provided to be useful for ultra-performance work
@@ -152,4 +152,20 @@ Class HighPrecisionTime = 256 bits: 128 bits for seconds and 128 bits for ticks 
 Can convert between the two by using sign extension etc.
 
 128 bits for ticks (roughly 10^39) is more than enough to store at less than a quectosecond, and very near to planck time.
+128 bits for seconds is enough to store the age of the universe, and probably the end of the universe.
 
+256 bits of ticks that are 1/2^128th of a second long is enough to store the entire duration of the existence of the universe from start to end, in precision down to the quectosecond level. This is all that could possibly ever be needed.
+
+                        /--------------------------------|--------------------------------\
+High-Precision Time     |               128              |              128               |
+                        \--------------------------------|--------------------------------/
+
+                                            /------------|----\
+Low Precision Time                          |     48     | 16 |
+                                            \------------|----/
+
+High-precision time exists only in userspace, the kernel doesn't worry about it?
+
+## DateTime
+
+A date/time is a combination of an instant, a calendar, and a timezone/location, as well as a fuzziness for how accurate the instant is (in number of dropped bits at the beginning). It allows human understanding of an instant.
