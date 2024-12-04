@@ -21,6 +21,7 @@
 #include <ps2controller.h>
 #include <debug.h>
 #include <amethyst.h>
+#include <mouse.h>
 
 #include <Structures/linkedlist.hpp>
 
@@ -120,6 +121,8 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 
     debug(LOGLEVEL_INFO, "Setting up the clock...");
     clock_init();
+
+    mouse_initialise();
 
     ps2controller_initialise();
     deviceTree_build();

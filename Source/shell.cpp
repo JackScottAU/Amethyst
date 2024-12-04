@@ -24,12 +24,6 @@ void Shell::RegisterCommand(char* commandString, uint32 (* callback)(StandardIO*
     commands->Add(command);
 }
 
-ShellCommand* Shell::GetShellCommand() {
-    ShellCommand* command = new ShellCommand();
-    command->command = "Shell";
-    command->callback = Main;
-}
-
 void Shell::Main() {
     while (1) {
         ProcessLine();
