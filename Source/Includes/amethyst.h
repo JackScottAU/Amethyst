@@ -5,7 +5,7 @@
 */
 
 #include "Types.h"
-
+#include <debug.h>
 
 
 #ifndef INCLUDES_AMETHYST_H_
@@ -28,7 +28,7 @@ extern "C" {
 /**
  * Debug logging level. Any log level with a higher number than this won't be processed. 0 (critical) is highest, 4 (debug) is lowest.
  */
-#define DEBUG_LEVEL     4
+#define DEBUG_LEVEL     LOGLEVEL_DEBUG
 
 #ifdef __cplusplus
 }

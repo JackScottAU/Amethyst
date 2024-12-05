@@ -15,6 +15,9 @@ extern "C" {
 
 deviceTree_Entry* ps2controller_initialise(void);
 
+void ps2controller_sendByteToDevice(uint8 channel, uint8 data);
+uint8 ps2controller_receiveByteFromDevice(uint8 channel);
+
 #ifdef __cplusplus
 }
 #endif

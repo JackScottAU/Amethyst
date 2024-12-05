@@ -10,6 +10,7 @@
 #include <serial.h>
 #include <pciBus.h>
 #include <keyboard.h>
+#include <ps2controller.h>
 
 deviceTree_Entry* deviceTree_rootEntry = NULL;
 
@@ -36,6 +37,9 @@ void deviceTree_build(void) {
         deviceTree_addChild(deviceTree_rootEntry, serial);
     }
 
-    deviceTree_Entry* keyboard = keyboard_initialise();
-    deviceTree_addChild(deviceTree_rootEntry, keyboard);
+    // Assume a PS/2 controller exists and attempt to initialise it.
+    deviceTree_Entry* ps2controller = ps2controller_initialise();
+    if(ps2controller != NULL) {
+        deviceTree_addChild(deviceTree_rootEntry, ps2controller);
+    }
 }

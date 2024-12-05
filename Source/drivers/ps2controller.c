@@ -13,6 +13,9 @@
 #include <serial.h>
 #include <ps2controller.h>
 #include <stream.h>
+#include <debug.h>
+#include <keyboard.h>
+#include <mouse.h>
 
 #define PS2CONTROLLER_DATAPORT      0x60
 #define PS2CONTROLLER_CONTROLPORT   0x64    // reading = status register, writing = command register.
@@ -30,103 +33,140 @@
 void ps2controller_waitForRead(void);
 void ps2controller_waitForWrite(void);
 
+uint8 ps2controller_getConfigurationByte(void);
+void ps2controller_setConfigurationByte(uint8 configByte);
+
+/**
+ * 
+ */
 deviceTree_Entry* ps2controller_initialise(void) {
+    bool channel1Status = true;     // By default, channel one is available.
+    bool channel2Status = false;    // By default, channel two is unavailable (assume a single-channel controller).
+
     // Resource: https://wiki.osdev.org/%228042%22_PS/2_Controller
 
     // Missing steps: 1 (usb init), 2 (determine controller exists) - these are done at the level above.
 
-    // Step 3: Disable Devices
+    // Step 1: Disable Devices & Flush Output (Read) Buffer
     portIO_write8(PS2CONTROLLER_CONTROLPORT, PS2CONTROLLER_COMMAND_DISABLE_PORT1);
     portIO_write8(PS2CONTROLLER_CONTROLPORT, PS2CONTROLLER_COMMAND_DISABLE_PORT2);
-
-    // Step 4: Flush Buffer
     portIO_read8(PS2CONTROLLER_DATAPORT);
 
-    // Step 5: Set the Controller Configuration Byte.
-    portIO_write8(PS2CONTROLLER_CONTROLPORT, 0x20);
-    uint8 configByte = portIO_read8(PS2CONTROLLER_DATAPORT);
-    bool haveDualChannelController = configByte & PS2CONTROLLER_CONFIG_DISABLE_PORT2;
-    stream_printf(serial_writeChar, "ps2controller config: %h\n", configByte);
-    configByte = configByte | 0x03;     // Enable interrupts on both devices.
-    stream_printf(serial_writeChar, "ps2controller config: %h\n", configByte);
+    // Step 2: Perform Controller Self-Test
+    portIO_write8(PS2CONTROLLER_CONTROLPORT, 0xAA);
+    ps2controller_waitForRead();
+    if (portIO_read8(PS2CONTROLLER_DATAPORT) != 0x55) {
+        debug(LOGLEVEL_ERROR, "PS/2 Controller failed self-test.");
+        return NULL;
+    }
 
+    // Step 3: Determine if there are two channels.
+    uint8 configByte = ps2controller_getConfigurationByte();
+    channel2Status = configByte & PS2CONTROLLER_CONFIG_DISABLE_PORT2;
+
+    // Step 4: Perform Interface Tests
+    if(channel1Status) {
+        portIO_write8(PS2CONTROLLER_CONTROLPORT, 0xAB);
+        ps2controller_waitForRead();
+        if (portIO_read8(PS2CONTROLLER_DATAPORT) != 0x00) {
+            debug(LOGLEVEL_WARNING, "PS/2 Controller channel one failed interface test.");
+            channel1Status = false;
+        }
+    }
+
+    if(channel2Status) {
+        portIO_write8(PS2CONTROLLER_CONTROLPORT, 0xA9);
+        ps2controller_waitForRead();
+        if (portIO_read8(PS2CONTROLLER_DATAPORT) != 0x00) {
+            debug(LOGLEVEL_WARNING, "PS/2 Controller channel two failed interface test.");
+            channel2Status = false;
+        }
+    }
+
+    // Step 5: Enable Devices.
+    ps2controller_disableInterrupts();
+    if(channel1Status) {
+        portIO_write8(PS2CONTROLLER_CONTROLPORT, PS2CONTROLLER_COMMAND_ENABLE_PORT1);
+    }
+    if(channel2Status) {
+        portIO_write8(PS2CONTROLLER_CONTROLPORT, PS2CONTROLLER_COMMAND_ENABLE_PORT2);
+    }
+
+    // Step 6: Initialise child devices.
+    deviceTree_Entry* parent = deviceTree_createDevice("PS/2 Controller", DEVICETREE_TYPE_OTHER, NULL);
+
+    // TODO: add code to detect what is plugged in where, so we could have two keyboards or two mice or mouse on channel 1 and keyboard on channel 2.
+
+    if(channel1Status) {
+        deviceTree_addChild(parent, keyboard_initialise());
+    }
+
+    if(channel2Status) {
+        deviceTree_addChild(parent, mouse_initialise());
+    }
+
+    ps2controller_enableInterrupts();
+
+    debug(LOGLEVEL_INFO, "PS/2 Controller initialisation complete.");
+
+    return parent;
+}
+
+void ps2controller_disableInterrupts() {
+    debug(LOGLEVEL_DEBUG, "PS/2 Controller: Disabling interrupts...");
+
+    uint8 configByte = ps2controller_getConfigurationByte();
+
+    configByte = configByte & 0xF4;     // Disable interrupts on both devices.
+    
+    ps2controller_setConfigurationByte(configByte);
+
+    debug(LOGLEVEL_DEBUG, "PS/2 Controller: Disabled interrupts.");
+}
+
+void ps2controller_enableInterrupts() {
+    debug(LOGLEVEL_DEBUG, "PS/2 Controller: Enabling interrupts...");
+
+    uint8 configByte = ps2controller_getConfigurationByte();
+    
+    configByte = configByte | 0x03;     // Enable interrupts on both devices.
+    
+    ps2controller_setConfigurationByte(configByte);
+
+    debug(LOGLEVEL_DEBUG, "PS/2 Controller: Enabled interrupts.");
+}
+
+uint8 ps2controller_getConfigurationByte(void) {
+    portIO_write8(PS2CONTROLLER_CONTROLPORT, 0x20);
+    ps2controller_waitForRead();
+    uint8 configByte = portIO_read8(PS2CONTROLLER_DATAPORT);
+
+    debug(LOGLEVEL_DEBUG, "PS/2 Controller: Got configuration byte, value = %h", configByte);
+
+    return configByte;
+}
+
+void ps2controller_setConfigurationByte(uint8 configByte) {
     portIO_write8(PS2CONTROLLER_CONTROLPORT, 0x60);
     ps2controller_waitForWrite();
     portIO_write8(PS2CONTROLLER_DATAPORT, configByte);
 
-    // Step 6: Perform Controller Self-Test
-    portIO_write8(PS2CONTROLLER_CONTROLPORT, 0xAA);
+    debug(LOGLEVEL_DEBUG, "PS/2 Controller: Set configuration byte, value = %h", configByte);
+}
+
+void ps2controller_sendByteToDevice(uint8 channel, uint8 data) {
+    if(channel == 2) {
+        ps2controller_waitForWrite();
+        portIO_write8(PS2CONTROLLER_CONTROLPORT, 0xD4); // next command to channel two.
+    }
+
+    ps2controller_waitForWrite();
+    portIO_write8(PS2CONTROLLER_DATAPORT, data);
+}
+
+uint8 ps2controller_receiveByteFromDevice(uint8 channel) {
     ps2controller_waitForRead();
-    uint8 ok = portIO_read8(PS2CONTROLLER_DATAPORT);
-
-    stream_printf(serial_writeChar, "ps2controller ok: %h\n", ok);
-    if (ok != 0x55) {
-        return NULL;
-    }
-
-    // Step 7: Determine if there are two channels.
-
-    // Step 8: Perform Interface Tests
-    // TODO(JackScottAU)
-    portIO_write8(PS2CONTROLLER_CONTROLPORT, 0xAB);
-    ps2controller_waitForRead();
-    uint8 ok3 = portIO_read8(PS2CONTROLLER_DATAPORT);
-
-    stream_printf(serial_writeChar, "ps2 keyboard line ok: %h\n", ok3);
-    if (ok3 != 0x00) {
-        return NULL;
-    }
-
-    if(haveDualChannelController) {
-        stream_printf(serial_writeChar, "testing mouse line...\n");
-        portIO_write8(PS2CONTROLLER_CONTROLPORT, 0xA9);
-        ps2controller_waitForRead();
-        stream_printf(serial_writeChar, "testing mouse line 2...\n");
-        uint8 ok2 = portIO_read8(PS2CONTROLLER_DATAPORT);
-
-        stream_printf(serial_writeChar, "ps2 mouse line ok: %h\n", ok2);
-        if (ok2 != 0x00) {
-            return NULL;
-        }
-    }
-
-    // Step 9: Enable Devices.
-    portIO_write8(PS2CONTROLLER_CONTROLPORT, PS2CONTROLLER_COMMAND_ENABLE_PORT1);
-    if (haveDualChannelController) {
-
-        stream_printf(serial_writeChar, "have dual channel controller\n");
-        
-        portIO_write8(PS2CONTROLLER_CONTROLPORT, PS2CONTROLLER_COMMAND_ENABLE_PORT2);
-    }
-
-    portIO_write8(PS2CONTROLLER_CONTROLPORT, 0x20);
-    ps2controller_waitForRead();
-    uint8 configByte2 = portIO_read8(PS2CONTROLLER_DATAPORT);
-    stream_printf(serial_writeChar, "ps2controller config: %h\n", configByte2);
-
-    // VERY important that mouse interrupts are already set up before doing this, as the ps2 controller will send interrupts for the below, because we didn't disable them.
-
-    // enable mouse data sending
-    stream_printf(serial_writeChar, "sending mouse reset...\n");
-    portIO_write8(PS2CONTROLLER_CONTROLPORT, 0xD4); // next command to mouse
-    ps2controller_waitForWrite();
-    portIO_write8(PS2CONTROLLER_DATAPORT, 0xFF); // reset
-    
-    stream_printf(serial_writeChar, "sending mouse rate...\n");
-    portIO_write8(PS2CONTROLLER_CONTROLPORT, 0xD4); // next command to mouse
-    ps2controller_waitForWrite();
-    portIO_write8(PS2CONTROLLER_DATAPORT, 0xF3); // rate set
-    portIO_write8(PS2CONTROLLER_CONTROLPORT, 0xD4); // next command to mouse
-    ps2controller_waitForWrite();
-    portIO_write8(PS2CONTROLLER_DATAPORT, 100); // reset
-
-    stream_printf(serial_writeChar, "sending mouse enable data sending...\n");
-    portIO_write8(PS2CONTROLLER_CONTROLPORT, 0xD4); // next command to mouse
-    ps2controller_waitForWrite();
-    portIO_write8(PS2CONTROLLER_DATAPORT, 0xF4); // enable data sending
-
-
-    return deviceTree_createDevice("PS/2 Controller", DEVICETREE_TYPE_OTHER, NULL);
+    return portIO_read8(PS2CONTROLLER_DATAPORT);
 }
 
 /**

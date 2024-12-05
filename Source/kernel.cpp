@@ -122,15 +122,11 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
     debug(LOGLEVEL_INFO, "Setting up the clock...");
     clock_init();
 
-    mouse_initialise();
-
-    ps2controller_initialise();
     deviceTree_build();
-
-    stream_printf(vgaConsole_putChar, "\n");
 
     // Initialise the standard I/O streams for use by the shell.
     StandardIO* console = new StandardIO(vgaConsole_putChar, keyboard_readChar);
+    console->Print("\n");
 
     // Launch the kernel shell.
     Shell* shell = new Shell(console);
