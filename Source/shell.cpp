@@ -35,17 +35,19 @@ void Shell::ProcessLine() {
 
     char* line = stdio->ReadLine(true);
 
-    if (string_compare(line, "Get-DeviceTree") == 0) {
+    string_toLower(line);
+
+    if (string_compare(line, "get-devicetree") == 0) {
         deviceTree_print(vgaConsole_putChar, true);
         return;
     }
 
-    if (string_compare(line, "Get-Time") == 0) {
+    if (string_compare(line, "get-time") == 0) {
         stdio->Print("Time: %h\n", clock_uptime());
         return;
     }
 
-    if (string_compare(line, "Get-CpuInformation") == 0) {
+    if (string_compare(line, "get-cpuinformation") == 0) {
         CPUID cpuid = CPUID();
 
         stdio->Print("Manufacturer: %s\n", cpuid.getManufacturerString());
@@ -56,12 +58,12 @@ void Shell::ProcessLine() {
     }
 
     // Triggers a CPU exception for testing the kernel panic screen.
-    if (string_compare(line, "Trigger-Exception") == 0) {
+    if (string_compare(line, "trigger-exception") == 0) {
         uint8* invalidMemoryAddress = (uint8*) 0xA00B8000;
         invalidMemoryAddress[0] = 0x00;
     }
 
-    if (string_compare(line, "Show-GDT") == 0) {
+    if (string_compare(line, "show-gdt") == 0) {
         stdio->Print("GDT Pointer:\t%h\n", &gdt_pointer);
         stdio->Print("GDT Address:\t%h\n", gdt_table);
 
@@ -113,14 +115,14 @@ void Shell::ProcessLine() {
         return;
     }
 
-    if (string_compare(line, "Shutdown") == 0) {
+    if (string_compare(line, "shutdown") == 0) {
         stdio->Print("Shutting down...\n");
         interrupts_disableInterrupts();
         stdio->Print("It is now safe to turn off your PC.");
         haltCPU();
     }
 
-    if (string_compare(line, "Get-PciDetails") == 0) {
+    if (string_compare(line, "get-pcidetails") == 0) {
         pci_printBuses(vgaConsole_putChar);
         return;
     }
