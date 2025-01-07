@@ -33,7 +33,7 @@ gdt_table:       #The actual GDT table.
 	.long 0x0000FFFF 		#Data descriptor (ring 3). 0GB->4GB.
 	.long 0x00CFF200
 
-	.long 0x20000072 		#Task State Segment
+	.long 0x20000072 		#Task State Segment - TSS structure located at 0x00002000 physical.
 	.long 0x0040E900
 
 # Pointer we give the CPU to tell it where the GDT table is and how big it is.

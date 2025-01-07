@@ -40,6 +40,14 @@ Booting is always done via multiboot. This gives us several options:
  *  Using GRUB on CD-ROM.
  *  Loading via iPXE either using CD-ROM or Network card ROM image.
 
+## Video Cards
+
+We aren't going to use EFI or VBE to set video modes.
+
+We'll stick with EGA text mode for now. Later on, steal ideas from the Linux kernel in order to create 2D framebuffer drivers. Start with VGA, then work up from there.
+
+This means we can avoid needs virtual 8086 mode and can stick entirely to protected mode.
+
 ## Executables
 
 Use 32-bit elf binaries.
@@ -48,8 +56,9 @@ Use 32-bit elf binaries.
 
 Use kernel threading in 1:N model (kernel knows about all threads).
 
-Process:	Code / Data / Heap
-Thread:		Registers / Stack
+Session:    Console, Security
+Process:	Code / Data / Heap (Virtual Address Space - CR3)
+Thread:		Registers / Stack (Stack Top)
 
 ## Shell Language
 
@@ -124,6 +133,7 @@ Microkernel
 Config object model (like browser's document object model). 
 Base config set in header files or something, baked in to kernel.
 Config loaded from disk in xml format (hard to parse, but fully capable of s-expressions so can handle any arbitrary config) into COM.
+Also can be passed in on multiboot command line.
 
 # Platforms
 
