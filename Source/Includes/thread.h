@@ -14,11 +14,15 @@ extern "C" {
 #include <Types.h>
 
 typedef struct  {
-    void* process_control_block;
-    uint32 kernel_stack_top;
-    uint32 cr3;
+    void* process_control_block; // 0
+    uint32 kernel_stack_top; // 4
+    uint32 cr3; // 8 - move this to process block when we get that far
 
 } thread_control_block;
+
+void initialise_multitasking(); // current task ends up current_task_tcb
+void switch_to_task(thread_control_block *next_thread);
+thread_control_block* new_task(void (* callback)(), thread_control_block* currentTask);
 
 // https://wiki.osdev.org/Brendan%27s_Multi-tasking_Tutorial
 

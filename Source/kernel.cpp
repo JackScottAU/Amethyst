@@ -22,6 +22,7 @@
 #include <debug.h>
 #include <amethyst.h>
 #include <mouse.h>
+#include <thread.h>
 
 #include <Structures/linkedlist.hpp>
 
@@ -32,11 +33,23 @@
 extern "C" {
 #endif
 
+thread_control_block* current_task_TCB = (thread_control_block*) 0xC0001000;
+thread_control_block* task1;
+
 // To shut GCC up.
 void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData);
 struct multiboot_info* multiboot_correctDataStructureAddresses(struct multiboot_info* data);
 void kernel_printBanner(void (*putChar)(char));
 uint32 memoryManager_printPhysicalMemoryMap(StandardIO* stdio);
+uint32 printCurrentTask(StandardIO* stdio);
+
+void testfunc() {
+    while(1) {
+debug(LOGLEVEL_INFO, "Hello from thread #2. cr3 = %h", task1->cr3);
+    switch_to_task(task1);
+    }
+    
+}
 
 struct multiboot_info* multiboot_correctDataStructureAddresses(struct multiboot_info* data) {
     data = (struct multiboot_info*)(((uint32) data) + 0xC0000000);
@@ -128,13 +141,37 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
     StandardIO* console = new StandardIO(vgaConsole_putChar, keyboard_readChar);
     console->Print("\n");
 
+    
+
+    current_task_TCB->process_control_block = NULL;
+    initialise_multitasking();
+
+    task1 = current_task_TCB;
+    thread_control_block* task2 = new_task(testfunc, task1);
+
+    while(true) {
+        debug(LOGLEVEL_INFO, "Hello from thread #1. cr3 = %h", task1->cr3);
+        switch_to_task(task2);
+    }
+
+
     // Launch the kernel shell.
     Shell* shell = new Shell(console);
     shell->RegisterCommand("Print-PhysicalMemoryMap", memoryManager_printPhysicalMemoryMap);
+    shell->RegisterCommand("ct", printCurrentTask);
     shell->Main();
 
     delete shell;
     delete console;
+}
+
+
+
+uint32 printCurrentTask(StandardIO* stdio) {
+    stdio->Print("CR3: %h\n", current_task_TCB->cr3);
+    stdio->Print("ESP: %h\n", current_task_TCB->kernel_stack_top);
+
+    return 42;
 }
 
 uint32 memoryManager_printPhysicalMemoryMap(StandardIO* stdio) {
