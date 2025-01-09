@@ -1,6 +1,13 @@
 #include <thread.h>
 #include <memoryManager.h>
 #include <debug.h>
+#include <Clock.h>
+
+extern void* boot_page_directory;
+
+extern thread_control_block* current_task_TCB;
+
+clock_timerRequest* schedulerJob;
 
 thread_control_block* new_task(void (* callback)(), thread_control_block* currentTask) {
     debug(LOGLEVEL_INFO, "Creating new thread...\n");
@@ -27,4 +34,26 @@ thread_control_block* new_task(void (* callback)(), thread_control_block* curren
     debug(LOGLEVEL_DEBUG, "callback: %h, ip: %h", callback, ip);
 
     return tcb;
+}
+
+void initialise_multitasking() {
+    current_task_TCB->cr3 = (uint32) &boot_page_directory - 0xC0000000;
+    current_task_TCB->process_control_block = NULL;
+}
+
+void thread_startScheduler() {
+
+    schedulerJob = clock_addRepeatRequest(0, 100, scheduler);
+}
+
+void thread_stopScheduler() {
+    clock_deleteTimerRequest(schedulerJob);
+}
+
+void scheduler() {
+    thread_control_block* nextThread = current_task_TCB->nextThread;
+
+    if(nextThread != NULL) {
+        switch_to_task(nextThread);
+    }
 }

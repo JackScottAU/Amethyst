@@ -43,7 +43,11 @@ extern "C" {
     void clock_handler_PIC(uint32 arbitraryNumber);
     uint32 clock_uptime(void);
 
-    void clock_setHertz(unsigned int Hertz);
+    /**
+     * Sets the divisor of the PIT channel 0 clock.
+     * @param hertz Requested frequency.
+     */
+    void clock_setHertz(unsigned int hertz);
 
     uint8 clock_getRTCRegister(uint8 chosenRegister);
     void clock_updateTimeFromRTC(time_t* clock);

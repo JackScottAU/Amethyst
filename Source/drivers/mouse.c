@@ -29,20 +29,19 @@ deviceTree_Entry* mouse_initialise() {
     interrupts_addHandler(0x2C, 0, (*mouse_interruptHandler));
 
     // enable mouse data sending
-    stream_printf(serial_writeChar, "sending mouse reset...\n");
-
+    debug(LOGLEVEL_DEBUG, "PS/2 Mouse: Sending reset...");
     ps2controller_sendByteToDevice(2, 0xFF); // RESET.
     ps2controller_receiveByteFromDevice(2);
     ps2controller_receiveByteFromDevice(2);
     ps2controller_receiveByteFromDevice(2);
     
-    stream_printf(serial_writeChar, "sending mouse rate...\n");
+    debug(LOGLEVEL_DEBUG, "PS/2 Mouse: Setting sample rate...");
     ps2controller_sendByteToDevice(2, 0xF3); // set rate.
     ps2controller_receiveByteFromDevice(2);
     ps2controller_sendByteToDevice(2, 100); // 100 samples per second.
     ps2controller_receiveByteFromDevice(2);
 
-    stream_printf(serial_writeChar, "sending mouse enable data sending...\n");
+    debug(LOGLEVEL_DEBUG, "PS/2 Mouse: Enabling data sending...");
     ps2controller_sendByteToDevice(2, 0xF4); // set rate.
     ps2controller_receiveByteFromDevice(2);
 

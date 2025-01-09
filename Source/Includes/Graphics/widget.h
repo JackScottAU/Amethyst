@@ -9,7 +9,7 @@
 
 #include <Types.h>
 #include <Graphics/canvas.h>
-#include <Structures/list.h>
+#include <linkedlist.hpp>
 
 #ifdef __cplusplus
 extern "C" {
@@ -23,7 +23,7 @@ typedef struct Widget_s {
     uint32 height;
 
     struct Widget_s* parent;
-    List* children;
+    LinkedList<struct Widget_s*>* children;
 } Widget;
 
 #ifdef __cplusplus

@@ -91,16 +91,13 @@ void clock_deleteTimerRequest(clock_timerRequest* request) {
     }
 }
 
-void clock_setHertz(unsigned int Hertz) {
-    /*
-    SYNOPSIS:	Sets the divisor of the channel 0 clock.
-    INPUT:		Requested frequency.
-    OUTPUT:		None.
-    NOTES:		None.
-    */
-
+/**
+ * Sets the divisor of the PIT channel 0 clock.
+ * @param hertz Requested frequency.
+ */
+void clock_setHertz(unsigned int hertz) {
     int Divisor;
-    Divisor = 1193180 / Hertz;
+    Divisor = 1193180 / hertz;
     portIO_write8(0x43, 0x36);              // Set command byte.
     portIO_write8(0x40, Divisor & 0xFF);    // LSB
     portIO_write8(0x40, Divisor >> 8);      // MSB

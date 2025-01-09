@@ -142,17 +142,26 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
     console->Print("\n");
 
     
-
-    current_task_TCB->process_control_block = NULL;
     initialise_multitasking();
 
     task1 = current_task_TCB;
     thread_control_block* task2 = new_task(testfunc, task1);
 
-    while(true) {
-        debug(LOGLEVEL_INFO, "Hello from thread #1. cr3 = %h", task1->cr3);
-        switch_to_task(task2);
-    }
+    task1->nextThread = task2;
+    task2->nextThread = task1;
+
+    
+//    Scheduler* scheduler = new Scheduler();
+//    scheduler->AddThread(task1);
+//    scheduler->AddThread(task2);
+//    scheduler->Start(); // installs interrupt handler and begins doing stuff.
+
+ //   while(true) {
+ //       debug(LOGLEVEL_INFO, "Hello from thread #1. cr3 = %h", task1->cr3);
+ //       switch_to_task(task2);
+ //   }
+
+    thread_startScheduler();
 
 
     // Launch the kernel shell.

@@ -33,6 +33,12 @@ Multiple instances of that program can be run simultaneously in terminal emulato
 6. Multitasking
 7. Drivers for storage
 
+## Multitasking
+
+Thread.h contains stuff for creating, destroying and switching threads, and is processor-specific.
+
+Scheduler.h contains the main scheduler, and can have threads added and removed, and is processor agnostic.
+
 ## Booting - x86_32
 
 Booting is always done via multiboot. This gives us several options:
@@ -57,7 +63,7 @@ Use 32-bit elf binaries.
 Use kernel threading in 1:N model (kernel knows about all threads).
 
 Session:    Console, Security
-Process:	Code / Data / Heap (Virtual Address Space - CR3)
+Process:	Code / Data / Heap (Virtual Address Space - CR3), File Pointers etc
 Thread:		Registers / Stack (Stack Top)
 
 ## Shell Language
@@ -139,9 +145,24 @@ Also can be passed in on multiboot command line.
 
 Each potential platform has a pair identifying it:
 First part is CPU architecture, second part is the machine type (and built in assumptions about booting and root device)
-    x86-pc
-    x64-pc
+    x86-bios
+    x64-uefi
     arm-pi5
+
+# Logging and Debugging
+
+There are several debugging options available to us:
+ - QEMU Debug Device (0xe9)
+ - Serial Port
+ - EGA text console
+ - File logging
+ - GDB via QEMU
+
+What we do is:
+ - Have a debug logger that exports to port E9 until we have everything set up, and can then log to file
+
+What we currently do is:
+ - Send ANSI to serial
 
 # Time
 
