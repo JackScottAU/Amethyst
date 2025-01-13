@@ -21,6 +21,9 @@ Kernel will natively support threads.
 
 Threads have priorities, processes have priorities, sessions have priorities (driver session has highest priority, for example).
 
+Each has 16 priority levels, with 15 being the highest. Process priority is left shifted two bits, session priority is left shifted 4 bits, then added together and maxed to 255.
+Idle task is priority 0.
+
 ## IPC
 
  * messages

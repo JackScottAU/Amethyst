@@ -44,11 +44,13 @@ uint32 memoryManager_printPhysicalMemoryMap(StandardIO* stdio);
 uint32 printCurrentTask(StandardIO* stdio);
 
 void testfunc() {
+    interrupts_enableInterrupts();
+
     while(1) {
-debug(LOGLEVEL_INFO, "Hello from thread #2. cr3 = %h", task1->cr3);
-    switch_to_task(task1);
+        debug(LOGLEVEL_INFO, "Hello from thread #2. cr3 = %h", task1->cr3);
+
+        haltCPU();
     }
-    
 }
 
 struct multiboot_info* multiboot_correctDataStructureAddresses(struct multiboot_info* data) {
@@ -150,12 +152,6 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
     task1->nextThread = task2;
     task2->nextThread = task1;
 
-    
-//    Scheduler* scheduler = new Scheduler();
-//    scheduler->AddThread(task1);
-//    scheduler->AddThread(task2);
-//    scheduler->Start(); // installs interrupt handler and begins doing stuff.
-
  //   while(true) {
  //       debug(LOGLEVEL_INFO, "Hello from thread #1. cr3 = %h", task1->cr3);
  //       switch_to_task(task2);
@@ -163,6 +159,9 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 
     thread_startScheduler();
 
+    debug(LOGLEVEL_INFO, "Got here");
+
+    interrupts_enableInterrupts();
 
     // Launch the kernel shell.
     Shell* shell = new Shell(console);

@@ -9,6 +9,8 @@ extern thread_control_block* current_task_TCB;
 
 clock_timerRequest* schedulerJob;
 
+bool schedulerEnabled = false;
+
 thread_control_block* new_task(void (* callback)(), thread_control_block* currentTask) {
     debug(LOGLEVEL_INFO, "Creating new thread...\n");
 
@@ -42,18 +44,20 @@ void initialise_multitasking() {
 }
 
 void thread_startScheduler() {
-
-    schedulerJob = clock_addRepeatRequest(0, 100, scheduler);
+    schedulerEnabled = true;
 }
 
 void thread_stopScheduler() {
-    clock_deleteTimerRequest(schedulerJob);
+    schedulerEnabled = false;
 }
 
 void scheduler() {
-    thread_control_block* nextThread = current_task_TCB->nextThread;
+    if(schedulerEnabled) {
+        thread_control_block* nextThread = current_task_TCB->nextThread;
 
-    if(nextThread != NULL) {
-        switch_to_task(nextThread);
+        if(nextThread != NULL) {
+            debug(LOGLEVEL_DEBUG, "We would switch task here...");
+            switch_to_task(nextThread);
+        }
     }
 }

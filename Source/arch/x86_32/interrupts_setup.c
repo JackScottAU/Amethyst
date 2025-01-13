@@ -38,8 +38,6 @@ void interrupts_initialise(void) {
     interrupts_installEmptyIDT();
     interrupts_installISRs();        //} These two could be done in any order.
     interrupts_remap8259s(0x20);        //}
-
-    interrupts_enableInterrupts();
 }
 
 void interrupts_installEmptyIDT() {

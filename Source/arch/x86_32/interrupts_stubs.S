@@ -506,5 +506,5 @@ interrupts_ISR_Stub:
 	popl %es
 	popl %ds
 	popa
-	addl $8,%esp
+	addl $8,%esp	# Compensate for the two values pushed in the stubs above.
 	iret

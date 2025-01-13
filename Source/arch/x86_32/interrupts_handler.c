@@ -11,6 +11,7 @@
 #include <memoryManager.h>
 #include <stream.h>
 #include <vgaConsole.h>
+#include <thread.h>
 
 interrupts_handlerCallback* interrupts_callbacks = (interrupts_handlerCallback*) NULL;
 
@@ -60,6 +61,8 @@ void interrupts_handler(struct Registers_S *Registers) {
         // But send it to the master no matter what.
         portIO_write8(0x20, 0x20);
     }
+
+    scheduler();
 }
 
 interrupts_handlerCallback* interrupts_addHandler(uint8 interruptNumber, uint32 argument, void (* callback)(uint32)) {

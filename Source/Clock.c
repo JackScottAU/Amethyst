@@ -8,6 +8,7 @@
 #include <Clock.h>
 #include <memoryManager.h>
 #include <interrupts.h>
+#include <debug.h>
 
 time_t clock_systemClock;
 
@@ -119,13 +120,12 @@ void clock_handler_PIC(uint32 eventData) {
     clock_timerRequest* oldCurrent = 0;
     while (current) {
         // Perform check.
-        if ((current->seconds == clock_systemClock.seconds) &&
-        (current->milliSeconds == clock_systemClock.milliSeconds)) {
+        if ((current->seconds <= clock_systemClock.seconds) && (current->milliSeconds <= clock_systemClock.milliSeconds)) {
             // We have a shot!
             void (*foo)();
             foo = current->funcToCall;
             (*foo)();   // Call the function.
-            // vgaConsole_printf("Shot! %h.%h",current->seconds,current->milliSeconds);
+   //      vgaConsole_printf("Shot! %h.%h",current->seconds,current->milliSeconds);
 
             if (current->isRepeatTimer) {
                 // Reset to give it another go.
