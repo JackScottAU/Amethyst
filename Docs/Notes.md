@@ -34,6 +34,18 @@ Multiple instances of that program can be run simultaneously in terminal emulato
 6. Multitasking
 7. Drivers for storage
 
+## VFS
+
+file://CD0/
+
+HD1 = hard disk logical partition 1
+HD2 = hd1, p
+
+FD1 = A:
+FD2 = B:
+
+NET? no these are something other than file://
+
 ## Multitasking
 
 Thread.h contains stuff for creating, destroying and switching threads, and is processor-specific.
@@ -71,6 +83,61 @@ Fibres:     User-mode co-operative thread. Invisible to the kernel, but implemen
 ## Shell Language
 
 Amethyst will have a command/scripting language like Bash/Powershell.
+
+Call the shell language Gem, allow scripts with extension .gem?
+
+Or oyster (oyster shell) - file extension .oys(ter)
+
+Or do we do something like lisp?
+
+syntax
+
+then semantics
+
+
+syntax = like tcl or powershell?
+
+basically, everything is an expression.
+expressions are in prefix notation
+
+take ideas from TCL
+
+everything is either a literal, a variable or a function, there are no operators (or operators are disguised functions)
+
+a variable can contain either a literal or a function call
+
+a literal can be either a string or a number (in one of many formats)
+
+everything is func(arg, arg, arg)
+
+
+    if(arg, do(expr1, expr2, expr3))
+
+    assign(varname, "x") <- assigns the expression to the variable without executing it yet, allows defining functions
+
+    import("filename") reads in a script file and executes it
+
+without the (), something is a variable. The () - at the top level makes it go.
+
+idea: have both commas and semicolons be usable, so you can do this to create blocks (and allow ending ; or , before closing brackets):
+
+    if(arg, do(
+        expr1;
+        expr2; 
+        expr3;
+    ))
+
+have namespaces:
+
+    thread:new(arg1, arg2)
+
+"statements":
+
+    if(cond, block)
+    do(block, ...)
+    assign(var, block)
+    import(file)
+    while(cond, block)
 
 ## Incoherent Ramblings
 
@@ -147,9 +214,17 @@ Also can be passed in on multiboot command line.
 
 Each potential platform has a pair identifying it:
 First part is CPU architecture, second part is the machine type (and built in assumptions about booting and root device)
-    x86-bios
-    x64-uefi
-    arm-pi5
+
+| Platform Name | CPU Architecture  | Machine Type                                              |
+| ------------- | ----------------- | --------------------------------------------------------- |
+| X86_BIOS      | x86 32-bit        | IBM Compatible PC BIOS - Booting with Multiboot v1        |
+| X64_UEFI      | x86 64-bit        | IBM PC - UEFI Booting w. ACPI                             |
+| ARM_RPI5      | Arm 64-bit        | Raspberry Pi 5                                            |
+
+
+A = arm, I = intel, S = sparc, R = riscv, P = powerpc, M = 68k, W = WDC 6502?
+
+These all have a corresponding #define, and when that define is set via makefile it compiles the kernel for that architecture.
 
 # Logging and Debugging
 

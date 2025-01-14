@@ -5,7 +5,8 @@
 
 extern void* boot_page_directory;
 
-extern thread_control_block* current_task_TCB;
+// Current TCB for this CPU.
+thread_control_block* current_task_TCB = (thread_control_block*) 0xC0001000;
 
 // TODO: make this thread-safe.
 bool schedulerEnabled = false;
@@ -13,9 +14,9 @@ bool schedulerEnabled = false;
 thread_control_block* new_task(void (* callback)(), thread_control_block* currentTask) {
     debug(LOGLEVEL_INFO, "Creating new thread...\n");
 
-    thread_control_block* tcb = memoryManager_allocate(sizeof(thread_control_block));
+    thread_control_block* tcb = (thread_control_block*)memoryManager_allocate(sizeof(thread_control_block));
 
-    uint32* stack = memoryManager_allocate(sizeof(uint32) * 1024); // 4KiB stack.
+    uint32* stack = (uint32*)memoryManager_allocate(sizeof(uint32) * 1024); // 4KiB stack (one page). - later this will be an actual page allocation.
 
     debug(LOGLEVEL_DEBUG, "stack: %h\n", stack);
 
@@ -28,7 +29,7 @@ thread_control_block* new_task(void (* callback)(), thread_control_block* curren
     tcb->kernel_stack_top = (uint32)(stack + 1019);
     tcb->cr3 = currentTask->cr3;
 
-    uint32* kst = tcb->kernel_stack_top;
+    uint32* kst = (uint32*)tcb->kernel_stack_top;
     uint32 ip = kst[0];
 
     debug(LOGLEVEL_DEBUG, "top of stack: %h", kst);
@@ -37,11 +38,13 @@ thread_control_block* new_task(void (* callback)(), thread_control_block* curren
     return tcb;
 }
 
-void initialise_multitasking() {
+thread_control_block* initialise_multitasking() {
     current_task_TCB->cr3 = (uint32) &boot_page_directory - 0xC0000000;
     current_task_TCB->process_control_block = NULL;
 
     // TODO: set up the linked lists for thread control block storage.
+
+    return current_task_TCB;
 }
 
 void thread_startScheduler() {

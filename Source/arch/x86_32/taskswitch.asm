@@ -22,7 +22,7 @@ switch_to_task:
     push ebp
 
     mov edi,[current_task_TCB]    ;edi = address of the previous task's "thread control block"
-    mov [edi+4],esp         ;Save ESP for previous task's kernel stack in the thread's TCB
+    mov [edi+0],esp         ;Save ESP for previous task's kernel stack in the thread's TCB
 
     ; Switch current thread control block.
 
@@ -31,8 +31,8 @@ switch_to_task:
     
     ; Load next thread's state into the CPU.
 
-    mov esp,[esi+4]         ;Load ESP for next task's kernel stack from the thread's TCB
-    mov eax,[esi+8]         ;eax = address of page directory for next task
+    mov esp,[esi+0]         ;Load ESP for next task's kernel stack from the thread's TCB
+    mov eax,[esi+4]         ;eax = address of page directory for next task
  ;  mov ebx,[esi+TCB.ESP0]        ;ebx = address for the top of the next task's kernel stack
  ;  mov [TSS.ESP0],ebx            ;Adjust the ESP0 field in the TSS (used by CPU for for CPL=3 -> CPL=0 privilege level changes)
     mov ecx,cr3                   ;ecx = previous task's virtual address space

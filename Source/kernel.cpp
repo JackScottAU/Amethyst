@@ -33,9 +33,6 @@
 extern "C" {
 #endif
 
-thread_control_block* current_task_TCB = (thread_control_block*) 0xC0001000;
-thread_control_block* task1;
-
 // To shut GCC up.
 void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData);
 struct multiboot_info* multiboot_correctDataStructureAddresses(struct multiboot_info* data);
@@ -70,16 +67,6 @@ void startSerialShell() {
 
     delete shell;
     delete console;
-}
-
-void testfunc() {
-    interrupts_enableInterrupts();
-
-    while(1) {
-        debug(LOGLEVEL_INFO, "Hello from thread #2. cr3 = %h", task1->cr3);
-
-        haltCPU();
-    }
 }
 
 struct multiboot_info* multiboot_correctDataStructureAddresses(struct multiboot_info* data) {
@@ -171,9 +158,9 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
     
 
     // Sets up the initial TCB.
-    initialise_multitasking();
+    thread_control_block* task1 = initialise_multitasking();
 
-    task1 = current_task_TCB;
+    // Start shells in new threads.
     thread_control_block* task2 = new_task(startShell, task1);
     thread_control_block* task3 = new_task(startSerialShell, task1);
 
