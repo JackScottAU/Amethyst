@@ -7,8 +7,7 @@ extern void* boot_page_directory;
 
 extern thread_control_block* current_task_TCB;
 
-clock_timerRequest* schedulerJob;
-
+// TODO: make this thread-safe.
 bool schedulerEnabled = false;
 
 thread_control_block* new_task(void (* callback)(), thread_control_block* currentTask) {
@@ -41,6 +40,8 @@ thread_control_block* new_task(void (* callback)(), thread_control_block* curren
 void initialise_multitasking() {
     current_task_TCB->cr3 = (uint32) &boot_page_directory - 0xC0000000;
     current_task_TCB->process_control_block = NULL;
+
+    // TODO: set up the linked lists for thread control block storage.
 }
 
 void thread_startScheduler() {
@@ -56,7 +57,7 @@ void scheduler() {
         thread_control_block* nextThread = current_task_TCB->nextThread;
 
         if(nextThread != NULL) {
-            debug(LOGLEVEL_DEBUG, "We would switch task here...");
+        //    debug(LOGLEVEL_DEBUG, "We would switch task here...");
             switch_to_task(nextThread);
         }
     }

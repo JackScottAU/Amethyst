@@ -41,7 +41,36 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 struct multiboot_info* multiboot_correctDataStructureAddresses(struct multiboot_info* data);
 void kernel_printBanner(void (*putChar)(char));
 uint32 memoryManager_printPhysicalMemoryMap(StandardIO* stdio);
-uint32 printCurrentTask(StandardIO* stdio);
+
+void startShell() {
+    interrupts_enableInterrupts();
+
+    // Initialise the standard I/O streams for use by the shell.
+    StandardIO* console = new StandardIO(vgaConsole_putChar, keyboard_readChar);
+    console->Print("\n");
+    // Launch the kernel shell.
+    Shell* shell = new Shell(console);
+    shell->RegisterCommand("Print-PhysicalMemoryMap", memoryManager_printPhysicalMemoryMap);
+    shell->Main();
+
+    delete shell;
+    delete console;
+}
+
+void startSerialShell() {
+    interrupts_enableInterrupts();
+
+    // Initialise the standard I/O streams for use by the shell.
+    StandardIO* console = new StandardIO(serial_writeChar, serial_readChar);
+    console->Print("\n");
+    // Launch the kernel shell.
+    Shell* shell = new Shell(console);
+    shell->RegisterCommand("Print-PhysicalMemoryMap", memoryManager_printPhysicalMemoryMap);
+    shell->Main();
+
+    delete shell;
+    delete console;
+}
 
 void testfunc() {
     interrupts_enableInterrupts();
@@ -139,23 +168,19 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 
     deviceTree_build();
 
-    // Initialise the standard I/O streams for use by the shell.
-    StandardIO* console = new StandardIO(vgaConsole_putChar, keyboard_readChar);
-    console->Print("\n");
-
     
+
+    // Sets up the initial TCB.
     initialise_multitasking();
 
     task1 = current_task_TCB;
-    thread_control_block* task2 = new_task(testfunc, task1);
+    thread_control_block* task2 = new_task(startShell, task1);
+    thread_control_block* task3 = new_task(startSerialShell, task1);
 
+    // Because our scheduler is very stupid, we do this.
     task1->nextThread = task2;
-    task2->nextThread = task1;
-
- //   while(true) {
- //       debug(LOGLEVEL_INFO, "Hello from thread #1. cr3 = %h", task1->cr3);
- //       switch_to_task(task2);
- //   }
+    task2->nextThread = task3;
+    task3->nextThread = task1;
 
     thread_startScheduler();
 
@@ -163,23 +188,12 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 
     interrupts_enableInterrupts();
 
-    // Launch the kernel shell.
-    Shell* shell = new Shell(console);
-    shell->RegisterCommand("Print-PhysicalMemoryMap", memoryManager_printPhysicalMemoryMap);
-    shell->RegisterCommand("ct", printCurrentTask);
-    shell->Main();
+    // The initial startup thread now becomes the system idle task for this CPU.
+    while(1) {
+        debug(LOGLEVEL_INFO, "System idle task running.");
 
-    delete shell;
-    delete console;
-}
-
-
-
-uint32 printCurrentTask(StandardIO* stdio) {
-    stdio->Print("CR3: %h\n", current_task_TCB->cr3);
-    stdio->Print("ESP: %h\n", current_task_TCB->kernel_stack_top);
-
-    return 42;
+        haltCPU();
+    }
 }
 
 uint32 memoryManager_printPhysicalMemoryMap(StandardIO* stdio) {

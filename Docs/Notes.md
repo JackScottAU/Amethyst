@@ -21,6 +21,7 @@ Needs:
  - Multitasking
  - Ring 3
  - Basic system calls
+ - Executable loading from file
 
 Milestone 2:
 Multiple instances of that program can be run simultaneously in terminal emulators in a graphical gui
@@ -63,8 +64,9 @@ Use 32-bit elf binaries.
 Use kernel threading in 1:N model (kernel knows about all threads).
 
 Session:    Console, Security
-Process:	Code / Data / Heap (Virtual Address Space - CR3), File Pointers etc
+Process:	Code / Data / Heap (Virtual Address Space - CR3), File Pointers, working directory etc
 Thread:		Registers / Stack (Stack Top)
+Fibres:     User-mode co-operative thread. Invisible to the kernel, but implemented in the standard library.
 
 ## Shell Language
 
