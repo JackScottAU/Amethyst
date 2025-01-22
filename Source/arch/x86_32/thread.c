@@ -20,6 +20,7 @@ thread_control_block* new_task(void (* callback)(), thread_control_block* curren
 
     debug(LOGLEVEL_DEBUG, "stack: %h\n", stack);
 
+    // Set up the initial stack frame.
     stack[1023] = (uint32)callback; // EIP
     stack[1022] = 0; // EBX;
     stack[1021] = 0; // ESI;
@@ -28,12 +29,6 @@ thread_control_block* new_task(void (* callback)(), thread_control_block* curren
 
     tcb->kernel_stack_top = (uint32)(stack + 1019);
     tcb->cr3 = currentTask->cr3;
-
-    uint32* kst = (uint32*)tcb->kernel_stack_top;
-    uint32 ip = kst[0];
-
-    debug(LOGLEVEL_DEBUG, "top of stack: %h", kst);
-    debug(LOGLEVEL_DEBUG, "callback: %h, ip: %h", callback, ip);
 
     return tcb;
 }

@@ -42,10 +42,24 @@ void interrupts_handler(struct Registers_S *Registers);
 // Defines whether the interrupt table entry is valid.
 #define IDT_FLAG_PRESENT    0x80
 
-// Minimum level for callers.
+/**
+ * Callers in ring 0 can call this interrupt (as well as hardware and exceptions).
+ */
 #define IDT_FLAG_RING0      0x00
+
+/**
+ * Calls in rings 0 and 1 can call this interrupt (as well as hardware and exceptions).
+ */
 #define IDT_FLAG_RING1      0x20
+
+/**
+ * Callers in rings 0 through 2 can call this interrupt (as well as hardware and exceptions).
+ */
 #define IDT_FLAG_RING2      0x40
+
+/**
+ * Callers in rings 0 through 3 can call this interrupt (as well as hardware and exceptions).
+ */
 #define IDT_FLAG_RING3      0x60
 
 // Type of gate.

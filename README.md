@@ -28,7 +28,7 @@ platforms will be supported eventually. Eventual platforms will include:
 * Raspberry Pi 5 (Architecture 'rpi-5')
 
 This repository contains the kernel and device drivers, and is written in C/C++ with scatterings 
-of architecture-specific assembly. THe user-mode applications will be in another repository when the time comes.
+of architecture-specific assembly. The user-mode applications will be in another repository when the time comes.
 
 ![Screenshot of Amethyst Running in QEMU](/Resources/screenshot.png)
 
@@ -101,4 +101,4 @@ More documentation is in the documentation folder:
 The issue tracker as well as the primary mirror for the git repository are on
 [GitHub](https://github.com/JackScottAU/Amethyst).
 
-<a href="https://www.flaticon.com/free-icons/amethyst" title="amethyst icons">Amethyst icons created by Kason Koo - Flaticon</a>
+<a href="https://www.flaticon.com/free-icon/amethyst_8810527" title="amethyst icons">Amethyst icons created by Kason Koo - Flaticon</a>

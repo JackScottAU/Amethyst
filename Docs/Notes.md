@@ -12,6 +12,11 @@
 
 ## Current Priorities
 
+ - Tidy up current multitasking, GDT and interrupt code.
+ - Write a page frame allocator
+
+## Milestones (move this to Github)
+
 Milestone 1:
 A user program loaded from disk runs in userspace, accepts input from the keyboard, and outputs to a text console.
 Needs:

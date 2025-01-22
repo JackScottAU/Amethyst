@@ -24,7 +24,7 @@ typedef struct thread_control_block_S {
     /**
      * TODO(JackScottAU): Rename this to something processor agnostic, like "KernelStackPointer".
      */
-    uint32 kernel_stack_top; // 0
+    void* kernel_stack_top;
 
     /**
      * The value of the CR3 register for this thread. This should be a pointer to the start of the thread's page directory.
@@ -32,9 +32,9 @@ typedef struct thread_control_block_S {
      * 
      * TODO(JackScottAU): Rename this to something processor agnostic, like "PageDirectoryPointer".
      */
-    uint32 cr3; // 4 - move this to process block when we get that far
+    uint32 cr3;
 
-    void* process_control_block; // 8
+    void* process_control_block; 
 
     /**
      * The next thread in the queue.
@@ -47,9 +47,10 @@ thread_control_block* initialise_multitasking(); // current task ends up current
 void switch_to_task(thread_control_block* next_thread);
 thread_control_block* new_task(void (* callback)(), thread_control_block* currentTask);
 
-void thread_startScheduler();
-void thread_stopScheduler();
-void scheduler();
+// move these to scheduler.h, make them general for the kernel, thread.h move to x86.
+void thread_startScheduler();   // scheduler_start()
+void thread_stopScheduler();    // scheduler_stop()
+void scheduler();               // scheduler_pickTask()
 
 // TODO: move scheduler into the non-arch area of the kernel.
 
