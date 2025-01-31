@@ -7,12 +7,28 @@
 #include <memoryManager.h>
 #include <multiboot.h>
 #include <vgaConsole.h>        // This is only used for debugging.
+#include <debug.h>
 
 
 // Holds the address of the start of the list representing free memory blocks.
 // When the kernel is first started, this list is empty.
 memoryManager_freeMemoryNode* memoryManager_firstFreeNode = (memoryManager_freeMemoryNode*) END_OF_MEMORY_LIST;
 
+PageDirectory* memoryManager_getCurrentPageDirectory() {
+    PageDirectory* value;
+
+    __asm__ __volatile__ ( "mov %%cr3, %0" : "=r"(value) );
+    return value;
+}
+
+void memoryManager_mapPhysicalMemoryPage(PageDirectory* directory, void* startLogicalAddress, void* physicalMemory, uint32 count) {
+    // TODO:
+
+    // find the relevant page directory entry.
+    // if null, set up new page table.
+    // then find relevant page table entry.
+    // then set the bits appropriately.
+}
 
 /**
  * Allocates a block of memory of the correct size. Currently uses a first-fit algorithm.
@@ -58,6 +74,8 @@ void* memoryManager_allocate(uint32 size) {
     // Update the address and length of the free area accordingly.
     chosen->address = chosen->address + size + sizeof(memoryManager_allocatedHeader);
     chosen->length = chosen->length - size - sizeof(memoryManager_allocatedHeader);
+
+    debug(LOGLEVEL_DEBUG, "Allocating memory at %h of size %h", memoryHeader, size);
 
     // Return the first usable byte of the allocated block.
     return (void*) ((uint32)memoryHeader + (uint32)sizeof(memoryManager_allocatedHeader));

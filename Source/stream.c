@@ -16,17 +16,17 @@ void stream_putDecimal(void (*putChar)(char), uint32 arg);
 void stream_putHexadecimal(void (*putChar)(char), uint32 arg, uint8 leadingZeroes);
 void stream_putHexadecimalInternal(void (*putChar)(char), uint32 arg);
 
-char* stream_readLine(bool echoMode) {
+char* stream_readLine(char (*getChar)(void), void (*putChar)(char), bool echoMode) {
     // hopelessly naive implementation that ignores memory safety entirely!
 
     char* data = memoryManager_allocate(100);
 
     int i = 0;
 
-    data[i] = keyboard_readChar();
+    data[i] = getChar();
 
     if (echoMode) {
-        vgaConsole_putChar(data[i]);
+        putChar(data[i]);
     }
 
     while (data[i] != '\n') {
@@ -40,10 +40,10 @@ char* stream_readLine(bool echoMode) {
             }
         }
 
-        data[i] = keyboard_readChar();
+        data[i] = getChar();
 
         if (echoMode) {
-            vgaConsole_putChar(data[i]);
+            putChar(data[i]);
         }
     }
 

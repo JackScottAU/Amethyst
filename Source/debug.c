@@ -46,3 +46,7 @@ void debug(uint8 logLevel, const char* formatString, ...) {
 
     va_end(args);
 }
+
+void debug_printChar() {
+    // TODO: write to QEMU port.
+}

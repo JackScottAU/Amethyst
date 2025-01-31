@@ -16,8 +16,10 @@ After that, the kernel retrieves the memory map from the bootloader (GRUB) and a
 
 | Start      | End        | Size     | Usage                                      									   |
 | ---------- | ---------- | -------- | ------------------------------------------------------------------------------- |
-| 0x00001000 | 0x00001FFF |    4 KiB | Current Thread Control Block for CPU #0                                         |
 | 0x00002000 | 0x00002071 |   72   B | Task State Segment Structure													   |
+| 0x00060000 | 0x0007FFFF |  128 KiB | Physical Memory Allocation Bitmap                                               |
+
+We also want to put the IDT, GDT, etc in here
 
 ## Virtual Memory Layout
 

@@ -6,7 +6,7 @@
 extern void* boot_page_directory;
 
 // Current TCB for this CPU.
-thread_control_block* current_task_TCB = (thread_control_block*) 0xC0001000;
+thread_control_block* current_task_TCB;
 
 // TODO: make this thread-safe.
 bool schedulerEnabled = false;
@@ -34,6 +34,8 @@ thread_control_block* new_task(void (* callback)(), thread_control_block* curren
 }
 
 thread_control_block* initialise_multitasking() {
+    current_task_TCB = memoryManager_allocate(sizeof(thread_control_block));
+
     current_task_TCB->cr3 = (uint32) &boot_page_directory - 0xC0000000;
     current_task_TCB->process_control_block = NULL;
 

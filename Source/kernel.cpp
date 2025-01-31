@@ -177,7 +177,9 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 
     // The initial startup thread now becomes the system idle task for this CPU.
     while(1) {
-        debug(LOGLEVEL_INFO, "System idle task running.");
+        debug(LOGLEVEL_TRACE, "System idle task running.");
+
+    //    debug(LOGLEVEL_DEBUG, "CR3: %h\n", memoryManager_getCurrentPageDirectory());
 
         haltCPU();
     }

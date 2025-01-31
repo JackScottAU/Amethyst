@@ -35,7 +35,7 @@ typedef struct  {
     uint32 address : 20;
 } __attribute__((packed)) pageTableEntry;
 
-typedef pageDirectoryEntry* pageDirectory;
+typedef pageDirectoryEntry* PageDirectory;
 
 
 #ifdef __cplusplus

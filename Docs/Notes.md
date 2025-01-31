@@ -51,6 +51,16 @@ FD2 = B:
 
 NET? no these are something other than file://
 
+## Startup Process
+
+1.  Memory Management:
+        GDT
+        Paging
+2.  Interrupts
+3.  Multitasking
+4.  Basic Devices
+5.  Everything Else
+
 ## Multitasking
 
 Thread.h contains stuff for creating, destroying and switching threads, and is processor-specific.

@@ -16,5 +16,5 @@ void StandardIO::Print(const char* formatString, ...) {
 }
 
 char* StandardIO::ReadLine(bool echo) {
-    return stream_readLine(echo);
+    return stream_readLine(this->stdin, this->stdout, echo);
 }

@@ -8,6 +8,7 @@
 #define INCLUDES_MEMORYMANAGER_H_
 
 #include <multiboot.h>
+#include "../arch/x86_32/paging.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -29,6 +30,16 @@ typedef struct {
 } memoryManager_allocatedHeader;
 
 void memoryManager_init(struct multiboot_memoryMapNode* startAddress, uint32 length, uint32 endOfReservedMemory);
+
+/**
+ * Returns the address of the current page directory.
+ */
+PageDirectory* memoryManager_getCurrentPageDirectory();
+
+/**
+ * Maps count number of 4KiB regions of physical memory into logical memory.
+ */
+void memoryManager_mapPhysicalMemoryPage(PageDirectory* directory, void* startLogicalAddress, void* physicalMemory, uint32 count);
 
 void* memoryManager_allocate(uint32 size);
 void memoryManager_free(void* mem);

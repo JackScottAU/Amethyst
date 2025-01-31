@@ -27,7 +27,7 @@ void stream_printf(void (*putChar)(char), const char* formatString, ...);
 // Internal version of the above, mostly for use with debug etc.
 void stream_vprintf(void (*putChar)(char), const char* formatString, va_list args);
 
-char* stream_readLine(bool echoMode);
+char* stream_readLine(char (*getChar)(void), void (*putChar)(char), bool echoMode);
 
 /**
  * An input/output stream. If buffer is null, all writes are immediate.

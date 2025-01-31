@@ -27,6 +27,7 @@ extern "C" {
     #define LOGLEVEL_WARNING    2
     #define LOGLEVEL_INFO       3
     #define LOGLEVEL_DEBUG      4
+    #define LOGLEVEL_TRACE      5
 
 #ifdef __cplusplus
 }
