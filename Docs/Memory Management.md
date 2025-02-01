@@ -21,6 +21,14 @@ After that, the kernel retrieves the memory map from the bootloader (GRUB) and a
 
 We also want to put the IDT, GDT, etc in here
 
+### Physical Memory Allocation Bitmap
+
+128K is 1024x1024 / 8.
+
+All zeroes = all allocated.
+
+All ones = all free.
+
 ## Virtual Memory Layout
 
 0GB to 3GB is user space.

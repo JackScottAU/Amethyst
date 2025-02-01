@@ -12,6 +12,7 @@
 #include <memoryManager.h>
 #include <deviceTree.h>
 #include "pci/deviceNames.h"
+#include <debug.h>
 
 
 #define PCIBUS_IOPORT_REQUEST   0x0CF8
@@ -21,8 +22,10 @@
 #define PCIBUS_REGISTER_STATUS_AND_COMMAND  0x04
 #define PCIBUS_REGISTER_CLASSCODES          0x08
 #define PCIBUS_REGISTER_HEADERTYPE          0x0C
+#define PCIBUS_REGISTER_ROMADDRESS          0x30
 
 bool pci_isMultiFunctionDevice(uint8 bus, uint8 slot);
+uint32 pci_getBar(bus, slot, function, bar);
 
 // PCI Bus Class names. If we can get these within 34 characters length we can use in display table below.
 const char* classNames[] = {
@@ -50,7 +53,7 @@ const char* classNames[] = {
 pciBus_Entry* pci_busEntries;
 pciBus_Entry* pci_currentEntry;
 
-// There are 256 buses, each with up to 32 devices, each with up to 8 functions.
+// There are 256 buses, each with up to 32 devices/slots, each with up to 8 functions.
 #define PCI_BUSCOUNT 256
 #define PCI_SLOTCOUNT 32
 #define PCI_FUNCCOUNT  8
@@ -97,6 +100,44 @@ void pci_printBuses(void (*putChar)(char)) {
     }
 
     stream_printf(putChar, "  +-----+------+------+--------+--------+------------------------------------+\n");
+}
+
+void pci_printBars(void (*putChar)(char)) {
+    pci_currentEntry = pci_busEntries;
+    while (pci_currentEntry->next != NULL) {
+    char* name = pci_getNameFromVendorAndDevice(pci_currentEntry->vendorID, pci_currentEntry->deviceID);
+
+        stream_printf(putChar, "%s:\n", name);
+
+        for(int bar = 0; bar < 6; bar++) {
+            uint32 val = pci_getBar(pci_currentEntry->bus, pci_currentEntry->slot, pci_currentEntry->function, bar);
+
+            if(val > 0) {
+                stream_printf(putChar, "  BAR%d: %h\n", bar, val);
+            }
+
+        }
+
+        uint32 rom = pci_readConfigurationRegister(pci_currentEntry->bus, pci_currentEntry->slot, pci_currentEntry->function, PCIBUS_REGISTER_ROMADDRESS);
+        if(rom > 0) {
+            stream_printf(putChar, "  ROM:  %h\n", rom);
+        }
+
+        uint32 irq = pci_readConfigurationRegister(pci_currentEntry->bus, pci_currentEntry->slot, pci_currentEntry->function, 0x3C);
+        if((irq & 0x000000FF) > 0) {
+            stream_printf(putChar, "  IRQ:  %d\n", irq & 0x000000FF);
+        }
+
+        pci_currentEntry = pci_currentEntry->next;
+    }
+}
+
+uint32 pci_getBar(bus, slot, function, bar) {
+    uint32 registerNo = 0x10 + (bar * 4);
+
+    debug(LOGLEVEL_DEBUG, "Register Number: %h", registerNo);
+
+    return pci_readConfigurationRegister(bus, slot, function, registerNo);
 }
 
 void pci_enumerateBuses(void) {

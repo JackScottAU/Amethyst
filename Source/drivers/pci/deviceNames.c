@@ -30,6 +30,7 @@ const struct pci_deviceName deviceNames[] = {
     { 0x10EC, 0x8139, "Realtek 8139 Network Adapter" },
 
     { 0x1234, 0x1111, "QEMU Standard VGA Graphics Adapter" },
+    { 0x1B36, 0x0011, "QEMU PVPANIC Device"},
 
     { 0x1414, 0x5353, "Microsoft Hyper-V Graphics Adapter" },
 

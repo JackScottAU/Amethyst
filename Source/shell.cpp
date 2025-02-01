@@ -127,6 +127,11 @@ void Shell::ProcessLine() {
         return;
     }
 
+    if (string_compare(line, "get-pcibars") == 0) {
+        pci_printBars(vgaConsole_putChar);
+        return;
+    }
+
     commands->Reset();
     do {
         ShellCommand* command = commands->Current();

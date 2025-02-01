@@ -14,6 +14,20 @@
 
  - Tidy up current multitasking, GDT and interrupt code.
  - Write a page frame allocator
+ - Fix memory leak issue so we don't get page faults after a minute of running
+
+### Driver Priorities
+
+While we work on core microkernel stuff, we should also be working on drivers:
+
+1.  QEMU/Bochs Display Adapter (enough to set a mode and get a framebuffer)
+2.  IDE
+
+## Debug in StandardIO
+
+Add a logging channel to StandardIO. Everything that uses StandardIO can be given a default debugging channel and can set it's own debugging channels.
+
+And the kernel pre-StandardIO can use the debug() method directly, which will be wired directly to the qemu port.
 
 ## Milestones (move this to Github)
 
@@ -78,9 +92,12 @@ Booting is always done via multiboot. This gives us several options:
 
 We aren't going to use EFI or VBE to set video modes.
 
-We'll stick with EGA text mode for now. Later on, steal ideas from the Linux kernel in order to create 2D framebuffer drivers. Start with VGA, then work up from there.
+Get rid of EGA text mode from the kernel, it's obsolete even in 1995. Instead, write drivers for the following cards:
 
-This means we can avoid needs virtual 8086 mode and can stick entirely to protected mode.
+1.  QEMU/Bochs Display Adapter
+2.  Standard VGA (emulated in QEMU)
+3.  Cirrus Logic 5400 Series (emulated in QEMU)
+4.  ATI Rage 128 Pro (in QEMU, also have a physical card for Gresley)
 
 ## Executables
 

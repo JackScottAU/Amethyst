@@ -8,6 +8,7 @@
 #include <multiboot.h>
 #include <vgaConsole.h>        // This is only used for debugging.
 #include <debug.h>
+#include <memory.h>
 
 
 // Holds the address of the start of the list representing free memory blocks.
@@ -21,6 +22,38 @@ PageDirectory* memoryManager_getCurrentPageDirectory() {
     return value;
 }
 
+uint32 memoryManager_getPhysicalAddressOfFreePhysicalPage() {
+    uint8* bitmap = (uint8*)0xC0060000;
+
+    for(uint32 i = 0; i < 0x20000; i++) { // iterate through 128K of memory.
+   //     debug(LOGLEVEL_DEBUG, "Index %d: %h", i, bitmap[i]);
+
+        if(bitmap[i] == 0xFF) {
+            // all free - FIX THIS SO WE TEST != 0x00 and are a bit more clever. At the moment we only allocate one page in 8.
+
+            return (i * 8) << 12;
+        }
+    }
+}
+
+void memoryManager_markPageAllocated(uint32 address) {
+    uint8* bitmap = (uint8*)0xC0060000;
+
+    uint32 index = (address >> 12) / 8;
+
+    // we need to set the relavant bit as a 0. For now we just set the whole thing as allocated.
+    bitmap[index] = 0x00;
+}
+
+void memoryManager_markPageFree(uint32 address) {
+    uint8* bitmap = (uint8*)0xC0060000;
+
+    uint32 index = (address >> 12) / 8;
+
+    // we need to set the relavant bit as a 1. For now we just set the whole thing as allocated. This only works because our search mechanism is stupid too.
+    bitmap[index] = 0xFF;   
+}
+
 void memoryManager_mapPhysicalMemoryPage(PageDirectory* directory, void* startLogicalAddress, void* physicalMemory, uint32 count) {
     // TODO:
 
@@ -28,6 +61,84 @@ void memoryManager_mapPhysicalMemoryPage(PageDirectory* directory, void* startLo
     // if null, set up new page table.
     // then find relevant page table entry.
     // then set the bits appropriately.
+
+    // IMPROVEMENTS:
+    // - Write the physical memory bitmap into low memory which we can use to find somewhere to put page tables.
+    // - Set the bitmap to true if we allocate it.
+
+    for(int i = 0; i < count; i++) {
+        
+
+        uint32 pageDirectoryIndex = (uint32)startLogicalAddress >> 22;
+        uint32 pageTableIndex = ((uint32)startLogicalAddress >> 12) & 0x3FF;
+        
+        debug(LOGLEVEL_DEBUG, "Indexes: %h, %h", pageDirectoryIndex, pageTableIndex);
+
+        pageDirectoryEntry* directoryEntry = &((pageDirectoryEntry*)((uint32)directory + 0xC0000000))[pageDirectoryIndex];
+
+        if(!directoryEntry->p) {
+            // page table doesn't exist, we need to create one.
+            // Fake this for now.
+            debug(LOGLEVEL_DEBUG, "Creating new page table.");
+
+            uint32 pageAddress = memoryManager_getPhysicalAddressOfFreePhysicalPage();
+            memoryManager_markPageAllocated(pageAddress);
+
+            directoryEntry->rw = true;
+            directoryEntry->p = true;
+            directoryEntry->address = pageAddress >> 12; // hard code the page table address for now.
+            debug(LOGLEVEL_DEBUG, "Created new page table.");
+        }
+
+        // we now have a valid page table. get the address of the entries.
+        pageTableEntry* tableEntries = ((uint32)(directoryEntry->address << 12) + 0xC0000000);
+        debug(LOGLEVEL_DEBUG, "Page table start: %h", tableEntries);
+
+      //  pageTableEntry tableEntry = tableEntries[pageTableIndex];
+        
+        debug(LOGLEVEL_DEBUG, "Page table entry: %h", tableEntries[pageTableIndex]);
+
+        tableEntries[pageTableIndex].address = (uint32)physicalMemory >> 12;
+        tableEntries[pageTableIndex].p = true;
+        tableEntries[pageTableIndex].rw = true;
+
+        // get ready to go again.
+        physicalMemory += 0x1000;
+        startLogicalAddress += 0x1000;
+    }
+}
+
+void memoryManager_printMemoryMap(PageDirectory* directory)
+{
+    pageDirectoryEntry* directoryEntries = ((uint32)directory + 0xC0000000);
+
+        debug(LOGLEVEL_DEBUG, "directory: %h", directoryEntries);
+
+    for(uint32 i = 0; i < 1024; i++) {
+
+        if(directoryEntries[i].p == 0) {
+            continue;
+        }
+
+        debug(LOGLEVEL_DEBUG, "directory[%d]: %h", i, directoryEntries[i].address);
+
+        pageTableEntry* tableEntries = ((uint32)(directoryEntries[i].address << 12) + 0xC0000000);
+
+        debug(LOGLEVEL_DEBUG, "table: %h", tableEntries);
+
+        for(uint32 j = 0; j < 1024; j++) {
+            if(tableEntries[j].p == 0) {
+                continue;
+            }
+
+            uint32 virtualAddress = (i << 22) | (j << 12);
+            uint32 physicalAddress = tableEntries[j].address << 12;
+
+            debug(LOGLEVEL_DEBUG, "directory[%d]table[%d]: %h mapped to %h", i, j, virtualAddress, physicalAddress);
+        }
+
+        // page directory is valid
+    }
 }
 
 /**
@@ -135,6 +246,9 @@ void memoryManager_init(struct multiboot_memoryMapNode* memNode, uint32 length, 
     memoryManager_firstFreeNode->length = 0x200000;         // 2 megs.
     memoryManager_firstFreeNode->next = (memoryManager_freeMemoryNode*)END_OF_MEMORY_LIST;
 
+    // IMPORTANT: free the stuff
+    memset(0xC0060000, 0xFF, 0x1FFFF); // zero the directory stuff.
+    memset(0xC0060000, 0x00, 1023 / 8); // set first 1024 bits to 1 (first page table filled in entry.S).
 
     /*memNode = (uint32) memNode + 0xC0000000;
 

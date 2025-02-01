@@ -27,12 +27,19 @@ lint:
 	@cpplint --quiet --recursive --linelength=120 --filter=-readability/casting,-build/include_order --root=Source Source
 
 qemu-x86_32: image-x86_32
-	@qemu-system-i386 -cpu pentium -m 16 -no-reboot -no-shutdown -drive format=raw,media=cdrom,file=Amethyst.iso -vga std -serial stdio
+	@qemu-system-i386 \
+		-no-reboot -no-shutdown \
+		--machine pc -cpu pentium -m 16  \
+		-drive format=raw,media=cdrom,file=Amethyst.iso \
+		-vga std \
+		-serial stdio \
+		-net nic,model=rtl8139 \
+		-device pvpanic
 
 cd-image: Build/kernel32 resources
 	-@grub-mkrescue -o Amethyst.iso Build -quiet
 
-resources:
+resources: 
 	-@mkdir -p Build/boot/grub
 	@cp Resources/grub.cfg Build/boot/grub
 	@cp Resources/Fonts Build -r

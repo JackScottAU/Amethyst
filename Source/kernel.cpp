@@ -155,19 +155,28 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 
     deviceTree_build();
 
-    
+    PageDirectory* pg = memoryManager_getCurrentPageDirectory();
+
+    memoryManager_mapPhysicalMemoryPage(pg, (void*)0xC0400000, (void*)0x00400000, 1024); // we now have another 4 megs to play with!
+    memoryManager_mapPhysicalMemoryPage(pg, (void*)0xFF000000, (void*)0x00004000, 2);
+    memoryManager_mapPhysicalMemoryPage(pg, (void*)0xFC000000, (void*)0x00004000, 2);
+
+    memoryManager_printMemoryMap(pg);
+
+  //  uint32 pageaddress = memoryManager_getPhysicalAddressOfFreePhysicalPage();
+  //  debug(LOGLEVEL_ERROR, "page address: %h", pageaddress);
 
     // Sets up the initial TCB.
     thread_control_block* task1 = initialise_multitasking();
 
     // Start shells in new threads.
     thread_control_block* task2 = new_task(startShell, task1);
-    thread_control_block* task3 = new_task(startSerialShell, task1);
+ //   thread_control_block* task3 = new_task(startSerialShell, task1);
 
     // Because our scheduler is very stupid, we do this.
     task1->nextThread = task2;
-    task2->nextThread = task3;
-    task3->nextThread = task1;
+    task2->nextThread = task1;
+//    task3->nextThread = task1;
 
     thread_startScheduler();
 

@@ -19,6 +19,7 @@ void pci_printBuses(void (*putChar)(char));
 void pci_checkBus(uint8 bus);
 void pci_checkSlot(uint8 bus, uint8 slot);
 deviceTree_Entry* pci_addDevicesToTree(void);
+void pci_printBars(void (*putChar)(char));
 
 /**
  * Reads the PCI configuration registers for a particular PCI device.
