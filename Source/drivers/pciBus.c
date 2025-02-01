@@ -25,7 +25,6 @@
 #define PCIBUS_REGISTER_ROMADDRESS          0x30
 
 bool pci_isMultiFunctionDevice(uint8 bus, uint8 slot);
-uint32 pci_getBar(bus, slot, function, bar);
 
 // PCI Bus Class names. If we can get these within 34 characters length we can use in display table below.
 const char* classNames[] = {
@@ -132,7 +131,7 @@ void pci_printBars(void (*putChar)(char)) {
     }
 }
 
-uint32 pci_getBar(bus, slot, function, bar) {
+uint32 pci_getBar(uint8 bus, uint8 slot, uint8 function, uint8 bar) {
     uint32 registerNo = 0x10 + (bar * 4);
 
     debug(LOGLEVEL_DEBUG, "Register Number: %h", registerNo);

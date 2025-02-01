@@ -33,6 +33,7 @@ uint32 pci_readConfigurationRegister(uint8 bus, uint8 slot, uint8 function, uint
 
 void pci_writeConfigurationRegister(uint8 bus, uint8 slot, uint8 function, uint8 registerNo, uint32 data);
 uint32 pci_calculateRegisterAddress(uint8 bus, uint8 slot, uint8 function, uint8 registerNo);
+uint32 pci_getBar(uint8 bus, uint8 slot, uint8 function, uint8 bar);
 
 typedef struct pciBus_Entry_s {
     uint8 bus;

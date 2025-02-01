@@ -23,6 +23,8 @@
 #include <amethyst.h>
 #include <mouse.h>
 #include <thread.h>
+#include <Graphics/canvas.h>
+#include "drivers/vesa_framebuffer.h"
 
 #include <Structures/linkedlist.hpp>
 
@@ -158,10 +160,40 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
     PageDirectory* pg = memoryManager_getCurrentPageDirectory();
 
     memoryManager_mapPhysicalMemoryPage(pg, (void*)0xC0400000, (void*)0x00400000, 1024); // we now have another 4 megs to play with!
-    memoryManager_mapPhysicalMemoryPage(pg, (void*)0xFF000000, (void*)0x00004000, 2);
+  //  memoryManager_mapPhysicalMemoryPage(pg, (void*)0xFF000000, (void*)0x00004000, 2);
     memoryManager_mapPhysicalMemoryPage(pg, (void*)0xFC000000, (void*)0x00004000, 2);
 
-    memoryManager_printMemoryMap(pg);
+ //   memoryManager_printMemoryMap(pg);
+
+    uint32 bar0 = pci_getBar(0, 2, 0, 0) & 0xFFFFFFF0;
+    uint32 bar2 = pci_getBar(0, 2, 0, 2) & 0xFFFFFFF0;
+    memoryManager_mapPhysicalMemoryPage(pg, (void*)0xFFC00000, (void*)bar0, 1024);
+    memoryManager_mapPhysicalMemoryPage(pg, (void*)0xFFBFF000, (void*)bar2, 1);
+    debug(LOGLEVEL_INFO, "VESA BAR0: %h", bar0);
+    debug(LOGLEVEL_INFO, "VESA BAR0: %h", bar2);
+
+  //  memoryManager_printMemoryMap(pg);
+
+    // can now read registers.
+    uint16* bochsRegs = (uint16*) 0xFFBFF500;
+
+    debug(LOGLEVEL_ERROR, "Bochs ID: %h", bochsRegs[0]);
+    debug(LOGLEVEL_ERROR, "Bochs ID: %h", bochsRegs[1]);
+    debug(LOGLEVEL_ERROR, "Bochs ID: %h", bochsRegs[2]);
+
+    // BOCHS DISPLAY SETUP.
+    bochsRegs[4] = 0; // disable.
+    bochsRegs[1] = 1024;
+    bochsRegs[2] = 768;
+    bochsRegs[3] = 0x20;
+    bochsRegs[4] = 0x1 | 0x40; // enable, plus enable LFB.
+
+    Canvas* canvas = (Canvas*)memoryManager_allocate(sizeof(Canvas));
+    canvas->framebuffer = (void*)0xFFC00000;
+    canvas->height =768;
+    canvas->width = 1024;
+
+    vga_drawRect(canvas, 200, 300, 100, 150, 0x00FF0080);
 
   //  uint32 pageaddress = memoryManager_getPhysicalAddressOfFreePhysicalPage();
   //  debug(LOGLEVEL_ERROR, "page address: %h", pageaddress);

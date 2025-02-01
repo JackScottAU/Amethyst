@@ -25,33 +25,50 @@ PageDirectory* memoryManager_getCurrentPageDirectory() {
 uint32 memoryManager_getPhysicalAddressOfFreePhysicalPage() {
     uint8* bitmap = (uint8*)0xC0060000;
 
+    // TODO: hold a persistent index to the first byte with free memory to speed up this search.
+
     for(uint32 i = 0; i < 0x20000; i++) { // iterate through 128K of memory.
    //     debug(LOGLEVEL_DEBUG, "Index %d: %h", i, bitmap[i]);
 
-        if(bitmap[i] == 0xFF) {
+        if(bitmap[i] != 0x00) {
             // all free - FIX THIS SO WE TEST != 0x00 and are a bit more clever. At the moment we only allocate one page in 8.
 
-            return (i * 8) << 12;
+            for(uint8 b = 0; b < 8; b++) {
+                if((bitmap[i] >> b) & 0x01) {
+                    // the b-th bit of this index is free, we can return that.
+                    return ((i * 8) + b) << 12;
+                }
+            }
+
+          //  return (i * 8) << 12;
         }
     }
+
+    return 0xFFFFFFFF; // no memory found.
 }
 
 void memoryManager_markPageAllocated(uint32 address) {
     uint8* bitmap = (uint8*)0xC0060000;
 
     uint32 index = (address >> 12) / 8;
+    uint32 bit = (address >> 12) % 8;
+
+    uint8 mask = 0x01 << bit;
 
     // we need to set the relavant bit as a 0. For now we just set the whole thing as allocated.
-    bitmap[index] = 0x00;
+    bitmap[index] = bitmap[index] & !mask;
 }
 
 void memoryManager_markPageFree(uint32 address) {
     uint8* bitmap = (uint8*)0xC0060000;
 
     uint32 index = (address >> 12) / 8;
+    uint32 bit = (address >> 12) % 8;
 
-    // we need to set the relavant bit as a 1. For now we just set the whole thing as allocated. This only works because our search mechanism is stupid too.
-    bitmap[index] = 0xFF;   
+    uint8 mask = 0x01 << bit;
+
+    // we need to set the relavant bit as a 1. For now we just set the whole thing as free. This only works because our search mechanism is stupid too.
+    bitmap[index] = bitmap[index] | mask;   
 }
 
 void memoryManager_mapPhysicalMemoryPage(PageDirectory* directory, void* startLogicalAddress, void* physicalMemory, uint32 count) {
@@ -63,8 +80,6 @@ void memoryManager_mapPhysicalMemoryPage(PageDirectory* directory, void* startLo
     // then set the bits appropriately.
 
     // IMPROVEMENTS:
-    // - Write the physical memory bitmap into low memory which we can use to find somewhere to put page tables.
-    // - Set the bitmap to true if we allocate it.
 
     for(int i = 0; i < count; i++) {
         
@@ -247,7 +262,7 @@ void memoryManager_init(struct multiboot_memoryMapNode* memNode, uint32 length, 
     memoryManager_firstFreeNode->next = (memoryManager_freeMemoryNode*)END_OF_MEMORY_LIST;
 
     // IMPORTANT: free the stuff
-    memset(0xC0060000, 0xFF, 0x1FFFF); // zero the directory stuff.
+    memset(0xC0060000, 0xFF, 0x1FFFF); // Set all pages in the physical bitmap as free.
     memset(0xC0060000, 0x00, 1023 / 8); // set first 1024 bits to 1 (first page table filled in entry.S).
 
     /*memNode = (uint32) memNode + 0xC0000000;

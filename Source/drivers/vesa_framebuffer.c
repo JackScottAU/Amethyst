@@ -6,7 +6,7 @@
 
 #include <Graphics/canvas.h>
 #include <Graphics/screenfont.h>
-#include "drivers/vesa_framebuffer.h"
+#include "vesa_framebuffer.h"
 
 void vga_putPixel(Canvas* canvas, uint32 x, uint32 y, uint32 colour) {
     uint32* screen = canvas->framebuffer;
