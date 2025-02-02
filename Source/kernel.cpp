@@ -25,6 +25,7 @@
 #include <thread.h>
 #include <Graphics/canvas.h>
 #include "drivers/vesa_framebuffer.h"
+#include <qemuVga.h>
 
 #include <Structures/linkedlist.hpp>
 
@@ -155,45 +156,23 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
     debug(LOGLEVEL_INFO, "Setting up the clock...");
     clock_init();
 
-    deviceTree_build();
-
     PageDirectory* pg = memoryManager_getCurrentPageDirectory();
 
     memoryManager_mapPhysicalMemoryPage(pg, (void*)0xC0400000, (void*)0x00400000, 1024); // we now have another 4 megs to play with!
-  //  memoryManager_mapPhysicalMemoryPage(pg, (void*)0xFF000000, (void*)0x00004000, 2);
-    memoryManager_mapPhysicalMemoryPage(pg, (void*)0xFC000000, (void*)0x00004000, 2);
 
- //   memoryManager_printMemoryMap(pg);
+    deviceTree_build();
+    
+    // We now have a QEMU display adapter somewhere in the device tree, and it knows where it is, so we can use it.
+    qemuVga_setMode(1024, 768);
+    Canvas* canvas = qemuVga_getCanvas();
+    
 
-    uint32 bar0 = pci_getBar(0, 2, 0, 0) & 0xFFFFFFF0;
-    uint32 bar2 = pci_getBar(0, 2, 0, 2) & 0xFFFFFFF0;
-    memoryManager_mapPhysicalMemoryPage(pg, (void*)0xFFC00000, (void*)bar0, 1024);
-    memoryManager_mapPhysicalMemoryPage(pg, (void*)0xFFBFF000, (void*)bar2, 1);
-    debug(LOGLEVEL_INFO, "VESA BAR0: %h", bar0);
-    debug(LOGLEVEL_INFO, "VESA BAR0: %h", bar2);
+    ScreenFont* font = (ScreenFont*)memoryManager_allocate(sizeof(ScreenFont));
+    font->header = (ScreenFontHeader*)multibootData->modsAddr->start;
+    font->characterData = (uint8*)(font->header) + font->header->headerSize;
 
-  //  memoryManager_printMemoryMap(pg);
-
-    // can now read registers.
-    uint16* bochsRegs = (uint16*) 0xFFBFF500;
-
-    debug(LOGLEVEL_ERROR, "Bochs ID: %h", bochsRegs[0]);
-    debug(LOGLEVEL_ERROR, "Bochs ID: %h", bochsRegs[1]);
-    debug(LOGLEVEL_ERROR, "Bochs ID: %h", bochsRegs[2]);
-
-    // BOCHS DISPLAY SETUP.
-    bochsRegs[4] = 0; // disable.
-    bochsRegs[1] = 1024;
-    bochsRegs[2] = 768;
-    bochsRegs[3] = 0x20;
-    bochsRegs[4] = 0x1 | 0x40; // enable, plus enable LFB.
-
-    Canvas* canvas = (Canvas*)memoryManager_allocate(sizeof(Canvas));
-    canvas->framebuffer = (void*)0xFFC00000;
-    canvas->height =768;
-    canvas->width = 1024;
-
-    vga_drawRect(canvas, 200, 300, 100, 150, 0x00FF0080);
+    vga_drawRect(canvas, 200, 300, 100, 150, 0x00C000F0);
+    vga_drawWord(canvas, font, 50, 50, 0xFFFFFFFF, "Amethyst shell will be returning next season...");
 
   //  uint32 pageaddress = memoryManager_getPhysicalAddressOfFreePhysicalPage();
   //  debug(LOGLEVEL_ERROR, "page address: %h", pageaddress);

@@ -1,3 +1,13 @@
+## TODOs
+
+-   Refactor bochs into a driver file
+-   Create framebuffer printf
+-   Clean up debugging messages
+-   Clean up kernel file
+-   Tidy up current multitasking, GDT and interrupt code.
+-   Make the physical memory allocation code better (own file etc).
+-   Fix the memory leak in stream_readLine() caused by multitasking.
+
 ## Source Tree Layout
 
 * Docs/ - contains documentation.
@@ -9,12 +19,6 @@
     * kernel/ - general kernel code not dependant on architecture.
 	* drivers/ - code for drivers (all drivers except root platform device, even architecture-specific ones).
     * library/ - generic code that will eventually be part of the libc (linked lists, printf(), etc).
-
-## Current Priorities
-
- - Tidy up current multitasking, GDT and interrupt code.
- - Write a page frame allocator
- - Fix memory leak issue so we don't get page faults after a minute of running
 
 ### Driver Priorities
 
@@ -202,19 +206,6 @@ Then start building up a device tree.
 
 We can get started on a shell quicker if we do serial.
 
-Current Priorities:
-1. Serial Port - done enough to move on
-2. Interactive Shell - needs string functions! Tolower() and split() mostly
-3. Link against libgcc
-4. Device Tree
-5. Higher half kernel. (Half of paging)
-6. Generic linked list and tree structures 
-More paging
-7. Multitasking
-8. Client apps
-9. Device detector for IDE, floppy, etc
-10. Driver for IDE, driver for file system fat32
-11. Graphics driver
 
 Bus devices (including platform device) know about all their possible children and can ask them to detect and init. Some (pci, USB) have registration so child devices can add themselves to the list?
 

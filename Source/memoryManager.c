@@ -31,7 +31,6 @@ uint32 memoryManager_getPhysicalAddressOfFreePhysicalPage() {
    //     debug(LOGLEVEL_DEBUG, "Index %d: %h", i, bitmap[i]);
 
         if(bitmap[i] != 0x00) {
-            // all free - FIX THIS SO WE TEST != 0x00 and are a bit more clever. At the moment we only allocate one page in 8.
 
             for(uint8 b = 0; b < 8; b++) {
                 if((bitmap[i] >> b) & 0x01) {
@@ -55,7 +54,6 @@ void memoryManager_markPageAllocated(uint32 address) {
 
     uint8 mask = 0x01 << bit;
 
-    // we need to set the relavant bit as a 0. For now we just set the whole thing as allocated.
     bitmap[index] = bitmap[index] & !mask;
 }
 
@@ -67,7 +65,6 @@ void memoryManager_markPageFree(uint32 address) {
 
     uint8 mask = 0x01 << bit;
 
-    // we need to set the relavant bit as a 1. For now we just set the whole thing as free. This only works because our search mechanism is stupid too.
     bitmap[index] = bitmap[index] | mask;   
 }
 
@@ -87,31 +84,32 @@ void memoryManager_mapPhysicalMemoryPage(PageDirectory* directory, void* startLo
         uint32 pageDirectoryIndex = (uint32)startLogicalAddress >> 22;
         uint32 pageTableIndex = ((uint32)startLogicalAddress >> 12) & 0x3FF;
         
-        debug(LOGLEVEL_DEBUG, "Indexes: %h, %h", pageDirectoryIndex, pageTableIndex);
+        debug(LOGLEVEL_TRACE, "Indexes: %h, %h", pageDirectoryIndex, pageTableIndex);
 
         pageDirectoryEntry* directoryEntry = &((pageDirectoryEntry*)((uint32)directory + 0xC0000000))[pageDirectoryIndex];
 
         if(!directoryEntry->p) {
             // page table doesn't exist, we need to create one.
-            // Fake this for now.
-            debug(LOGLEVEL_DEBUG, "Creating new page table.");
+            debug(LOGLEVEL_TRACE, "Creating new page table.");
 
             uint32 pageAddress = memoryManager_getPhysicalAddressOfFreePhysicalPage();
             memoryManager_markPageAllocated(pageAddress);
 
+            // TODO: fix the problem where our page table might be put in virtual memory we don't have access to.
+
             directoryEntry->rw = true;
             directoryEntry->p = true;
             directoryEntry->address = pageAddress >> 12; // hard code the page table address for now.
-            debug(LOGLEVEL_DEBUG, "Created new page table.");
+            debug(LOGLEVEL_TRACE, "Created new page table.");
         }
 
         // we now have a valid page table. get the address of the entries.
         pageTableEntry* tableEntries = ((uint32)(directoryEntry->address << 12) + 0xC0000000);
-        debug(LOGLEVEL_DEBUG, "Page table start: %h", tableEntries);
+        debug(LOGLEVEL_TRACE, "Page table start: %h", tableEntries);
 
       //  pageTableEntry tableEntry = tableEntries[pageTableIndex];
         
-        debug(LOGLEVEL_DEBUG, "Page table entry: %h", tableEntries[pageTableIndex]);
+        debug(LOGLEVEL_TRACE, "Page table entry: %h", tableEntries[pageTableIndex]);
 
         tableEntries[pageTableIndex].address = (uint32)physicalMemory >> 12;
         tableEntries[pageTableIndex].p = true;

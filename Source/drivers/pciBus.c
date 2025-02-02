@@ -13,6 +13,7 @@
 #include <deviceTree.h>
 #include "pci/deviceNames.h"
 #include <debug.h>
+#include <qemuVga.h>
 
 
 #define PCIBUS_IOPORT_REQUEST   0x0CF8
@@ -68,11 +69,19 @@ deviceTree_Entry* pci_addDevicesToTree(void) {
 
     pci_currentEntry = pci_currentEntry->next;
     while (pci_currentEntry->next != 0x0) {
-        char* name = pci_getNameFromVendorAndDevice(pci_currentEntry->vendorID, pci_currentEntry->deviceID);
 
-        deviceTree_Entry* device = deviceTree_createDevice(name, DEVICETREE_TYPE_PCI, pci_currentEntry);
+        if(pci_currentEntry->vendorID == 0x1234 && pci_currentEntry->deviceID == 0x1111) {
+            deviceTree_Entry* device = qemuVga_initialise(pci_currentEntry->bus, pci_currentEntry->slot, pci_currentEntry->function);
 
-        deviceTree_addChild(root, device);
+            deviceTree_addChild(root, device);
+        } else {
+            char* name = pci_getNameFromVendorAndDevice(pci_currentEntry->vendorID, pci_currentEntry->deviceID);
+
+            deviceTree_Entry* device = deviceTree_createDevice(name, DEVICETREE_TYPE_PCI, pci_currentEntry);
+
+            deviceTree_addChild(root, device);
+        }
+        
 
         pci_currentEntry = pci_currentEntry->next;
     }
