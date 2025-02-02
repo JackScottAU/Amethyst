@@ -2,6 +2,7 @@
 #include <memoryManager.h>
 #include <Types.h>
 #include "drivers/vesa_framebuffer.h"
+#include <debug.h>
 
 // Code ripped wholesale from https://wiki.osdev.org/Loading_Icons
 TargaImage::TargaImage(uint8* ptr, uint32 length, uint32 locx, uint32 locy, Canvas* canvas)
@@ -131,10 +132,14 @@ void Widget::RemoveChild(Widget* widget) {
 
 void Widget::RedrawChildren()
 {
+        debug(LOGLEVEL_WARNING, "rdeware?");
     children->Reset();
+        debug(LOGLEVEL_WARNING, "after reset?");
 
     do {
         Widget* child = children->Current();
+
+        debug(LOGLEVEL_WARNING, "Child?");
 
         if(child != nullptr) {
             child->Redraw();

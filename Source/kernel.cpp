@@ -29,6 +29,7 @@
 #include <Graphics/TextConsole.hpp>
 #include <Graphics/TextLabel.hpp>
 #include <Graphics/TargaImage.hpp>
+#include <Graphics/Window.hpp>
 
 #include <Structures/linkedlist.hpp>
 
@@ -190,9 +191,9 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 
     TargaImage* image = new TargaImage((uint8*)modules[1].start, length, 200, 300, canvas);
 
-    vga_drawRect(canvas, 0, 0, canvas->width, 32, 0x008000C0);
+    Window* window = new Window(font2, 0, 0, 1024, 768, canvas, "Amethyst OS");
 
-    TextLabel* label1 = new TextLabel(font2, (canvas->width / 2) - (8 * 11 / 2), 8, canvas, "Amethyst OS", 0xFFFFFFFF);
+  //  vga_drawRect(canvas, 0, 0, canvas->width, 32, 0x008000C0);
 
     stdioTextBox = new TextConsole(canvas, font, 0, 32, 46, 128);
 
@@ -200,15 +201,8 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 
     for(int i = 0; i < 1000; i++) {
         image->SetPosition(i, 100);
-        image->Redraw();
+   //     image->Redraw();
     }
-
-    label1->SetText("HERE.");
-    
-    // TODO: toolbar->Redraw();
-
-  //  vga_drawRect(canvas, 200, 300, 100, 150, 0x00C000F0);
-  //  vga_drawWord(canvas, font, 50, 50, 0xFFFFFFFF, "Amethyst shell will be returning next season...");
 
   //  uint32 pageaddress = memoryManager_getPhysicalAddressOfFreePhysicalPage();
   //  debug(LOGLEVEL_ERROR, "page address: %h", pageaddress);

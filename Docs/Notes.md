@@ -1,10 +1,23 @@
 ## TODOs
 
--   Create framebuffer printf
+### Micro Kernel (C only)
+
 -   Clean up debugging messages
 -   Clean up kernel file
 -   Tidy up current multitasking, GDT and interrupt code.
 -   Make the physical memory allocation code better (own file etc).
+-   Keep going with page management.
+-   Make the scheduler a bit smarter
+-   Refactor scheduler into thread.c (arch) and scheduler.c (generic)
+
+### Drivers
+
+-   Refactor device drivers into a nice C++ class sort of thing.
+
+### User Space
+
+-   Turn canvas into a class
+-   Finish the windowing toolkit
 -   Fix the memory leak in stream_readLine() caused by multitasking.
 
 ## Source Tree Layout

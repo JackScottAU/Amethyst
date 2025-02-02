@@ -52,6 +52,10 @@ class LinkedList {
         /// @brief Returns the data at the current location in the list.
         /// @return 
         T Current() {
+            if(current == nullptr) {
+                return nullptr;
+            }
+
             return current->data;
         }
 
