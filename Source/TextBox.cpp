@@ -3,7 +3,9 @@
 #include <debug.h>
 #include <memory.h>
 
-TextBox::TextBox(Canvas* canvas, ScreenFont* font, uint16 rows, uint16 columns) {
+TextBox::TextBox(Canvas* canvas, ScreenFont* font, uint32 x, uint32 y, uint16 rows, uint16 columns) {
+    this->x = x;
+    this->y = y;
     this->rows = rows;
     this->columns = columns;
     this->currentColumn = 0;
@@ -28,7 +30,7 @@ void TextBox::PutChar(char c) {
             }
             
             this->characterBuffer[this->currentRow][this->currentColumn] = ' ';
-            vga_drawRect(canvas, currentColumn * 8, currentRow * 16, 8, 16, 0x00000000);
+            vga_drawRect(canvas, x + (currentColumn * 8), y + (currentRow * 16), 8, 16, 0x00000000);
             break;
 
         case 0x09:    // Tab
@@ -47,7 +49,7 @@ void TextBox::PutChar(char c) {
         default:
             //printable character.
             this->characterBuffer[this->currentRow][this->currentColumn] = c;
-            vga_drawChar(canvas, font, currentColumn * 8, currentRow * 16, this->colour, c);
+            vga_drawChar(canvas, font, x + (currentColumn * 8), y + (currentRow * 16), this->colour, c);
 
             currentColumn++;
 
@@ -94,11 +96,11 @@ void TextBox::Scroll() {
 
 void TextBox::Redraw() {
     debug(LOGLEVEL_DEBUG, "Redrawing...");
-    vga_drawRect(canvas, 0, 0, columns * 8,  rows * 16, 0x00000000);
+    vga_drawRect(canvas, x, y, x + (columns * 8), y + (rows * 16), 0x00000000);
 
     for(int row = 0; row < rows; row++) {
         for(int column = 0; column < columns; column++) {
-            vga_drawChar(canvas, font, column * 8, row * 16, this->colour, characterBuffer[row][column]);
+            vga_drawChar(canvas, font, x + (column * 8), y + (row * 16), this->colour, characterBuffer[row][column]);
         }
     }
 

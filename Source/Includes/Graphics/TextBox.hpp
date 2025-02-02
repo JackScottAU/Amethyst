@@ -4,7 +4,7 @@
 
 class TextBox {
   public:
-    TextBox(Canvas* canvas, ScreenFont* font, uint16 rows, uint16 columns);
+    TextBox(Canvas* canvas, ScreenFont* font, uint32 x, uint32 y, uint16 rows, uint16 columns);
 
     void PutChar(char c);
 
@@ -21,4 +21,6 @@ class TextBox {
     ScreenFont* font;
     Canvas* canvas;
     uint32 colour;
+    uint32 x;
+    uint32 y;
 };

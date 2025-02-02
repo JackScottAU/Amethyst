@@ -178,7 +178,9 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
     font->header = (ScreenFontHeader*)multibootData->modsAddr->start;
     font->characterData = (uint8*)(font->header) + font->header->headerSize;
 
-    stdioTextBox = new TextBox(canvas, font, 48, 128);
+    vga_drawRect(canvas, 0, 0, 1024, 32, 0x008000C0);
+    vga_drawWord(canvas, font, (1024 / 2) - (8 * 11 / 2), 8, 0x00FFFFFF, "Amethyst OS"); // 16 is number of characterts
+    stdioTextBox = new TextBox(canvas, font, 0, 32, 46, 128);
 
 
   //  vga_drawRect(canvas, 200, 300, 100, 150, 0x00C000F0);
