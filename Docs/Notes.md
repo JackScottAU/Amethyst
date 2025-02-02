@@ -1,6 +1,5 @@
 ## TODOs
 
--   Refactor bochs into a driver file
 -   Create framebuffer printf
 -   Clean up debugging messages
 -   Clean up kernel file

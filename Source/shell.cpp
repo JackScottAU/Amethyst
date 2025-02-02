@@ -38,7 +38,7 @@ void Shell::ProcessLine() {
     string_toLower(line);
 
     if (string_compare(line, "get-devicetree") == 0) {
-        deviceTree_print(vgaConsole_putChar, true);
+        deviceTree_print(stdio->stdout, true);
         return;
     }
 
@@ -123,12 +123,12 @@ void Shell::ProcessLine() {
     }
 
     if (string_compare(line, "get-pcidetails") == 0) {
-        pci_printBuses(vgaConsole_putChar);
+        pci_printBuses(stdio->stdout);
         return;
     }
 
     if (string_compare(line, "get-pcibars") == 0) {
-        pci_printBars(vgaConsole_putChar);
+        pci_printBars(stdio->stdout);
         return;
     }
 

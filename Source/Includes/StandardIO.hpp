@@ -29,8 +29,9 @@ class StandardIO {
 
     char* ReadLine(bool echo);
     
- private:
     void (*stdout)(char);
+    
+ private:
     char (*stdin)(void);
 };
 

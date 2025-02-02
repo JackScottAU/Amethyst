@@ -3,10 +3,27 @@
 #include <debug.h>
 #include <pciBus.h>
 
+/**
+ * Qemu display adapter. This device doesn't support anything fancy, just a plain old framebuffer.
+ */
+
 uint32 qemuVga_width = 0;
 uint32 qemuVga_height = 0;
 
 deviceTree_Entry* qemu_device = NULL;
+
+/**
+ * ID register that tells us the version of the device.
+ */
+#define QEMUVGA_REGISTER_ID     0x0000
+#define QEMUVGA_REGISTER_WIDTH  0x0001
+#define QEMUVGA_REGISTER_HEIGHT 0x0002
+#define QEMUVGA_REGISTER_DEPTH  0x0003
+#define QEMUVGA_REGISTER_STATUS 0x0004
+
+#define QEMUVGA_STATUS_DISABLED 0x0000
+#define QEMUVGA_STATUS_ENABLED  0x0001
+#define QEMUVGA_STATUS_LINEAR   0x0040
 
 deviceTree_Entry* qemuVga_initialise(uint32 bus, uint32 slot, uint32 function)
 {
@@ -30,7 +47,17 @@ deviceTree_Entry* qemuVga_initialise(uint32 bus, uint32 slot, uint32 function)
     // can now read registers.
     uint16* bochsRegs = (uint16*) 0xFFBFF500;
 
+    if(bochsRegs[QEMUVGA_REGISTER_ID] < 0xB0C2) {
+        // Display adapter isn't good enough.
+        // TODO: unmap physdical memory pages we don't need.
+        return NULL;
+    }
+
     deviceTree_Entry* device = deviceTree_createDevice("QEMU Standard Display Adapter", DEVICETREE_TYPE_PCI, 0);
+
+    deviceTree_Entry* monitor = deviceTree_createDevice("Generic Monitor", DEVICETREE_TYPE_OTHER, 0);
+
+    deviceTree_addChild(device, monitor);
 
     qemu_device = device;
 
@@ -53,15 +80,15 @@ Canvas* qemuVga_getCanvas() {
 }
 
 void qemuVga_setMode(uint16 width, uint16 height) {
-uint16* bochsRegs = (uint16*) 0xFFBFF500;
+    uint16* bochsRegs = (uint16*) 0xFFBFF500;
 
     qemuVga_width = width;
     qemuVga_height = height;
 
     // BOCHS DISPLAY SETUP.
-    bochsRegs[4] = 0; // disable.
-    bochsRegs[1] = width;
-    bochsRegs[2] = height;
-    bochsRegs[3] = 0x20;
-    bochsRegs[4] = 0x1 | 0x40; // enable, plus enable LFB.
+    bochsRegs[QEMUVGA_REGISTER_STATUS]  = QEMUVGA_STATUS_DISABLED; // disable.
+    bochsRegs[QEMUVGA_REGISTER_WIDTH]   = width;
+    bochsRegs[QEMUVGA_REGISTER_HEIGHT]  = height;
+    bochsRegs[QEMUVGA_REGISTER_DEPTH]   = 0x20;
+    bochsRegs[QEMUVGA_REGISTER_STATUS]  = QEMUVGA_STATUS_ENABLED | QEMUVGA_STATUS_LINEAR; // enable, plus enable LFB.
 }

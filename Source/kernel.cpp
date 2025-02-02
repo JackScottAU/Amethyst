@@ -26,6 +26,7 @@
 #include <Graphics/canvas.h>
 #include "drivers/vesa_framebuffer.h"
 #include <qemuVga.h>
+#include <Graphics/TextBox.hpp>
 
 #include <Structures/linkedlist.hpp>
 
@@ -42,11 +43,17 @@ struct multiboot_info* multiboot_correctDataStructureAddresses(struct multiboot_
 void kernel_printBanner(void (*putChar)(char));
 uint32 memoryManager_printPhysicalMemoryMap(StandardIO* stdio);
 
+TextBox* stdioTextBox;
+
+void textBoxPutChar(char c) {
+    stdioTextBox->PutChar(c);
+}
+
 void startShell() {
     interrupts_enableInterrupts();
 
     // Initialise the standard I/O streams for use by the shell.
-    StandardIO* console = new StandardIO(vgaConsole_putChar, keyboard_readChar);
+    StandardIO* console = new StandardIO(textBoxPutChar, keyboard_readChar);
     console->Print("\n");
     // Launch the kernel shell.
     Shell* shell = new Shell(console);
@@ -171,8 +178,11 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
     font->header = (ScreenFontHeader*)multibootData->modsAddr->start;
     font->characterData = (uint8*)(font->header) + font->header->headerSize;
 
-    vga_drawRect(canvas, 200, 300, 100, 150, 0x00C000F0);
-    vga_drawWord(canvas, font, 50, 50, 0xFFFFFFFF, "Amethyst shell will be returning next season...");
+    stdioTextBox = new TextBox(canvas, font, 48, 128);
+
+
+  //  vga_drawRect(canvas, 200, 300, 100, 150, 0x00C000F0);
+  //  vga_drawWord(canvas, font, 50, 50, 0xFFFFFFFF, "Amethyst shell will be returning next season...");
 
   //  uint32 pageaddress = memoryManager_getPhysicalAddressOfFreePhysicalPage();
   //  debug(LOGLEVEL_ERROR, "page address: %h", pageaddress);
