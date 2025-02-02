@@ -20,6 +20,8 @@ extern "C" {
     void string_toLower(char* string);
     void string_toUpper(char* string);
 
+    uint32 string_length(char* string);
+
     /**
      * Formats a string.
      * @param destination Destination for the string output. Must have sufficient size. Memory allocation is the responsibility of the caller.

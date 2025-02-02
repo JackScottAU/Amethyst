@@ -5,9 +5,9 @@
 /***
  * Implements a scrolling ANSI compliant terminal within a framebuffer canvas.
  */
-class TextBox {
+class TextConsole {
   public:
-    TextBox(Canvas* canvas, ScreenFont* font, uint32 x, uint32 y, uint16 rows, uint16 columns);
+    TextConsole(Canvas* canvas, ScreenFont* font, uint32 x, uint32 y, uint16 rows, uint16 columns);
 
     void PutChar(char c);
 

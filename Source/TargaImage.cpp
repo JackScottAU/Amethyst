@@ -4,11 +4,20 @@
 #include "drivers/vesa_framebuffer.h"
 
 // Code ripped wholesale from https://wiki.osdev.org/Loading_Icons
-TargaImage::TargaImage(uint8* ptr, uint32 length)
+TargaImage::TargaImage(uint8* ptr, uint32 length, uint32 locx, uint32 locy, Canvas* canvas)
 {
+    this->children = new LinkedList<Widget*>();
+    this->canvas = canvas;
+    this->x = locx;
+    this->y = locy;
+
     uint32* data;
-    int i, j, k, x, y, w = (ptr[13] << 8) + ptr[12], h = (ptr[15] << 8) + ptr[14], o = (ptr[11] << 8) + ptr[10];
+    int i, j, k, x, y;
+    int o = (ptr[11] << 8) + ptr[10];
     int m = ((ptr[1]? (ptr[7]>>3)*ptr[5] : 0) + 18);
+
+    this->w = (ptr[13] << 8) + ptr[12];
+    this->h = (ptr[15] << 8) + ptr[14];
 
   //  if(w<1 || h<1) return NULL;
 
@@ -84,22 +93,52 @@ TargaImage::TargaImage(uint8* ptr, uint32 length)
             memoryManager_free(data); 
     }
 
-this->width = w;
-this->height = h;
-
 this->pixels = &data[2];
 
     data[0] = w;
     data[1] = h;
+
+    Redraw();
 }
 
-void TargaImage::Draw(Canvas* canvas, uint32 x, uint32 y) {
+void TargaImage::Redraw() {
     // draw.
-    for(int i = 0; i < height; i++) {
-        for(int j = 0; j < width; j++) {
-            uint32 pixel = pixels[(j * height + i)];
+    for(int i = 0; i < h; i++) {
+        for(int j = 0; j < w; j++) {
+            uint32 pixel = pixels[(j * h + i)];
 
             vga_putPixel(canvas, x + j, y + i, pixel);
         }
     }
+}
+
+void TargaImage::HandleUIEvent(void* eventData) {
+
+}
+
+void Widget::SetPosition(sint32 x, sint32 y) {
+    this->x = x;
+    this->y = y;
+}
+
+void Widget::AddChild(Widget* widget) {
+    children->Add(widget);
+}
+
+void Widget::RemoveChild(Widget* widget) {
+    children->Remove(widget);
+}
+
+void Widget::RedrawChildren()
+{
+    children->Reset();
+
+    do {
+        Widget* child = children->Current();
+
+        if(child != nullptr) {
+            child->Redraw();
+        }
+        
+    } while(children->Next());
 }

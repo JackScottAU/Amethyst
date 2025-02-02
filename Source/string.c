@@ -33,6 +33,17 @@ void string_toLower(char* string) {
     }
 }
 
+uint32 string_length(char* string) {
+    uint32 len = 0;
+
+    while (*string) {
+        len++;
+        string++;
+    }
+
+    return len;
+}
+
 void string_toUpper(char* string) {
     while (*string) {
         if (*string >= 0x61 && *string <= 0x6A) {

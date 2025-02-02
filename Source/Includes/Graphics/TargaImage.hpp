@@ -1,13 +1,18 @@
 #include <Graphics/canvas.h>
+#include <Graphics/Widget.hpp>
 
-class TargaImage {
-    public:
-    TargaImage(uint8* ptr, uint32 length);
+/**
+ * A very simple image widget that loads data from a .tga image file and draws it on the canvas.
+ */
+class TargaImage : public Widget {
+  public:
+    TargaImage(uint8* ptr, uint32 length, uint32 x, uint32 y, Canvas* canvas);
 
-    void Draw(Canvas* canvas, uint32 x, uint32 y);
+    void Redraw();
+    void HandleUIEvent(void* eventData);
 
-    private:
-        uint32 width;
-        uint32 height;
-        uint32* pixels;
+    using Widget::SetPosition;
+
+  private:
+    uint32* pixels;
 };

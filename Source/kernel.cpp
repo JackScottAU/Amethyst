@@ -26,7 +26,8 @@
 #include <Graphics/canvas.h>
 #include "drivers/vesa_framebuffer.h"
 #include <qemuVga.h>
-#include <Graphics/TextBox.hpp>
+#include <Graphics/TextConsole.hpp>
+#include <Graphics/TextLabel.hpp>
 #include <Graphics/TargaImage.hpp>
 
 #include <Structures/linkedlist.hpp>
@@ -44,7 +45,7 @@ struct multiboot_info* multiboot_correctDataStructureAddresses(struct multiboot_
 void kernel_printBanner(void (*putChar)(char));
 uint32 memoryManager_printPhysicalMemoryMap(StandardIO* stdio);
 
-TextBox* stdioTextBox;
+TextConsole* stdioTextBox;
 
 void textBoxPutChar(char c) {
     stdioTextBox->PutChar(c);
@@ -174,26 +175,37 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
     qemuVga_setMode(1024, 768);
     Canvas* canvas = qemuVga_getCanvas();
     
+    multiboot_moduleNode* modules = multibootData->modsAddr;
 
     ScreenFont* font = (ScreenFont*)memoryManager_allocate(sizeof(ScreenFont));
-    font->header = (ScreenFontHeader*)multibootData->modsAddr->start;
+    font->header = (ScreenFontHeader*)(modules[0].start);
     font->characterData = (uint8*)(font->header) + font->header->headerSize;
 
-    multiboot_moduleNode* modules = multibootData->modsAddr;
+    ScreenFont* font2 = (ScreenFont*)memoryManager_allocate(sizeof(ScreenFont));
+    font2->header = (ScreenFontHeader*)(modules[2].start);
+    font2->characterData = (uint8*)(font2->header) + font2->header->headerSize;
 
     uint32 length = (uint32)modules[1].end - (uint32)modules[1].start;
     debug(LOGLEVEL_CRITICAL, "LENGTH: %h", length);
 
-    TargaImage* image = new TargaImage((uint8*)modules[1].start, length);
+    TargaImage* image = new TargaImage((uint8*)modules[1].start, length, 200, 300, canvas);
 
-    vga_drawRect(canvas, 0, 0, 1024, 32, 0x008000C0);
-    vga_drawWord(canvas, font, (1024 / 2) - (8 * 11 / 2), 8, 0x00FFFFFF, "Amethyst OS");
-    stdioTextBox = new TextBox(canvas, font, 0, 32, 46, 128);
+    vga_drawRect(canvas, 0, 0, canvas->width, 32, 0x008000C0);
+
+    TextLabel* label1 = new TextLabel(font2, (canvas->width / 2) - (8 * 11 / 2), 8, canvas, "Amethyst OS", 0xFFFFFFFF);
+
+    stdioTextBox = new TextConsole(canvas, font, 0, 32, 46, 128);
 
     kernel_printBanner(textBoxPutChar);
 
+    for(int i = 0; i < 1000; i++) {
+        image->SetPosition(i, 100);
+        image->Redraw();
+    }
+
+    label1->SetText("HERE.");
     
-    image->Draw(canvas, 200, 300);
+    // TODO: toolbar->Redraw();
 
   //  vga_drawRect(canvas, 200, 300, 100, 150, 0x00C000F0);
   //  vga_drawWord(canvas, font, 50, 50, 0xFFFFFFFF, "Amethyst shell will be returning next season...");

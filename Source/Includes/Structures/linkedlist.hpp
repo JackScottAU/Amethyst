@@ -59,6 +59,8 @@ class LinkedList {
         /// @param data 
         void Add(T data);
 
+        void Remove(T data);
+
         /// @brief Resets the seek position to the head of the list.
         void Reset();
     
@@ -93,6 +95,32 @@ void LinkedList<T>::Add(T data) {
         item->prev = ocurrent;
         ocurrent->next = item;
     }
+}
+
+template <typename T>
+void LinkedList<T>::Remove(T data) {
+    // step 1: find the right item.
+    LinkedListItem<T>* item;
+
+    item = head;
+
+    while(item->data != data && item != nullptr) {
+        item = item->next;
+    }
+
+    //here: either we have item or null.
+    if(item == nullptr) {
+        return;
+    }
+
+    // remove this item.
+    LinkedListItem<T>* p = item->prev;
+    LinkedListItem<T>* n = item->next;
+
+    p->next = n;
+    n->prev = p;
+
+    delete item;
 }
 
 template <typename T>

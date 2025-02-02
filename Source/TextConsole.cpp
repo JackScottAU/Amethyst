@@ -1,10 +1,10 @@
-#include <Graphics/TextBox.hpp>
+#include <Graphics/TextConsole.hpp>
 #include <memoryManager.h>
 #include <debug.h>
 #include <memory.h>
 #include <string.h>
 
-TextBox::TextBox(Canvas* canvas, ScreenFont* font, uint32 x, uint32 y, uint16 rows, uint16 columns) {
+TextConsole::TextConsole(Canvas* canvas, ScreenFont* font, uint32 x, uint32 y, uint16 rows, uint16 columns) {
     this->x = x;
     this->y = y;
     this->rows = rows;
@@ -30,7 +30,7 @@ TextBox::TextBox(Canvas* canvas, ScreenFont* font, uint32 x, uint32 y, uint16 ro
     isInCSI = false;
 }
 
-void TextBox::PutChar(char c) {
+void TextConsole::PutChar(char c) {
     if (isInCSI) {
         HandleControlSequenceIntroducer(c);
         return;
@@ -87,7 +87,7 @@ void TextBox::PutChar(char c) {
     debug(LOGLEVEL_TRACE, "Framebuffer row = %d, Framebuffer column = %d", this->currentRow, this->currentColumn);
 }
 
-void TextBox::HandleControlSequenceIntroducer(char c) {
+void TextConsole::HandleControlSequenceIntroducer(char c) {
     // if we get a command, execute that and remove isInCSI.
     // else store characters into parameter string.
 
@@ -115,7 +115,7 @@ void TextBox::HandleControlSequenceIntroducer(char c) {
 }
 
 /** When given a parameter string,  */
-void TextBox::HandleSelectGraphicsRendition() {
+void TextConsole::HandleSelectGraphicsRendition() {
     int i = 0;
     while (csiParameters[i] != '\0') {
         if (csiParameters[i] == '[' || csiParameters[i] == ';') {
@@ -128,7 +128,7 @@ void TextBox::HandleSelectGraphicsRendition() {
     }
 }
 
-void TextBox::DecodeSGR(uint32 parameter) {
+void TextConsole::DecodeSGR(uint32 parameter) {
     switch (parameter) {
         case 0:
             colour = 0x00FFFFFF;
@@ -201,7 +201,7 @@ void TextBox::DecodeSGR(uint32 parameter) {
     }
 }
 
-void TextBox::Scroll() {
+void TextConsole::Scroll() {
     debug(LOGLEVEL_TRACE, "Scrolling...");
     // save address of top row.
     char* oldTopRow = characterBuffer[0];
@@ -224,7 +224,7 @@ void TextBox::Scroll() {
     Redraw();
 }
 
-void TextBox::Redraw() {
+void TextConsole::Redraw() {
     vga_drawRect(canvas, x, y, x + (columns * 8), y + (rows * 16), backcolour);
 
     for(int row = 0; row < rows; row++) {
