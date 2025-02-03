@@ -6,6 +6,7 @@
 #include <deviceTree.h>
 #include <memoryManager.h>
 #include <stream.h>
+#include <Drivers/pciBus.h>
 
 void deviceTree_printInternal(void (*putChar)(char), deviceTree_Entry* device, uint8 depth, bool detailedInfo);
 
@@ -68,6 +69,10 @@ void deviceTree_printInternal(void (*putChar)(char), deviceTree_Entry* device, u
 
         // if(type = pci) { pci_printMoreInfo(entry, depth) } to show class/subclass/if/revision and Bus/Slot/Function
         // to make this work need to put bus/slot/function into devicetree entry.
+
+        if(device->type == DEVICETREE_TYPE_PCI) {
+            pciBus_printDeviceInformation(putChar, device->data, depth);
+        }
 
         // then interate through attached i/o, mem, irq resources, etc
         for(int i = 0; i < device->ResourceCount; i++) {

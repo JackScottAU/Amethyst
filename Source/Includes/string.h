@@ -23,7 +23,7 @@ extern "C" {
     uint32 string_length(char* string);
 
     // TODO:
- //   char** string_split(char* string, char splitter);
+    char** string_split(char* string, char splitter);
 
     /**
      * Formats a string.

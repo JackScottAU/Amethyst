@@ -23,11 +23,9 @@ extern "C" {
 deviceTree_Entry* pciBus_initialise(void);
 
 void pci_enumerateBuses(void);
-void pci_printBuses(void (*putChar)(char));
 void pci_checkBus(uint8 bus);
 void pci_checkSlot(uint8 bus, uint8 slot);
 deviceTree_Entry* pci_addDevicesToTree(void);
-void pci_printBars(void (*putChar)(char));
 
 /**
  * Reads the PCI configuration registers for a particular PCI device.
@@ -51,8 +49,11 @@ typedef struct pciBus_Entry_s {
     uint16 vendorID;
     uint16 deviceID;
     uint8 classID;
+    uint8 subClassID;
     struct pciBus_Entry_s* next;
 } pciBus_Entry;
+
+void pciBus_printDeviceInformation(void (*putChar)(char), pciBus_Entry* device, uint32 depth);
 
 #ifdef __cplusplus
 }

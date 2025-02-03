@@ -2,8 +2,12 @@
 #include <Drivers/pciBus.h>
 #include <memoryManager.h>
 
-deviceTree_Entry* piixide_initialise(uint32 bus, uint32 slot, uint32 function) {
-    deviceTree_Entry* device = deviceTree_createDevice("Generic PCI IDE Controller", DEVICETREE_TYPE_PCI, NULL);
+deviceTree_Entry* piixide_initialise(pciBus_Entry* pciDetails) {
+    uint32 bus = pciDetails->bus;
+    uint32 slot = pciDetails->slot;
+    uint32 function = pciDetails->function;
+
+    deviceTree_Entry* device = deviceTree_createDevice("Generic PCI IDE Controller", DEVICETREE_TYPE_PCI, pciDetails);
 
     // check programming interface byte: if bits set then we use BARs, otherwise use default addresses.
     uint32 classLong = pci_readConfigurationRegister(bus, slot, function, 0x08);

@@ -8,11 +8,12 @@ extern "C" {
 
 #include <Types.h>
 #include <deviceTree.h>
+#include <Drivers/pciBus.h>
 
 /**
  * Only thing this does is list resources. This is actually a generic PCI IDE controller, not PIIX specific.
  */
-deviceTree_Entry* piixide_initialise(uint32 bus, uint32 slot, uint32 function);
+deviceTree_Entry* piixide_initialise(pciBus_Entry* device);
 
 #ifdef __cplusplus
 }

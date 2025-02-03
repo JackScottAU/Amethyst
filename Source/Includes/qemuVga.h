@@ -15,8 +15,9 @@ extern "C" {
 
 #include <deviceTree.h>
 #include <Graphics/canvas.h>
+#include <Drivers/pciBus.h>
 
-deviceTree_Entry* qemuVga_initialise(uint32 bus, uint32 slot, uint32 function);
+deviceTree_Entry* qemuVga_initialise(pciBus_Entry* pciDetails);
 
 Canvas* qemuVga_getCanvas();
 

@@ -34,12 +34,35 @@ void Shell::Main() {
 void Shell::ProcessLine() {
     stdio->Print("> ");
 
-    char* line = stdio->ReadLine(true);
+    char* input = stdio->ReadLine(true);
+
+    char** strings = string_split(input, ' ');
+
+    int i = 0;
+    while(strings[i] != NULL) {
+     //   stdio->Print("string: %s\n", strings[i]);
+        i++;
+    }
+
+    char* line = strings[0];
+
+    debug(LOGLEVEL_DEBUG, "addr of line: %h", line);
+
+    if(*line == NULL) {
+        debug(LOGLEVEL_WARNING, "No input to shell.");
+        return;
+    }
 
     string_toLower(line);
 
     if (string_compare(line, "get-devicetree") == 0) {
-        deviceTree_print(stdio->stdout, true);
+        bool verbose = false;
+
+        if(strings[1] != NULL && string_compare(strings[1], "-v") == 0) {
+            verbose = true;
+        }
+
+        deviceTree_print(stdio->stdout, verbose);
         return;
     }
 
@@ -123,16 +146,6 @@ void Shell::ProcessLine() {
         haltCPU();
     }
 
-    if (string_compare(line, "get-pcidetails") == 0) {
-        pci_printBuses(stdio->stdout);
-        return;
-    }
-
-    if (string_compare(line, "get-pcibars") == 0) {
-        pci_printBars(stdio->stdout);
-        return;
-    }
-
     commands->Reset();
     do {
         ShellCommand* command = commands->Current();
@@ -151,6 +164,9 @@ void Shell::ProcessLine() {
             return;
         }
     } while(commands->Next());
+
+    // SPLIT TEST:
+    
 
     // None of the built-in commands match the input.
     stdio->Print("Unknown command.\n");

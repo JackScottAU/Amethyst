@@ -78,12 +78,12 @@ deviceTree_Entry* pci_addDevicesToTree(void) {
     while (pci_currentEntry->next != 0x0) {
 
         if(pci_currentEntry->vendorID == 0x1234 && pci_currentEntry->deviceID == 0x1111) {
-            deviceTree_Entry* device = qemuVga_initialise(pci_currentEntry->bus, pci_currentEntry->slot, pci_currentEntry->function);
+            deviceTree_Entry* device = qemuVga_initialise(pci_currentEntry);
 
             deviceTree_addChild(root, device);
-        } else if(pci_currentEntry->vendorID == 0x8086 && pci_currentEntry->deviceID == 0x7010) {
+        } else if(pci_currentEntry->classID == 1 && pci_currentEntry->subClassID == 1) {
             // TODO: make this whole device detection thing better.
-            deviceTree_Entry* device = piixide_initialise(pci_currentEntry->bus, pci_currentEntry->slot, pci_currentEntry->function);
+            deviceTree_Entry* device = piixide_initialise(pci_currentEntry);
 
             deviceTree_addChild(root, device);
         } else {
@@ -135,83 +135,16 @@ deviceTree_Entry* pci_addDevicesToTree(void) {
     return root;
 }
 
-void pci_printBuses(void (*putChar)(char)) {
-    stream_printf(putChar, "  +-----+------+------+--------+--------+------------------------------------+\n");
-    stream_printf(putChar, "  | BUS | SLOT | FUNC | VENDOR | DEVICE | CLASS DESCRIPTION                  |\n");
-    stream_printf(putChar, "  +-----+------+------+--------+--------+------------------------------------+\n");
-
-    // Iterate through the bus entries stored.
-    pci_currentEntry = pci_busEntries;
-    while (pci_currentEntry->next != NULL) {
-        // Print entry.
-        stream_printf(putChar, "  | %d   | %d    | %d    | %h | %h | ",
-        pci_currentEntry->bus, pci_currentEntry->slot, pci_currentEntry->function,
-        pci_currentEntry->vendorID, pci_currentEntry->deviceID);
-        stream_printf(putChar, classNames[pci_currentEntry->classID]);
-        stream_printf(putChar, " |\n");
-
-        pci_currentEntry = pci_currentEntry->next;
-    }
-
-    stream_printf(putChar, "  +-----+------+------+--------+--------+------------------------------------+\n");
-}
-
-void pci_printBars(void (*putChar)(char)) {
-    pci_currentEntry = pci_busEntries;
-    while (pci_currentEntry->next != NULL) {
-    char* name = pci_getNameFromVendorAndDevice(pci_currentEntry->vendorID, pci_currentEntry->deviceID);
-
-        stream_printf(putChar, "[%d:%d:%d] %s:\n", pci_currentEntry->bus, pci_currentEntry->slot, pci_currentEntry->function, name);
-
-        uint32 classRegister = pci_readConfigurationRegister(pci_currentEntry->bus, pci_currentEntry->slot, pci_currentEntry->function, PCIBUS_REGISTER_CLASSCODES);
-        uint8 subclassID = (uint8)(classRegister >> 16 & 0xFF);
-        uint8 progInterfaceID = (uint8)(classRegister >> 8 & 0xFF);
-        uint8 revisionID = (uint8)(classRegister >> 0 & 0xFF);
-        
-        stream_printf(putChar, "  Class <%d:%d:%d.%d>: %s\n", pci_currentEntry->classID, subclassID, progInterfaceID, revisionID, classNames[pci_currentEntry->classID]);
-
-        for(int bar = 0; bar < 6; bar++) {
-            uint32 val = pci_getBar(pci_currentEntry->bus, pci_currentEntry->slot, pci_currentEntry->function, bar);
-
-            char* type = "MEM";
-            bool prefetchable = false;
-
-            if(val & 0x1) {
-                type = "I/O";
-                val--;
+void pciBus_printDeviceInformation(void (*putChar)(char), pciBus_Entry* device, uint32 depth) {
+    for (int i = 0; i < depth; i++) {
+                stream_printf(putChar, " |  ");
             }
+    stream_printf(putChar, "PCI Details:    Location: %d:%d:%d | ", device->bus, device->slot, device->function);
+    
+    stream_printf(putChar, "Vendor ID: %h | ", device->vendorID);
+    stream_printf(putChar, "Model ID: %h | ", device->deviceID);
 
-            if(val & 0x8) {
-                prefetchable = true;
-                val -= 8;
-            }
-
-            if(val > 0) {
-                uint32 size = pci_getBarSize(pci_currentEntry->bus, pci_currentEntry->slot, pci_currentEntry->function, bar);
-
-                stream_printf(putChar, "  BAR%d (%s): %h (size %h)", bar, type,val, size);
-
-                if(prefetchable) {
-                    stream_printf(putChar, " - Prefetchable");
-                }
-
-                stream_printf(putChar, "\n");
-            }
-
-        }
-
-        uint32 rom = pci_readConfigurationRegister(pci_currentEntry->bus, pci_currentEntry->slot, pci_currentEntry->function, PCIBUS_REGISTER_ROMADDRESS);
-        if(rom > 0) {
-            stream_printf(putChar, "  ROM:  %h\n", rom);
-        }
-
-        uint32 irq = pci_readConfigurationRegister(pci_currentEntry->bus, pci_currentEntry->slot, pci_currentEntry->function, 0x3C);
-        if((irq & 0x000000FF) > 0) {
-            stream_printf(putChar, "  IRQ:  %d\n", irq & 0x000000FF);
-        }
-
-        pci_currentEntry = pci_currentEntry->next;
-    }
+    stream_printf(putChar, "Class: %d:%d\n", device->classID, device->subClassID, classNames[device->classID]);
 }
 
 uint32 pci_getBar(uint8 bus, uint8 slot, uint8 function, uint8 bar) {
@@ -285,6 +218,7 @@ void pci_checkSlot(uint8 bus, uint8 slot) {
 
         uint32 classRegister = pci_readConfigurationRegister(bus, slot, function, PCIBUS_REGISTER_CLASSCODES);
         uint8 class = (uint8)(classRegister >> 24);
+        uint8 subclass = (uint8)(classRegister >> 16) & 0xFF;
 
         pci_currentEntry->bus = bus;
         pci_currentEntry->slot = slot;
@@ -292,6 +226,7 @@ void pci_checkSlot(uint8 bus, uint8 slot) {
         pci_currentEntry->vendorID = deviceAndVendor & 0xFFFF;
         pci_currentEntry->deviceID = deviceAndVendor >> 16;
         pci_currentEntry->classID = class;
+        pci_currentEntry->subClassID = subclass;
 
         // Make new entry.
         pci_currentEntry->next = memoryManager_allocate(sizeof(pciBus_Entry));

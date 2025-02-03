@@ -25,9 +25,11 @@ deviceTree_Entry* qemu_device = NULL;
 #define QEMUVGA_STATUS_ENABLED  0x0001
 #define QEMUVGA_STATUS_LINEAR   0x0040
 
-deviceTree_Entry* qemuVga_initialise(uint32 bus, uint32 slot, uint32 function)
+deviceTree_Entry* qemuVga_initialise(pciBus_Entry* pciDetails)
 {
-
+    uint32 bus = pciDetails->bus;
+    uint32 slot = pciDetails->slot;
+    uint32 function = pciDetails->function;
     PageDirectory* pg = memoryManager_getCurrentPageDirectory();
 
     uint32 bar0 = pci_getBar(bus, slot, function, 0) & 0xFFFFFFF0;
@@ -53,7 +55,7 @@ deviceTree_Entry* qemuVga_initialise(uint32 bus, uint32 slot, uint32 function)
         return NULL;
     }
 
-    deviceTree_Entry* device = deviceTree_createDevice("QEMU Standard Display Adapter", DEVICETREE_TYPE_PCI, 0);
+    deviceTree_Entry* device = deviceTree_createDevice("QEMU Standard Display Adapter", DEVICETREE_TYPE_PCI, pciDetails);
 
     device->Resources = memoryManager_allocate(sizeof(DeviceResource) * 2);
     device->ResourceCount = 2;

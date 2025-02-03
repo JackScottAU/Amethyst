@@ -194,7 +194,7 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 
     stdioTextBox = new TextConsole(canvas, font, 0, 32, 46, 128);
 
-    kernel_printBanner(textBoxPutChar);
+  //  kernel_printBanner(textBoxPutChar);
 
     for(int i = 0; i < 1000; i++) {
         image->SetPosition(i, 100);

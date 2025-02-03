@@ -7,6 +7,8 @@
 #include <string.h>
 #include <serial.h>
 #include <stream.h>
+#include <memoryManager.h>
+#include <debug.h>
 
 void string_copy(char *dest, const char* src) {
     while (*src) {      // while source string isnt null, copy, then increase pointer.
@@ -31,6 +33,32 @@ void string_toLower(char* string) {
         }
         string++;
     }
+}
+
+char** string_split(char* string, char splitter) {
+    char** strings = memoryManager_allocate(sizeof(char*) * 128); // to store pointers. TODO: count splitter occurences beforehand so we allocate the right amount.
+
+    int i = 0;
+    char* stringStart = string;
+
+    while(*string != NULL) {
+      //  debug(LOGLEVEL_DEBUG, "Remaining text: %s", string);
+
+        if(*string == splitter || *string == '\0') {
+        //    debug(LOGLEVEL_DEBUG, "Match");
+            strings[i] = stringStart;
+            *string = '\0';
+            stringStart = string + 1;
+            i++;
+
+        }
+
+        string++;
+    }
+    strings[i] = stringStart;
+    strings[i + 1] = NULL;
+
+    return strings;
 }
 
 uint32 string_length(char* string) {
