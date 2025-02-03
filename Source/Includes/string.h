@@ -22,6 +22,9 @@ extern "C" {
 
     uint32 string_length(char* string);
 
+    // TODO:
+ //   char** string_split(char* string, char splitter);
+
     /**
      * Formats a string.
      * @param destination Destination for the string output. Must have sufficient size. Memory allocation is the responsibility of the caller.

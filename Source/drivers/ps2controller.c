@@ -95,14 +95,24 @@ deviceTree_Entry* ps2controller_initialise(void) {
     // Step 6: Initialise child devices.
     deviceTree_Entry* parent = deviceTree_createDevice("PS/2 Controller", DEVICETREE_TYPE_OTHER, NULL);
 
+    parent->ResourceCount = 1 + channel1Status + channel2Status;
+    parent->Resources = memoryManager_allocate(sizeof(DeviceResource) * parent->ResourceCount);
+    parent->Resources[0].Type = DEVICE_RESOURCETYPE_IO;
+    parent->Resources[0].StartAddress = 0x60;
+    parent->Resources[0].Length = 8;
+
     // TODO: add code to detect what is plugged in where, so we could have two keyboards or two mice or mouse on channel 1 and keyboard on channel 2.
 
     if(channel1Status) {
         deviceTree_addChild(parent, keyboard_initialise());
+        parent->Resources[1].Type = DEVICE_RESOURCETYPE_IRQ;
+        parent->Resources[1].Flags = 1;
     }
 
     if(channel2Status) {
         deviceTree_addChild(parent, mouse_initialise());
+        parent->Resources[2].Type = DEVICE_RESOURCETYPE_IRQ;
+        parent->Resources[2].Flags = 12;
     }
 
     ps2controller_enableInterrupts();

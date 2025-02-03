@@ -30,10 +30,13 @@ typedef struct thread_control_block_S {
      * The value of the CR3 register for this thread. This should be a pointer to the start of the thread's page directory.
      * In an ideal world, this would be in the process control block. However, we put it here as it is much easier to get to.
      * 
-     * TODO(JackScottAU): Rename this to something processor agnostic, like "PageDirectoryPointer".
+     * TODO(JackScottAU): Rename this to something processor agnostic, like "PageDirectoryPointer" or maybe "PageControlPointer".
      */
     uint32 cr3;
 
+    // TODO: add the kernel stack bottom (highest address) here, to be used switching from user to supervisor mode.
+
+    // TODO: describe this.
     void* process_control_block; 
 
     /**

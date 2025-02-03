@@ -20,6 +20,12 @@ A 'device' is a node in a tree that can either implement a class of device (vide
      |   |   +- PCI Bridge (0:1:2) // i think this is the USB controller.
      |   |   +- ISA Controller (0:1:3)
 
+## Resources
+
+Every item in the tree can have resources attached to it. Resources are of type I/O, memory, or IRQ.
+
+
+
 ## Bus Devices & Drivers
 
 ### Platform Devices

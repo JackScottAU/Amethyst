@@ -13,6 +13,13 @@
 extern "C" {
 #endif
 
+typedef struct {
+    uint32 Type; // 0 = mem, 1 = i/o, 2, irq.
+    uint32 Flags; // irq number for irq. memory prefetch etc for memory. and so on.
+    uint32 StartAddress; // Used for memory and Io
+    uint32 Length; // Used for memory and Io
+} DeviceResource;
+
 /**
  * An entry in the kernel device driver tree. Parents are responsible for detecting and initialising their children.
 */
@@ -21,6 +28,8 @@ typedef struct deviceTree_Entry_S {
     struct deviceTree_Entry_S* child;   // pointer to first child.
     char* name;
     uint32 type;                        // determines what sort of struct data points to.
+    DeviceResource* Resources; // as resources are unlikely to change much once a device is initialised, we use an array rather than a linked list.
+    uint32 ResourceCount;
     void* data;
 } deviceTree_Entry;
 
@@ -41,6 +50,10 @@ void deviceTree_addChild(deviceTree_Entry* parent, deviceTree_Entry* toAttach);
 #define DEVICETREE_TYPE_PCI         0x01
 // ...
 #define DEVICETREE_TYPE_OTHER       0xFFFFFFFF
+
+#define DEVICE_RESOURCETYPE_MEM     0x00
+#define DEVICE_RESOURCETYPE_IO      0x01
+#define DEVICE_RESOURCETYPE_IRQ     0x02
 
 #ifdef __cplusplus
 }

@@ -1,7 +1,7 @@
 #include <qemuVga.h>
 #include <memoryManager.h>
 #include <debug.h>
-#include <pciBus.h>
+#include <Drivers/pciBus.h>
 
 /**
  * Qemu display adapter. This device doesn't support anything fancy, just a plain old framebuffer.
@@ -54,6 +54,16 @@ deviceTree_Entry* qemuVga_initialise(uint32 bus, uint32 slot, uint32 function)
     }
 
     deviceTree_Entry* device = deviceTree_createDevice("QEMU Standard Display Adapter", DEVICETREE_TYPE_PCI, 0);
+
+    device->Resources = memoryManager_allocate(sizeof(DeviceResource) * 2);
+    device->ResourceCount = 2;
+
+    device->Resources[0].Type = DEVICE_RESOURCETYPE_MEM;
+    device->Resources[0].StartAddress = bar0;
+    device->Resources[0].Length = pci_getBarSize(bus, slot, function, 0); // 4KiB
+    device->Resources[1].Type = DEVICE_RESOURCETYPE_MEM;
+    device->Resources[1].StartAddress = bar2;
+    device->Resources[1].Length = 0x1000; // 4KiB
 
     deviceTree_Entry* monitor = deviceTree_createDevice("Generic Monitor", DEVICETREE_TYPE_OTHER, 0);
 

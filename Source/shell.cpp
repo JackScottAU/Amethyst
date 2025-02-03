@@ -6,9 +6,10 @@
 #include <Clock.h>
 #include <portIO.h>
 #include <interrupts.h>
-#include <pciBus.h>
+#include <Drivers/pciBus.h>
 #include <GDT.h>
 #include <vgaConsole.h>
+#include <debug.h>
 
 Shell::Shell(StandardIO* stdio) {
     this->stdio = stdio;
@@ -135,6 +136,10 @@ void Shell::ProcessLine() {
     commands->Reset();
     do {
         ShellCommand* command = commands->Current();
+
+        debug(LOGLEVEL_DEBUG, "Testing shell command: %s", command->command);
+
+        string_toLower(command->command);
 
         if (string_compare(line, command->command) == 0) {
             uint32 result = command->callback(stdio);

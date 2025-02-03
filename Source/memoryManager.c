@@ -28,7 +28,7 @@ uint32 memoryManager_getPhysicalAddressOfFreePhysicalPage() {
     // TODO: hold a persistent index to the first byte with free memory to speed up this search.
 
     for(uint32 i = 0; i < 0x20000; i++) { // iterate through 128K of memory.
-   //     debug(LOGLEVEL_DEBUG, "Index %d: %h", i, bitmap[i]);
+   //     debug(LOGLEVEL_TRACE, "Index %d: %h", i, bitmap[i]);
 
         if(bitmap[i] != 0x00) {
 
@@ -125,7 +125,7 @@ void memoryManager_printMemoryMap(PageDirectory* directory)
 {
     pageDirectoryEntry* directoryEntries = ((uint32)directory + 0xC0000000);
 
-        debug(LOGLEVEL_DEBUG, "directory: %h", directoryEntries);
+        debug(LOGLEVEL_TRACE, "directory: %h", directoryEntries);
 
     for(uint32 i = 0; i < 1024; i++) {
 
@@ -133,11 +133,11 @@ void memoryManager_printMemoryMap(PageDirectory* directory)
             continue;
         }
 
-        debug(LOGLEVEL_DEBUG, "directory[%d]: %h", i, directoryEntries[i].address);
+        debug(LOGLEVEL_TRACE, "directory[%d]: %h", i, directoryEntries[i].address);
 
         pageTableEntry* tableEntries = ((uint32)(directoryEntries[i].address << 12) + 0xC0000000);
 
-        debug(LOGLEVEL_DEBUG, "table: %h", tableEntries);
+        debug(LOGLEVEL_TRACE, "table: %h", tableEntries);
 
         for(uint32 j = 0; j < 1024; j++) {
             if(tableEntries[j].p == 0) {
@@ -147,7 +147,7 @@ void memoryManager_printMemoryMap(PageDirectory* directory)
             uint32 virtualAddress = (i << 22) | (j << 12);
             uint32 physicalAddress = tableEntries[j].address << 12;
 
-            debug(LOGLEVEL_DEBUG, "directory[%d]table[%d]: %h mapped to %h", i, j, virtualAddress, physicalAddress);
+            debug(LOGLEVEL_TRACE, "directory[%d]table[%d]: %h mapped to %h", i, j, virtualAddress, physicalAddress);
         }
 
         // page directory is valid
@@ -199,7 +199,7 @@ void* memoryManager_allocate(uint32 size) {
     chosen->address = chosen->address + size + sizeof(memoryManager_allocatedHeader);
     chosen->length = chosen->length - size - sizeof(memoryManager_allocatedHeader);
 
-    debug(LOGLEVEL_DEBUG, "Allocating memory at %h of size %h", memoryHeader, size);
+    debug(LOGLEVEL_TRACE, "Allocating memory at %h of size %h", memoryHeader, size);
 
     // Return the first usable byte of the allocated block.
     return (void*) ((uint32)memoryHeader + (uint32)sizeof(memoryManager_allocatedHeader));

@@ -7,7 +7,8 @@
 #include <Types.h>
 #include <portIO.h>
 #include <vgaConsole.h>
-#include <pciBus.h>
+#include <Drivers/pciBus.h>
+#include <Drivers/piixide.h>
 #include <stream.h>
 #include <memoryManager.h>
 #include <deviceTree.h>
@@ -58,6 +59,12 @@ pciBus_Entry* pci_currentEntry;
 #define PCI_SLOTCOUNT 32
 #define PCI_FUNCCOUNT  8
 
+deviceTree_Entry* pciBus_initialise(void) {
+    pci_enumerateBuses();
+
+    return pci_addDevicesToTree();
+}
+
 deviceTree_Entry* pci_addDevicesToTree(void) {
     pci_currentEntry = pci_busEntries;
 
@@ -74,10 +81,49 @@ deviceTree_Entry* pci_addDevicesToTree(void) {
             deviceTree_Entry* device = qemuVga_initialise(pci_currentEntry->bus, pci_currentEntry->slot, pci_currentEntry->function);
 
             deviceTree_addChild(root, device);
+        } else if(pci_currentEntry->vendorID == 0x8086 && pci_currentEntry->deviceID == 0x7010) {
+            // TODO: make this whole device detection thing better.
+            deviceTree_Entry* device = piixide_initialise(pci_currentEntry->bus, pci_currentEntry->slot, pci_currentEntry->function);
+
+            deviceTree_addChild(root, device);
         } else {
             char* name = pci_getNameFromVendorAndDevice(pci_currentEntry->vendorID, pci_currentEntry->deviceID);
 
             deviceTree_Entry* device = deviceTree_createDevice(name, DEVICETREE_TYPE_PCI, pci_currentEntry);
+
+            
+            device->Resources = memoryManager_allocate(sizeof(DeviceResource) * 7); // brute force maximum for a pci device
+
+            int i = 0;
+
+            uint32 irq = pci_readConfigurationRegister(pci_currentEntry->bus, pci_currentEntry->slot, pci_currentEntry->function, 0x3C) & 0x000000FF;
+            if(irq > 0) {
+                device->Resources[i].Type = DEVICE_RESOURCETYPE_IRQ;
+                device->Resources[i].Flags = irq;
+
+                i++;
+            }
+
+            for(int bar = 0; bar < 6; bar++) {
+                uint32 val = pci_getBar(pci_currentEntry->bus, pci_currentEntry->slot, pci_currentEntry->function, bar);
+
+                if(val > 0) {
+                    // we have a device.
+                    device->Resources[i].Type = DEVICE_RESOURCETYPE_MEM;
+                    if(val & 0x01) {
+                        device->Resources[i].Type = DEVICE_RESOURCETYPE_IO;
+                        val--;
+                    }
+
+                    device->Resources[i].StartAddress = val;
+                    device->Resources[i].Length = pci_getBarSize(pci_currentEntry->bus, pci_currentEntry->slot, pci_currentEntry->function, bar);
+
+                    i++;
+                }
+            }
+
+            
+            device->ResourceCount = i;
 
             deviceTree_addChild(root, device);
         }
@@ -115,13 +161,41 @@ void pci_printBars(void (*putChar)(char)) {
     while (pci_currentEntry->next != NULL) {
     char* name = pci_getNameFromVendorAndDevice(pci_currentEntry->vendorID, pci_currentEntry->deviceID);
 
-        stream_printf(putChar, "%s:\n", name);
+        stream_printf(putChar, "[%d:%d:%d] %s:\n", pci_currentEntry->bus, pci_currentEntry->slot, pci_currentEntry->function, name);
+
+        uint32 classRegister = pci_readConfigurationRegister(pci_currentEntry->bus, pci_currentEntry->slot, pci_currentEntry->function, PCIBUS_REGISTER_CLASSCODES);
+        uint8 subclassID = (uint8)(classRegister >> 16 & 0xFF);
+        uint8 progInterfaceID = (uint8)(classRegister >> 8 & 0xFF);
+        uint8 revisionID = (uint8)(classRegister >> 0 & 0xFF);
+        
+        stream_printf(putChar, "  Class <%d:%d:%d.%d>: %s\n", pci_currentEntry->classID, subclassID, progInterfaceID, revisionID, classNames[pci_currentEntry->classID]);
 
         for(int bar = 0; bar < 6; bar++) {
             uint32 val = pci_getBar(pci_currentEntry->bus, pci_currentEntry->slot, pci_currentEntry->function, bar);
 
+            char* type = "MEM";
+            bool prefetchable = false;
+
+            if(val & 0x1) {
+                type = "I/O";
+                val--;
+            }
+
+            if(val & 0x8) {
+                prefetchable = true;
+                val -= 8;
+            }
+
             if(val > 0) {
-                stream_printf(putChar, "  BAR%d: %h\n", bar, val);
+                uint32 size = pci_getBarSize(pci_currentEntry->bus, pci_currentEntry->slot, pci_currentEntry->function, bar);
+
+                stream_printf(putChar, "  BAR%d (%s): %h (size %h)", bar, type,val, size);
+
+                if(prefetchable) {
+                    stream_printf(putChar, " - Prefetchable");
+                }
+
+                stream_printf(putChar, "\n");
             }
 
         }
@@ -146,6 +220,29 @@ uint32 pci_getBar(uint8 bus, uint8 slot, uint8 function, uint8 bar) {
     debug(LOGLEVEL_DEBUG, "Register Number: %h", registerNo);
 
     return pci_readConfigurationRegister(bus, slot, function, registerNo);
+}
+
+
+uint32 pci_getBarSize(uint8 bus, uint8 slot, uint8 function, uint8 bar) {
+    uint32 registerNo = 0x10 + (bar * 4);
+
+    debug(LOGLEVEL_DEBUG, "Register Number: %h", registerNo);
+
+    uint32 address = pci_readConfigurationRegister(bus, slot, function, registerNo);
+
+    pci_writeConfigurationRegister(bus, slot, function, registerNo, 0xFFFFFFFF);
+
+    uint32 size = pci_readConfigurationRegister(bus, slot, function, registerNo);
+
+    size = size & 0xFFFFFFF0;
+
+    size = ~size;
+
+    size = size + 1;
+
+    pci_writeConfigurationRegister(bus, slot, function, registerNo, address);
+
+    return size;
 }
 
 void pci_enumerateBuses(void) {
@@ -207,6 +304,9 @@ void pci_checkSlot(uint8 bus, uint8 slot) {
  * Calculates the address in the PCI configuration space for a given PCI bus:slot:function and register number.
 */
 uint32 pci_calculateRegisterAddress(uint8 bus, uint8 slot, uint8 function, uint8 registerNo) {
+    // FORMAT: 0x80BBSFRR
+    // Where BB is bus number, SF are slot and function bits, and RR is register number.
+
     // Create the address of the register we want to read from.
     // This is an address in "PCI configuration space", *not* I/O space or general memory space.
     return 0x80000000 | (uint32)((bus & 0xFF) << 16) | (uint32)((slot & 0x1F) << 11) |

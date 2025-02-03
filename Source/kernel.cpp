@@ -12,7 +12,7 @@
 #include <portIO.h>
 #include <Types.h>
 #include <vgaConsole.h>
-#include <pciBus.h>
+#include <Drivers/pciBus.h>
 #include <keyboard.h>
 #include <serial.h>
 #include <stream.h>
@@ -142,23 +142,20 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 
     multiBootDataP = multibootData;
 
-    stream_printf(vgaConsole_putChar, "Loading a GDT...\n");
+    debug(LOGLEVEL_INFO, "Loading a GDT...\n");
     gdt_install();
 
-    stream_printf(vgaConsole_putChar, "Setting up interrupts...\n");
+    debug(LOGLEVEL_INFO, "Setting up interrupts...\n");
     interrupts_initialise();
 
-    stream_printf(vgaConsole_putChar, "Setting up the memory manager...\n");
+    debug(LOGLEVEL_INFO, "Setting up the memory manager...\n");
     memoryManager_init(multibootData->memoryMapAddress, multibootData->memoryMapLength,
         (uint32) memoryManager_findEndOfReservedMemory(multibootData->modsAddr, multibootData->modsCount));
-
-    stream_printf(vgaConsole_putChar, "Enumerating PCI buses...\n");
-    pci_enumerateBuses();
 
     serial_init(SERIAL_COM1, SERIAL_BAUD_38400);
 
     // Testing SGR...
-    kernel_printBanner(vgaConsole_putChar);
+  //  kernel_printBanner(vgaConsole_putChar);
     kernel_printBanner(serial_writeChar);
 
     serial_writeLine("Amethyst Debugging Information:\n");
@@ -236,16 +233,40 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 }
 
 uint32 memoryManager_printPhysicalMemoryMap(StandardIO* stdio) {
-    for(uint32 i = 0; i < (multiBootDataP->memoryMapLength / 20); i++) {
+    for(uint32 i = 0; i < (multiBootDataP->memoryMapLength / 20) - 1; i++) {
         multiboot_memoryMapNode mem = (multiBootDataP->memoryMapAddress[i]);
 
         uint64 end = mem.addr + mem.len - 1;
 
-        stdio->Print("addrl: %H\tlen: %H\tend: %H\ttype: %d\n"
+        char* type;
+
+        switch(mem.type) {
+            case 1:
+                type = "Available RAM";
+                break;
+
+            case 3:
+                type = "ACPI";
+                break;
+
+            case 4:
+                type = "Hibernation RAM";
+                break;
+
+            case 5:
+                type = "Defective RAM";
+                break;
+
+            default:
+                type = "System Reserved";
+                break;
+        }
+
+        stdio->Print("addrl: %H\tlen: %H\tend: %H\ttype: %d (%s)\n"
         , (uint32) mem.addr
         , (uint32) mem.len
         , (uint32) end
-        , mem.type);
+        , mem.type, type);
         
     }
 
