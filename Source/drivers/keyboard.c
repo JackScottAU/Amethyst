@@ -25,7 +25,7 @@ void keyboard_interruptHandler(uint32 eventData);
 void keyboard_interruptHandler(uint32 eventData) {
     uint8 data = portIO_read8(0x60);
 
-    debug(LOGLEVEL_DEBUG, "Keyboard data received: %h", data);
+    debug(LOGLEVEL_TRACE, "Keyboard data received: %h", data);
 
     if (commandMode == true) {
         // discard data for now.
@@ -93,7 +93,7 @@ char keyboard_readChar(void) {
 
     FIFOBuffer_ReadBytes(keyboard_buffer, &data, 1);
 
-    debug(LOGLEVEL_DEBUG, "Keyboard readchar: %h", data);
+    debug(LOGLEVEL_TRACE, "Keyboard readchar: %h", data);
 
     if (data & 0x80) {
         // A key has been released.

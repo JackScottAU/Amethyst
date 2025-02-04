@@ -26,11 +26,11 @@ image-x86_32: cd-image
 lint:
 	@cpplint --quiet --recursive --linelength=120 --filter=-readability/casting,-build/include_order --root=Source Source
 
-qemu-x86_32: image-x86_32
+qemu-x86_32: image-x86_32 disk-image
 	@qemu-system-i386 \
 		-no-reboot -no-shutdown \
 		--machine pc -cpu pentium -m 16  \
-		-drive format=raw,media=cdrom,file=Amethyst.iso \
+		-drive if=ide,file=disk.img,format=raw \
 		-vga std \
 		-serial stdio \
 		-net nic,model=rtl8139 \
@@ -38,6 +38,24 @@ qemu-x86_32: image-x86_32
 
 cd-image: Build/kernel32 resources
 	-@grub-mkrescue -o Amethyst.iso Build -quiet
+
+disk-image: Build/kernel32 resources
+	dd if=/dev/zero of=disk.img bs=512 count=131072
+	sudo losetup /dev/loop1 disk.img
+	sudo sfdisk --force /dev/loop1 -u S < Resources/diskformat
+	sudo sync
+	sudo losetup -d /dev/loop1
+	sudo sync
+
+# This line is prone to breakage! We assume it goes on loop1, but it could go on any loop device. We need to save it to a variable or something.
+	$(eval LOOPBACK=$(shell sudo losetup -P -f disk.img --show))
+	sudo mkdosfs -F32 -f 2 $(LOOPBACK)p1
+	sudo mount $(LOOPBACK)p1 /mnt
+	sudo grub-install --boot-directory=/mnt/boot --no-floppy $(GIT_BRANCH)
+	sudo cp -r Build/* /mnt
+	sudo sync
+	sudo umount /mnt
+	sudo losetup -d $(LOOPBACK)
 
 resources: 
 	-@mkdir -p Build/boot/grub
