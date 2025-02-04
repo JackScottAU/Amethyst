@@ -16,9 +16,9 @@ extern "C" {
 #endif
 
 
-#define VERSION_MAJOR 2024
-#define VERSION_MINOR 0
-#define VERSION_PATCH 0
+#define VERSION_MAJOR 2025
+#define VERSION_MINOR 2
+#define VERSION_PATCH 4
 
 /**
  * The device to use in early-boot debug logging. Options are 'serial_writeChar' and 'vgaConsole_putChar'.

@@ -1,6 +1,7 @@
 /nbproject/
 /Synergy-OS.iso
 /Amethyst.iso
+/dis*.img
 /kernel32
 /Build/
 *.o

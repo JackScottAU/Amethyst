@@ -47,15 +47,20 @@ disk-image: Build/kernel32 resources
 	sudo losetup -d /dev/loop1
 	sudo sync
 
-# This line is prone to breakage! We assume it goes on loop1, but it could go on any loop device. We need to save it to a variable or something.
-	$(eval LOOPBACK=$(shell sudo losetup -P -f disk.img --show))
-	sudo mkdosfs -F32 -f 2 $(LOOPBACK)p1
-	sudo mount $(LOOPBACK)p1 /mnt
-	sudo grub-install --boot-directory=/mnt/boot --no-floppy $(GIT_BRANCH)
+# This line is prone to breakage! We assume it goes on loop0, but it could go on any loop device. We need to save it to a variable or something.
+	sudo losetup -P -f disk.img --show
+	sudo mkdosfs -F32 -f 2 /dev/loop0p1
+	sudo mount /dev/loop0p1 /mnt
+	sudo grub-install --boot-directory=/mnt/boot --no-floppy /dev/loop0
 	sudo cp -r Build/* /mnt
 	sudo sync
 	sudo umount /mnt
-	sudo losetup -d $(LOOPBACK)
+	sudo losetup -d /dev/loop0
+
+disk-image-cleanup:
+	sudo umount /mnt
+	sudo losetup -d /dev/loop0
+	sudo losetup -d /dev/loop1
 
 resources: 
 	-@mkdir -p Build/boot/grub
