@@ -15,13 +15,16 @@
 
 -   Refactor device drivers into a nice C++ class sort of thing.
 -   Make device tree support resources.
+-   Sort out the mess that is the PCI IDE driver (turn things into functions and DEFINEs)
+-   Split the IDE driver into three parts: PCI detection for two channels, then management of a channel and it's two drives, and then disk block access
+-   Make the text console work with colours when scrolling
 
 ### User Space
 
 -   Turn canvas into a class
 -   Finish the windowing toolkit
--   string_split() - useful for the shell
 -   Fix the memory leak in stream_readLine() caused by multitasking.
+-   Make the shell better
 
 ## Source Tree Layout
 
@@ -264,6 +267,16 @@ A = arm, I = intel, S = sparc, R = riscv, P = powerpc, M = 68k, W = WDC 6502?
 
 These all have a corresponding #define, and when that define is set via makefile it compiles the kernel for that architecture.
 
+## Makefile Targets
+
+-   make ARCH-cd-qemu < default
+-   make ARCH-hd-qemu
+-   make ARCH-cd
+-   make ARCH-hd
+-   make ARCH
+-   make clean
+-   make lint
+
 # Logging and Debugging
 
 There are several debugging options available to us:
@@ -278,6 +291,14 @@ What we do is:
 
 What we currently do is:
  - Send ANSI to serial
+
+## Plan
+
+The kernel has a function, debug() which takes a log level, a format string, and an arguments list. It outputs a formatted string to debug_loggingDevice, which is a function that takes a single character and puts it to the debug device. This debug device for boot startup is set to QEMU's debug device (port E9).
+
+There is also a function, debug_setLoggingDevice() which sets the value of the debug_loggingDevice function, so that once more services are available at runtime a better logging store can be used.
+
+Similar with debug_loggingLevel and debug_setLoggingLevel().
 
 # Time
 

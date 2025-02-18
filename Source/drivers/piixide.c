@@ -4,6 +4,14 @@
 #include <portIO.h>
 #include <debug.h>
 
+#define ATA_REGISTER_IO_LBALOW      3
+#define ATA_REGISTER_IO_LBAMID      4
+#define ATA_REGISTER_IO_LBAHIGH     5
+
+/**
+ * The drive number, whether to use CHS or LBA (our OS only supports LBA), and the top four bits of LBA.
+ */
+#define ATA_REGISTER_IO_DRIVE       6
 
 deviceTree_Entry* piixide_decodeDriveSignature(uint32 cl, uint32 ch) {
     if (cl==0x14 && ch==0xEB) {
@@ -142,14 +150,14 @@ deviceTree_Entry* piixide_initialise(pciBus_Entry* pciDetails) {
     portIO_write8(0x376, 0);
 	
     /* waits until master drive is ready again */
-	portIO_write8(0x170 + 6, 0xA0 | 0<<4);
+	portIO_write8(0x170 + ATA_REGISTER_IO_DRIVE, 0xA0 | 0<<4);
 	portIO_read8(0x376);			/* wait 400ns for drive select to work */
 	portIO_read8(0x376);
 	portIO_read8(0x376);
 	portIO_read8(0x376);
 
-	cl=portIO_read8(0x170 + 4);	/* get the "signature bytes" */
-	ch=portIO_read8(0x170 + 5);
+	cl=portIO_read8(0x170 + ATA_REGISTER_IO_LBAMID);	/* get the "signature bytes" */
+	ch=portIO_read8(0x170 + ATA_REGISTER_IO_LBAHIGH);
 
     debug(LOGLEVEL_DEBUG, "ATA SM: %h %h", cl, ch);
 

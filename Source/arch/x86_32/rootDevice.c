@@ -63,6 +63,16 @@ void deviceTree_build(void) {
         deviceTree_addChild(deviceTree_rootEntry, ps2controller);
     }
 
-    deviceTree_addChild(deviceTree_rootEntry, deviceTree_createDevice("Real Time Clock?!", DEVICETREE_TYPE_OTHER, NULL));
+  /*  deviceTree_addChild(deviceTree_rootEntry, deviceTree_createDevice("Real Time Clock?! - have this, need to put in tree", DEVICETREE_TYPE_OTHER, NULL));
     deviceTree_addChild(deviceTree_rootEntry, deviceTree_createDevice("PIT?!", DEVICETREE_TYPE_OTHER, NULL));
+    deviceTree_addChild(deviceTree_rootEntry, deviceTree_createDevice("8259s? pic", DEVICETREE_TYPE_OTHER, NULL));
+    deviceTree_addChild(deviceTree_rootEntry, deviceTree_createDevice("pc speaker?! - hangs off pit", DEVICETREE_TYPE_OTHER, NULL));
+    deviceTree_addChild(deviceTree_rootEntry, deviceTree_createDevice("parallel prt? - i think this is a 8255 and a few latch chips in disguise", DEVICETREE_TYPE_OTHER, NULL));
+    deviceTree_addChild(deviceTree_rootEntry, deviceTree_createDevice("8257 dma? x2", DEVICETREE_TYPE_OTHER, NULL));
+    deviceTree_addChild(deviceTree_rootEntry, deviceTree_createDevice("fdc controller and empty drive", DEVICETREE_TYPE_OTHER, NULL));
+
+    deviceTree_addChild(deviceTree_rootEntry, deviceTree_createDevice("pvpanic / qemu device", DEVICETREE_TYPE_OTHER, NULL));
+    deviceTree_addChild(deviceTree_rootEntry, deviceTree_createDevice("hpet", DEVICETREE_TYPE_OTHER, NULL)); // replacement for pit, along with lapic timer
+    deviceTree_addChild(deviceTree_rootEntry, deviceTree_createDevice("ioapic", DEVICETREE_TYPE_OTHER, NULL));
+    deviceTree_addChild(deviceTree_rootEntry, deviceTree_createDevice("piix4 i2c", DEVICETREE_TYPE_OTHER, NULL));*/
 }

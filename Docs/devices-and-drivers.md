@@ -20,6 +20,10 @@ A 'device' is a node in a tree that can either implement a class of device (vide
      |   |   +- PCI Bridge (0:1:2) // i think this is the USB controller.
      |   |   +- ISA Controller (0:1:3)
 
+## Driver Ideas
+
+-   Don't bother implementing ISA DMA - just use port I/O for everything non-PCI. Since we are targeting 686 and above, we can assume that most devices that need fastness will be on PCI.
+
 ## Resources
 
 Every item in the tree can have resources attached to it. Resources are of type I/O, memory, or IRQ.

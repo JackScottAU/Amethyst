@@ -62,7 +62,7 @@ deviceTree_Entry* qemuVga_initialise(pciBus_Entry* pciDetails)
 
     device->Resources[0].Type = DEVICE_RESOURCETYPE_MEM;
     device->Resources[0].StartAddress = bar0;
-    device->Resources[0].Length = pci_getBarSize(bus, slot, function, 0); // 4KiB
+    device->Resources[0].Length = pci_getBarSize(bus, slot, function, 0);
     device->Resources[1].Type = DEVICE_RESOURCETYPE_MEM;
     device->Resources[1].StartAddress = bar2;
     device->Resources[1].Length = 0x1000; // 4KiB
