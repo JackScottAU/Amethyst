@@ -7,8 +7,6 @@
 - Clean up debugging messages
 - Clean up kernel file
 - Tidy up current multitasking, GDT and interrupt code.
-- Make the physical memory allocation code better (own file etc).
-- Initialise the physical memory manager better.
 - Keep going with page management.
 - Make the scheduler a bit smarter
 - Refactor scheduler into thread.c (arch) and scheduler.c (generic)
@@ -122,7 +120,7 @@ Thread.h contains stuff for creating, destroying and switching threads, and is p
 
 Scheduler.h contains the main scheduler, and can have threads added and removed, and is processor agnostic.
 
-Use kernel threading in 1:N model (kernel knows about all threads).
+Use kernel threading in 1:1:N model (kernel knows about all threads, but has no idea about fibres).
 
 Session:    Console, Security
 Process:    Code / Data / Heap (Virtual Address Space - CR3), File Pointers, working directory etc
@@ -286,6 +284,8 @@ First part is CPU architecture, second part is the machine type (and built in as
 | ARM_RPI5      | Arm 64-bit        | Raspberry Pi 5                                            |
 
 A = arm, I = intel, S = sparc, R = riscv, P = powerpc, M = 68k, W = WDC 6502?
+
+Want to support both x86 and x64, arm in various forms, plus risc-v once it gets cheap, plus powerpc and 68k for old school kool.
 
 These all have a corresponding #define, and when that define is set via makefile it compiles the kernel for that architecture.
 

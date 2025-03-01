@@ -54,7 +54,7 @@ Remember each kernel process has it's own space. So we need lots of space for ke
 
 | 0xF1000000 | 0xFEFFFFFF |  224 MiB | Kernel-Mode Heap Space														   |
 
-| 0xFF800000 | 0xFFBFFFFF |    4 MiB | Kernel Stacks (4KiB per Thread)												   |
+| 0xFF800000 | 0xFFBFFFFF |    4 MiB | Kernel Stacks (4KiB per Thread)												   | < this is the only part of the kernel directory which changes per process
 | 0xFFC00000 | 0xFFFFFFFF |    4 MiB | Self-Reference to Page Directory                                                |
 
 ### Boot Page Directory

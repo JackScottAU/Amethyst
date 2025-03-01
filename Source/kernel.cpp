@@ -7,6 +7,7 @@
 #include <Clock.h>
 #include <GDT.h>
 #include <interrupts.h>
+#include <physicalMemory.h>
 #include <memoryManager.h>
 #include <multiboot.h>
 #include <portIO.h>
@@ -149,8 +150,9 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
     interrupts_initialise();
 
     debug(LOGLEVEL_INFO, "Setting up the memory manager...\n");
+    physicalMemory_initialise(multibootData);
     memoryManager_init(multibootData->memoryMapAddress, multibootData->memoryMapLength,
-        (uint32) memoryManager_findEndOfReservedMemory(multibootData->modsAddr, multibootData->modsCount));
+        (uint32) physicalMemory_findEndOfReservedMemory(multibootData->modsAddr, multibootData->modsCount));
 
     serial_init(SERIAL_COM1, SERIAL_BAUD_38400);
 

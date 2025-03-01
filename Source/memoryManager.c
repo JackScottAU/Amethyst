@@ -5,11 +5,10 @@
 */
 
 #include <memoryManager.h>
+#include <physicalMemory.h>
 #include <multiboot.h>
-#include <vgaConsole.h>        // This is only used for debugging.
 #include <debug.h>
 #include <memory.h>
-
 
 // Holds the address of the start of the list representing free memory blocks.
 // When the kernel is first started, this list is empty.
@@ -22,51 +21,6 @@ PageDirectory* memoryManager_getCurrentPageDirectory() {
     return value;
 }
 
-uint32 memoryManager_getPhysicalAddressOfFreePhysicalPage() {
-    uint8* bitmap = (uint8*)0xC0060000;
-
-    // TODO: hold a persistent index to the first byte with free memory to speed up this search.
-
-    for(uint32 i = 0; i < 0x20000; i++) { // iterate through 128K of memory.
-   //     debug(LOGLEVEL_TRACE, "Index %d: %h", i, bitmap[i]);
-
-        if(bitmap[i] != 0x00) {
-
-            for(uint8 b = 0; b < 8; b++) {
-                if((bitmap[i] >> b) & 0x01) {
-                    // the b-th bit of this index is free, we can return that.
-                    return ((i * 8) + b) << 12;
-                }
-            }
-
-          //  return (i * 8) << 12;
-        }
-    }
-
-    return 0xFFFFFFFF; // no memory found.
-}
-
-void memoryManager_markPageAllocated(uint32 address) {
-    uint8* bitmap = (uint8*)0xC0060000;
-
-    uint32 index = (address >> 12) / 8;
-    uint32 bit = (address >> 12) % 8;
-
-    uint8 mask = 0x01 << bit;
-
-    bitmap[index] = bitmap[index] & !mask;
-}
-
-void memoryManager_markPageFree(uint32 address) {
-    uint8* bitmap = (uint8*)0xC0060000;
-
-    uint32 index = (address >> 12) / 8;
-    uint32 bit = (address >> 12) % 8;
-
-    uint8 mask = 0x01 << bit;
-
-    bitmap[index] = bitmap[index] | mask;   
-}
 
 void memoryManager_mapPhysicalMemoryPage(PageDirectory* directory, void* startLogicalAddress, void* physicalMemory, uint32 count) {
     // TODO:
@@ -92,8 +46,7 @@ void memoryManager_mapPhysicalMemoryPage(PageDirectory* directory, void* startLo
             // page table doesn't exist, we need to create one.
             debug(LOGLEVEL_TRACE, "Creating new page table.");
 
-            uint32 pageAddress = memoryManager_getPhysicalAddressOfFreePhysicalPage();
-            memoryManager_markPageAllocated(pageAddress);
+            uint32 pageAddress = physicalMemory_allocate();
 
             // TODO: fix the problem where our page table might be put in virtual memory we don't have access to.
 
@@ -328,17 +281,6 @@ void memoryManager_init(struct multiboot_memoryMapNode* memNode, uint32 length, 
     //memoryManager_debug_printFreeMemoryList();*/
 }
 
-uint32 memoryManager_findEndOfReservedMemory(struct multiboot_moduleNode* module, uint32 count) {
-    uint32 endOfReservedMemory = (uint32) &_kernel_end;
-
-    for (uint32 i = 0; i < count; i++) {
-        if (module[i].end > (void*) endOfReservedMemory) {
-            endOfReservedMemory = (uint32) module[i].end;
-        }
-    }
-
-    return endOfReservedMemory;
-}
 
 /**
  * Print out the complete list of free memory regions in the system.

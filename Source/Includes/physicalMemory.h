@@ -14,12 +14,28 @@
 extern "C" {
 #endif
 
-void physicalMemory_initialise(multiboot_memoryMapNode* multibootMemoryMap, uint32 length);
+extern uint32 _kernel_end;
+uint32 physicalMemory_findEndOfReservedMemory(struct multiboot_moduleNode* module, uint32 count);
 
-void physicalMemory_allocate();
-void physicalMemory_allocate(uint32 address);
+/**
+ * Initialises the physical memory manager.
+ */
+void physicalMemory_initialise(struct multiboot_info* multibootData);
 
-void physicalMemory_free(uint32 address);
+/**
+ * Allocates a 4K block of physical RAM and returns it's physical address.
+ */
+void* physicalMemory_allocate();
+
+/**
+ * Marks a specific 4K block of physical memory as allocated. DO WE NEED THIS?!
+ */
+void physicalMemory_markAllocated(void* address);
+
+/**
+ * Marks a specific 4K block of physical memory as allocated.
+ */
+void physicalMemory_free(void* address);
 
 #ifdef __cplusplus
 }

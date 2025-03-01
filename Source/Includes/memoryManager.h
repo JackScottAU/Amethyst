@@ -48,12 +48,6 @@ void memoryManager_free(void* mem);
 
 void memoryManager_debug_printFreeMemoryList(void);
 
-uint32 memoryManager_getPhysicalAddressOfFreePhysicalPage();
-void memoryManager_markPageAllocated(uint32 address);
-void memoryManager_markPageFree(uint32 address);
-
-extern uint32 _kernel_end;
-uint32 memoryManager_findEndOfReservedMemory(struct multiboot_moduleNode* module, uint32 count);
 
 #ifdef __cplusplus
 }
