@@ -13,6 +13,14 @@
  */
 #define ATA_REGISTER_IO_DRIVE       6
 
+#define ATA_REGISTER_CONTROL_STATUS 0
+#define ATA_REGISTER_CONTROL_SELECT 1
+
+#define ATA_DRIVE_MASTER            0 << 4
+#define ATA_DRIVE_SLAVE             1 << 4
+
+void piixide_probeChannel(deviceTree_Entry* channelDevice);
+
 deviceTree_Entry* piixide_decodeDriveSignature(uint32 cl, uint32 ch) {
     if (cl==0x14 && ch==0xEB) {
         return deviceTree_createDevice("PATA CD-ROM Drive?!", DEVICETREE_TYPE_OTHER, NULL);
@@ -105,82 +113,63 @@ deviceTree_Entry* piixide_initialise(pciBus_Entry* pciDetails) {
 
    /* on Primary bus: ctrl->base =0x1F0, ctrl->dev_ctl =0x3F6. REG_CYL_LO=4, REG_CYL_HI=5, REG_DEVSEL=6 */
 
-    // reset
-    portIO_write8(0x3F6, 4);
-	portIO_read8(0x3F6);			/* wait 400ns for drive select to work */
-	portIO_read8(0x3F6);
-	portIO_read8(0x3F6);
-	portIO_read8(0x3F6);
-    portIO_write8(0x3F6, 0);
+    piixide_probeChannel(channel1);
+
+    piixide_probeChannel(channel2);
+
+   return device;
+}
+
+void piixide_probeChannel(deviceTree_Entry* channelDevice) {
+    uint16 ioBase = channelDevice->Resources[0].StartAddress;
+    uint16 controlBase = channelDevice->Resources[1].StartAddress;
+
+    piixide_softwareReset(channelDevice);
+
+    piixide_selectDrive(channelDevice, ATA_DRIVE_MASTER);
 	
-    /* waits until master drive is ready again */
-	portIO_write8(0x1F0 + 6, 0xA0 | 0<<4);
-	portIO_read8(0x3F6);			/* wait 400ns for drive select to work */
-	portIO_read8(0x3F6);
-	portIO_read8(0x3F6);
-	portIO_read8(0x3F6);
 
-	unsigned cl=portIO_read8(0x1F0 + 4);	/* get the "signature bytes" */
-	unsigned ch=portIO_read8(0x1F0 + 5);
+	unsigned cl=portIO_read8(ioBase + 4);	/* get the "signature bytes" */
+	unsigned ch=portIO_read8(ioBase + 5);
 
-    deviceTree_addChild(channel1, piixide_decodeDriveSignature(cl, ch));
+    deviceTree_addChild(channelDevice, piixide_decodeDriveSignature(cl, ch));
 
     debug(LOGLEVEL_DEBUG, "ATA PM: %h %h", cl, ch);
 
-    /* waits until master drive is ready again */
-	portIO_write8(0x1F0 + 6, 0xA0 | 1<<4);
-	portIO_read8(0x3F6);			/* wait 400ns for drive select to work */
-	portIO_read8(0x3F6);
-	portIO_read8(0x3F6);
-	portIO_read8(0x3F6);
+    piixide_selectDrive(channelDevice, ATA_DRIVE_SLAVE);
 
 	cl=portIO_read8(0x1F0 + 4);	/* get the "signature bytes" */
 	ch=portIO_read8(0x1F0 + 5);
 
     debug(LOGLEVEL_DEBUG, "ATA PS: %h %h", cl, ch);
 
-    deviceTree_addChild(channel1, piixide_decodeDriveSignature(cl, ch));
+    deviceTree_addChild(channelDevice, piixide_decodeDriveSignature(cl, ch));
+}
+
+void piixide_selectDrive(deviceTree_Entry* channelDevice, uint8 driveNumber) {
+    uint16 ioBase = channelDevice->Resources[0].StartAddress;
+    uint16 controlBase = channelDevice->Resources[1].StartAddress;
+
+        /* waits until master drive is ready again */
+	portIO_write8(ioBase + 6, 0xE0 | driveNumber);
+	portIO_read8 (controlBase + ATA_REGISTER_CONTROL_STATUS);			/* wait 400ns for drive select to work */
+	portIO_read8 (controlBase + ATA_REGISTER_CONTROL_STATUS);
+	portIO_read8 (controlBase + ATA_REGISTER_CONTROL_STATUS);
+	portIO_read8 (controlBase + ATA_REGISTER_CONTROL_STATUS);
+}
+
+void piixide_softwareReset(deviceTree_Entry* channelDevice) {
+    uint16 controlBase = channelDevice->Resources[1].StartAddress;
 
     // reset
-    portIO_write8(0x376, 4);
-	portIO_read8(0x376);			/* wait 400ns for drive select to work */
-	portIO_read8(0x376);
-	portIO_read8(0x376);
-	portIO_read8(0x376);
-    portIO_write8(0x376, 0);
-	
-    /* waits until master drive is ready again */
-	portIO_write8(0x170 + ATA_REGISTER_IO_DRIVE, 0xA0 | 0<<4);
-	portIO_read8(0x376);			/* wait 400ns for drive select to work */
-	portIO_read8(0x376);
-	portIO_read8(0x376);
-	portIO_read8(0x376);
-
-	cl=portIO_read8(0x170 + ATA_REGISTER_IO_LBAMID);	/* get the "signature bytes" */
-	ch=portIO_read8(0x170 + ATA_REGISTER_IO_LBAHIGH);
-
-    debug(LOGLEVEL_DEBUG, "ATA SM: %h %h", cl, ch);
-
-    deviceTree_addChild(channel2, piixide_decodeDriveSignature(cl, ch));
-
-    /* waits until master drive is ready again */
-	portIO_write8(0x170 + 6, 0xA0 | 1<<4);
-	portIO_read8(0x376);			/* wait 400ns for drive select to work */
-	portIO_read8(0x376);
-	portIO_read8(0x376);
-	portIO_read8(0x376);
-
-	cl=portIO_read8(0x170 + 4);	/* get the "signature bytes" */
-	ch=portIO_read8(0x170 + 5);
-
-    debug(LOGLEVEL_DEBUG, "ATA SS: %h %h", cl, ch);
-
-    deviceTree_addChild(channel2, piixide_decodeDriveSignature(cl, ch));
-
-
-	/* differentiate ATA, ATAPI, SATA and SATAPI 
-	*/
-
-
-   return device;
+    portIO_write8(controlBase + ATA_REGISTER_CONTROL_STATUS, 4); // SRST
+	portIO_read8 (controlBase + ATA_REGISTER_CONTROL_STATUS);			/* wait 400ns for drive select to work */
+	portIO_read8 (controlBase + ATA_REGISTER_CONTROL_STATUS);
+	portIO_read8 (controlBase + ATA_REGISTER_CONTROL_STATUS);
+	portIO_read8 (controlBase + ATA_REGISTER_CONTROL_STATUS);
+    portIO_write8(controlBase + ATA_REGISTER_CONTROL_STATUS, 0);
+	portIO_read8 (controlBase + ATA_REGISTER_CONTROL_STATUS);			/* wait 400ns for drive select to work */
+	portIO_read8 (controlBase + ATA_REGISTER_CONTROL_STATUS);
+	portIO_read8 (controlBase + ATA_REGISTER_CONTROL_STATUS);
+	portIO_read8 (controlBase + ATA_REGISTER_CONTROL_STATUS);
 }
