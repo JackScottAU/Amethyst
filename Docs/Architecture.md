@@ -4,10 +4,19 @@
 
 The kernel will be a microkernel. Drivers will exist in userland.
 
+The microkernel will be responsible for the following things:
+
+- Scheduling
+- Memory Management (Physical and Virtual)
+- Resource Management (Interrupts, I/O Space, etc)
+
+All other tasks (including paging virtual memory to disk) will be handled by userspace services.
+
 The kernel will present three different APIs to the userland:
- - Driver API
- - POSIX API
- - Amethyst Native API
+
+- Driver API
+- POSIX API
+- Amethyst Native API
 
 All three will use the same ABI (kernel will provide all calls for all processes) but statically linked library will be different.
 
@@ -26,8 +35,8 @@ Idle task is priority 0.
 
 ## IPC
 
- * messages
- * shared memory
+- messages
+- shared memory
 
 drivers are allowed to request shared memory with the HAL for use with devices.
 

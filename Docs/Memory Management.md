@@ -48,13 +48,13 @@ Kernel space is 256MiB from each address space on x86. 0xF0000000 upwards.
 
 Remember each kernel process has it's own space. So we need lots of space for kernel stacks (if we reserved 4MB, that's 1024 threads per process which should be enough).
 
-| Start (V)  | End (V)    | Size     | Usage                                      									   |
+| Start (V)  | End (V)    | Size     | Usage                                                                           |
 | ---------- | ---------- | -------- | ------------------------------------------------------------------------------- |
-| 0xF0000000 | 0xF03FFFFF |    4 MiB | Kernel Code + Kernel Core Data Structures									   |
+| 0xF0000000 | 0xF03FFFFF |    4 MiB | Kernel Code + Kernel Core Data Structures                                       |
 
-| 0xF1000000 | 0xFEFFFFFF |  224 MiB | Kernel-Mode Heap Space														   |
+| 0xF1000000 | 0xFEFFFFFF |  224 MiB | Kernel-Mode Heap Space                                                          |
 
-| 0xFF800000 | 0xFFBFFFFF |    4 MiB | Kernel Stacks (4KiB per Thread)												   | < this is the only part of the kernel directory which changes per process
+| 0xFF800000 | 0xFFBFFFFF |    4 MiB | Kernel Stacks (4KiB per Thread)                                                 | < this is the only part of the kernel directory which changes per process
 | 0xFFC00000 | 0xFFFFFFFF |    4 MiB | Self-Reference to Page Directory                                                |
 
 ### Boot Page Directory
