@@ -280,6 +280,12 @@ These all have a corresponding #define, and when that define is set via makefile
 
 All archs are a seven-letter code. Last two is bits.
 
+| Development Priority | Platform Code | Description |
+| -- | -- | --|
+| Tier 1 | Intel32 | 32-bit x86 BIOS PC |
+| Tier 1 | Intel64 | 64-bit x86 UEFI PC |
+| Tier 1 | ArmPi32 | First and Second Generation Raspberry Pi |
+
 ### Tier One Platforms
 
 These platforms are chosen for being as different as possible from each other to ensure our multi-platform kernel
