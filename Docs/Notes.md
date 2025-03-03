@@ -280,35 +280,19 @@ These all have a corresponding #define, and when that define is set via makefile
 
 All archs are a seven-letter code. Last two is bits.
 
-| Development Priority | Platform Code | Description |
-| -- | -- | --|
-| Tier 1 | Intel32 | 32-bit x86 BIOS PC |
-| Tier 1 | Intel64 | 64-bit x86 UEFI PC |
-| Tier 1 | ArmPi32 | First and Second Generation Raspberry Pi |
+| Priority | Platform Code | Description                                                                               |
+| -------- | ------------- | ----------------------------------------------------------------------------------------- |
+| Tier 1   | `Intel32`     | 32-bit x86 BIOS PC (PC-97)                                                                |
+| Tier 1   | `Intel64`     | 64-bit x86 UEFI PC                                                                        |
+| Tier 1   | `ArmPi32`     | 1st and 2nd Generation Raspberry Pi Boards                                                |
+| Tier 2   | `ArmPi64`     | 3rd and Subsequent Generation Raspberry Pi Boards                                         |
+| Tier 2   | `ArmPc64`     | Arm PC Base System Architecture 1.0                                                       |
+| Tier 2   | `Power64`     | 5th Generation PowerPC-based Macintoshes                                                  |
+| Tier 3   | `Power32`     | 1st to 4th Generation PowerPC-based Macintoshes                                           |
+| Tier 3   | `Motor32`     | Motorola 68000-based Macintoshes                                                          |
 
-### Tier One Platforms
+Other Potential Platforms:
 
-These platforms are chosen for being as different as possible from each other to ensure our multi-platform kernel
-core is well built, whilst still being (somewhat) popular platforms for end users.
-
-- Intel32 - bios pc (grub via mbr or gpt booting) - 586 as that supports CPUID and multi-processor and FPU. 686 *might* add MMX, but not necessarily. 486 doesn't have CPUID.
-- Intel64 - uefi pc (noting a gap in systems that are 64-bit but not uefi, this is a hole we can afford to lose, it's about 5 years from 2010 to 2015)
-- ArmPi32 - first gen raspberry pi (works on all later Pis)
-
-### Tier Two Platforms
-
-Popular platforms that are not in the tier-one list.
-
-- ArmPc64 - arm base system standard
-- Power64 - g5 macintosh
-- ArmPi64 - third/fourth/fifth gen raspberry pi, probably has PCI bus.
-
-### Tier Three Platforms
-
-We'll get around to them eventually. Mostly for fun. More thinking required.
-
-- Motor32 - Motorola-based Macintoshes
-- Power32 - g3/g4 macintosh
 - Loong64
 - Riscv64
 - Itanium?!
@@ -319,6 +303,23 @@ We'll get around to them eventually. Mostly for fun. More thinking required.
 - IBM System/36 (16-bit)
 - VAX
 - MIPS stuff
+
+### Tier One Platforms
+
+These platforms are chosen for being as different as possible from each other to ensure our multi-platform kernel
+core is well built, whilst still being (somewhat) popular platforms for end users.
+
+- Intel32 - bios pc (grub via mbr or gpt booting) - 586 as that supports CPUID and multi-processor and FPU. 686 adds PAE. 686 *might* add MMX, but not necessarily. 486 doesn't have CPUID.
+- Intel64 - uefi pc (noting a gap in systems that are 64-bit but not uefi, this is a hole we can afford to lose, it's about 5 years from 2010 to 2015)
+- ArmPi32 - first gen raspberry pi (works on all later Pis)
+
+### Tier Two Platforms
+
+Popular platforms that are not in the tier-one list.
+
+- ArmPc64 - arm base system standard
+- Power64 - g5 macintosh
+- ArmPi64 - third/fourth/fifth gen raspberry pi, probably has PCI bus.
 
 ## Makefile Targets
 
