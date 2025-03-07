@@ -69,6 +69,6 @@ uint32 FIFOBuffer_ContentsSize(FIFOBuffer* buffer) {
         return buffer->readIndex - buffer->writeIndex;
     }
 
-    // TODO: Pretty sure there's a bug here. Will (might) fix later.
+    // TODO(JackScottAU): Pretty sure there's a bug here. Will (might) fix later.
     return buffer->writeIndex - buffer->readIndex;
 }

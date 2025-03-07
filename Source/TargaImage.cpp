@@ -132,9 +132,9 @@ void Widget::RemoveChild(Widget* widget) {
 
 void Widget::RedrawChildren()
 {
-        debug(LOGLEVEL_WARNING, "rdeware?");
+    debug(LOGLEVEL_WARNING, "Performing Widget Redraw");
     children->Reset();
-        debug(LOGLEVEL_WARNING, "after reset?");
+    debug(LOGLEVEL_WARNING, "after reset");
 
     do {
         Widget* child = children->Current();

@@ -138,8 +138,8 @@ void piixide_probeChannel(deviceTree_Entry* channelDevice) {
 
     piixide_selectDrive(channelDevice, ATA_DRIVE_SLAVE);
 
-	cl=portIO_read8(0x1F0 + 4);	/* get the "signature bytes" */
-	ch=portIO_read8(0x1F0 + 5);
+	cl=portIO_read8(ioBase + 4);	/* get the "signature bytes" */
+	ch=portIO_read8(ioBase + 5);
 
     debug(LOGLEVEL_DEBUG, "ATA PS: %h %h", cl, ch);
 

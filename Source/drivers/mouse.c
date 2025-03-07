@@ -15,6 +15,7 @@
 #include <stream.h>
 #include <debug.h>
 #include <ps2controller.h>
+#include <mouse.h>
 
 
 void mouse_interruptHandler(uint32 eventData);
@@ -30,19 +31,19 @@ deviceTree_Entry* mouse_initialise() {
 
     // enable mouse data sending
     debug(LOGLEVEL_DEBUG, "PS/2 Mouse: Sending reset...");
-    ps2controller_sendByteToDevice(2, 0xFF); // RESET.
+    ps2controller_sendByteToDevice(2, 0xFF);    // RESET.
     ps2controller_receiveByteFromDevice(2);
     ps2controller_receiveByteFromDevice(2);
     ps2controller_receiveByteFromDevice(2);
-    
+
     debug(LOGLEVEL_DEBUG, "PS/2 Mouse: Setting sample rate...");
-    ps2controller_sendByteToDevice(2, 0xF3); // set rate.
+    ps2controller_sendByteToDevice(2, 0xF3);    // set rate.
     ps2controller_receiveByteFromDevice(2);
-    ps2controller_sendByteToDevice(2, 100); // 100 samples per second.
+    ps2controller_sendByteToDevice(2, 100);     // 100 samples per second.
     ps2controller_receiveByteFromDevice(2);
 
     debug(LOGLEVEL_DEBUG, "PS/2 Mouse: Enabling data sending...");
-    ps2controller_sendByteToDevice(2, 0xF4); // set rate.
+    ps2controller_sendByteToDevice(2, 0xF4);    // set rate.
     ps2controller_receiveByteFromDevice(2);
 
     return deviceTree_createDevice("Generic PS/2 Mouse", DEVICETREE_TYPE_OTHER, NULL);

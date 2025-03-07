@@ -33,6 +33,7 @@ deviceTree_Entry* qemuVga_initialise(pciBus_Entry* pciDetails)
     PageDirectory* pg = memoryManager_getCurrentPageDirectory();
 
     uint32 bar0 = pci_getBar(bus, slot, function, 0) & 0xFFFFFFF0;
+    uint32 bar0size = pci_getBarSize(bus, slot, function, 0);
     // TODO: check the size of the memory BAR and allocate more pages if needed.
     uint32 bar2 = pci_getBar(bus, slot, function, 2) & 0xFFFFFFFC;
     memoryManager_mapPhysicalMemoryPage(pg, (void*)0xFFC00000, (void*)bar0, 1024);

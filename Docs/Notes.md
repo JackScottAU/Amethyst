@@ -17,7 +17,10 @@
 - Make device tree support resources.
 - Sort out the mess that is the PCI IDE driver (turn things into functions and DEFINEs)
 - Split the IDE driver into three parts: PCI detection for two channels, then management of a channel and it's two drives, and then disk block access
-- Make the text console work with colours when scrolling
+- Make the text console work with colours when scrolling (and faster)
+- Fix detection in ATA driver.
+- Rename QEMU VGA driver to something more generic and make the files nicer.
+- Refactor "vga_framebuffer" into canvas
 
 #### Driver Priorities
 
@@ -139,14 +142,6 @@ Argb32 (rgb24 with top 8 bits ones)
 Then argb64 and rgb30 are also useful
 
 And rgb15 with top bit for opacity (if zero, pixel is transparent)
-
-## Booting - x86_32
-
-Booting is always done via multiboot. This gives us several options:
-
-- Using GRUB on hard disk.
-- Using GRUB on CD-ROM.
-- Loading via iPXE either using CD-ROM or Network card ROM image.
 
 ## Video Cards
 
@@ -271,55 +266,6 @@ Config object model (like browser's document object model).
 Base config set in header files or something, baked in to kernel.
 Config loaded from disk in xml format (hard to parse, but fully capable of s-expressions so can handle any arbitrary config) into COM.
 Also can be passed in on multiboot command line.
-
-## Platforms
-
-Want to support both x86 and x64, arm in various forms, plus risc-v once it gets cheap, plus powerpc and 68k for old school kool.
-
-These all have a corresponding #define, and when that define is set via makefile it compiles the kernel for that architecture.
-
-All archs are a seven-letter code. Last two is bits.
-
-| Priority | Platform Code | Description                                                                               |
-| -------- | ------------- | ----------------------------------------------------------------------------------------- |
-| Tier 1   | `Intel32`     | 32-bit x86 BIOS PC (PC-97)                                                                |
-| Tier 1   | `Intel64`     | 64-bit x86 UEFI PC                                                                        |
-| Tier 1   | `ArmPi32`     | 1st and 2nd Generation Raspberry Pi Boards                                                |
-| Tier 2   | `ArmPi64`     | 3rd and Subsequent Generation Raspberry Pi Boards                                         |
-| Tier 2   | `ArmPc64`     | Arm PC Base System Architecture 1.0                                                       |
-| Tier 2   | `Power64`     | 5th Generation PowerPC-based Macintoshes                                                  |
-| Tier 3   | `Power32`     | 1st to 4th Generation PowerPC-based Macintoshes                                           |
-| Tier 3   | `Motor32`     | Motorola 68000-based Macintoshes                                                          |
-
-Other Potential Platforms:
-
-- Loong64
-- Riscv64
-- Itanium?!
-- Sparc32
-- Sparc64
-- PDP-11? (16-bit)
-- IBM Series/1 (16-bit)
-- IBM System/36 (16-bit)
-- VAX
-- MIPS stuff
-
-### Tier One Platforms
-
-These platforms are chosen for being as different as possible from each other to ensure our multi-platform kernel
-core is well built, whilst still being (somewhat) popular platforms for end users.
-
-- Intel32 - bios pc (grub via mbr or gpt booting) - 586 as that supports CPUID and multi-processor and FPU. 686 adds PAE. 686 *might* add MMX, but not necessarily. 486 doesn't have CPUID.
-- Intel64 - uefi pc (noting a gap in systems that are 64-bit but not uefi, this is a hole we can afford to lose, it's about 5 years from 2010 to 2015)
-- ArmPi32 - first gen raspberry pi (works on all later Pis)
-
-### Tier Two Platforms
-
-Popular platforms that are not in the tier-one list.
-
-- ArmPc64 - arm base system standard
-- Power64 - g5 macintosh
-- ArmPi64 - third/fourth/fifth gen raspberry pi, probably has PCI bus.
 
 ## Makefile Targets
 

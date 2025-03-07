@@ -36,6 +36,9 @@ void ps2controller_waitForWrite(void);
 uint8 ps2controller_getConfigurationByte(void);
 void ps2controller_setConfigurationByte(uint8 configByte);
 
+void ps2controller_enableInterrupts(void);
+void ps2controller_disableInterrupts(void);
+
 /**
  * 
  */

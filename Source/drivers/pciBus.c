@@ -76,13 +76,12 @@ deviceTree_Entry* pci_addDevicesToTree(void) {
 
     pci_currentEntry = pci_currentEntry->next;
     while (pci_currentEntry->next != 0x0) {
-
-        if(pci_currentEntry->vendorID == 0x1234 && pci_currentEntry->deviceID == 0x1111) {
+        if (pci_currentEntry->vendorID == 0x1234 && pci_currentEntry->deviceID == 0x1111) {
             deviceTree_Entry* device = qemuVga_initialise(pci_currentEntry);
 
             deviceTree_addChild(root, device);
-        } else if(pci_currentEntry->classID == 1 && pci_currentEntry->subClassID == 1) {
-            // TODO: make this whole device detection thing better.
+        } else if (pci_currentEntry->classID == 1 && pci_currentEntry->subClassID == 1) {
+            // TODO(JackScottAU): make this whole device detection thing better.
             deviceTree_Entry* device = piixide_initialise(pci_currentEntry);
 
             deviceTree_addChild(root, device);
@@ -91,26 +90,25 @@ deviceTree_Entry* pci_addDevicesToTree(void) {
 
             deviceTree_Entry* device = deviceTree_createDevice(name, DEVICETREE_TYPE_PCI, pci_currentEntry);
 
-            
             device->Resources = memoryManager_allocate(sizeof(DeviceResource) * 7); // brute force maximum for a pci device
 
             int i = 0;
 
             uint32 irq = pci_readConfigurationRegister(pci_currentEntry->bus, pci_currentEntry->slot, pci_currentEntry->function, 0x3C) & 0x000000FF;
-            if(irq > 0) {
+            if (irq > 0) {
                 device->Resources[i].Type = DEVICE_RESOURCETYPE_IRQ;
                 device->Resources[i].Flags = irq;
 
                 i++;
             }
 
-            for(int bar = 0; bar < 6; bar++) {
+            for (int bar = 0; bar < 6; bar++) {
                 uint32 val = pci_getBar(pci_currentEntry->bus, pci_currentEntry->slot, pci_currentEntry->function, bar);
 
-                if(val > 0) {
+                if (val > 0) {
                     // we have a device.
                     device->Resources[i].Type = DEVICE_RESOURCETYPE_MEM;
-                    if(val & 0x01) {
+                    if (val & 0x01) {
                         device->Resources[i].Type = DEVICE_RESOURCETYPE_IO;
                         val--;
                     }
@@ -122,12 +120,10 @@ deviceTree_Entry* pci_addDevicesToTree(void) {
                 }
             }
 
-            
             device->ResourceCount = i;
 
             deviceTree_addChild(root, device);
         }
-        
 
         pci_currentEntry = pci_currentEntry->next;
     }
@@ -136,7 +132,7 @@ deviceTree_Entry* pci_addDevicesToTree(void) {
 }
 
 void pciBus_printDeviceInformation(void (*putChar)(char), pciBus_Entry* device, uint32 depth) {
-    for (int i = 0; i < depth; i++) {
+    for (uint32 i = 0; i < depth; i++) {
                 stream_printf(putChar, " |  ");
             }
     stream_printf(putChar, "PCI Details:    Location: %d:%d:%d | ", device->bus, device->slot, device->function);

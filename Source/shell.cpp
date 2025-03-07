@@ -1,3 +1,9 @@
+/**
+ *  Amethyst Operating System - Shell.
+ *  Copyright 2024 Jack Scott <jack@jackscott.id.au>.
+ *  Released under the terms of the ISC license.
+*/
+
 #include <shell.hpp>
 #include <cpuid.hpp>
 #include <stream.h>
@@ -16,8 +22,7 @@ Shell::Shell(StandardIO* stdio) {
     this->commands = new LinkedList<ShellCommand*>();
 }
 
-void Shell::RegisterCommand(char* commandString, uint32 (* callback)(StandardIO*))
-{
+void Shell::RegisterCommand(char* commandString, uint32 (* callback)(StandardIO*)) {
     ShellCommand* command = new ShellCommand();
     command->callback = callback;
     command->command = commandString;
@@ -39,7 +44,7 @@ void Shell::ProcessLine() {
     char** strings = string_split(input, ' ');
 
     int i = 0;
-    while(strings[i] != NULL) {
+    while (strings[i] != NULL) {
      //   stdio->Print("string: %s\n", strings[i]);
         i++;
     }
@@ -48,7 +53,7 @@ void Shell::ProcessLine() {
 
     debug(LOGLEVEL_DEBUG, "addr of line: %h", line);
 
-    if(*line == NULL) {
+    if (*line == NULL) {
         debug(LOGLEVEL_WARNING, "No input to shell.");
         return;
     }
@@ -58,7 +63,7 @@ void Shell::ProcessLine() {
     if (string_compare(line, "get-devicetree") == 0) {
         bool verbose = false;
 
-        if(strings[1] != NULL && string_compare(strings[1], "-v") == 0) {
+        if (strings[1] != NULL && string_compare(strings[1], "-v") == 0) {
             verbose = true;
         }
 
@@ -99,7 +104,6 @@ void Shell::ProcessLine() {
 
 
         for (int i = 0; i < entries; i++) {
-
             uint32 base = (gdt_table[i].base_high << 24) + gdt_table[i].base_low;
             uint32 limit = (gdt_table[i].limit_high << 16) + gdt_table[i].limit_low;
 
@@ -131,7 +135,6 @@ void Shell::ProcessLine() {
             } else {
                 stdio->Print("TSS Segment\n");
             }
-            
 
             stdio->Print("\t\tBase:  %H\t", base);
             stdio->Print("Limit: %H\n\n", limit);
@@ -157,16 +160,13 @@ void Shell::ProcessLine() {
         if (string_compare(line, command->command) == 0) {
             uint32 result = command->callback(stdio);
 
-            if(result != 0) {
+            if (result != 0) {
                 stdio->Print("Command result: %d\n", result);
             }
-            
+
             return;
         }
-    } while(commands->Next());
-
-    // SPLIT TEST:
-    
+    } while (commands->Next());
 
     // None of the built-in commands match the input.
     stdio->Print("Unknown command.\n");

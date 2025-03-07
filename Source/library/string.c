@@ -36,25 +36,26 @@ void string_toLower(char* string) {
 }
 
 char** string_split(char* string, char splitter) {
-    char** strings = memoryManager_allocate(sizeof(char*) * 128); // to store pointers. TODO: count splitter occurences beforehand so we allocate the right amount.
+    // to store pointers. TODO: count splitter occurences beforehand so we allocate the right amount.
+    char** strings = memoryManager_allocate(sizeof(char*) * 128);
 
     int i = 0;
     char* stringStart = string;
 
-    while(*string != NULL) {
+    while (*string != '\0') {
       //  debug(LOGLEVEL_DEBUG, "Remaining text: %s", string);
 
-        if(*string == splitter || *string == '\0') {
+        if (*string == splitter || *string == '\0') {
         //    debug(LOGLEVEL_DEBUG, "Match");
             strings[i] = stringStart;
             *string = '\0';
             stringStart = string + 1;
             i++;
-
         }
 
         string++;
     }
+
     strings[i] = stringStart;
     strings[i + 1] = NULL;
 

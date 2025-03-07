@@ -12,7 +12,7 @@ extern "C" {
 #endif
 
 
-void* memset(void *b, int c, int len);
+void* memset(void* b, int c, int len);
 void memzero(void* b, int len) ;
 
 #ifdef __cplusplus

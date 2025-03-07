@@ -27,7 +27,7 @@ thread_control_block* new_task(void (* callback)(), thread_control_block* curren
     stack[1020] = 0; // EDI;
     stack[1019] = (uint32)(stack + 1023); // EBP
 
-    tcb->kernel_stack_top = (uint32)(stack + 1019);
+    tcb->kernel_stack_top = (void*)(stack + 1019);
     tcb->cr3 = currentTask->cr3;
 
     return tcb;

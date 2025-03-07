@@ -17,7 +17,7 @@ memoryManager_freeMemoryNode* memoryManager_firstFreeNode = (memoryManager_freeM
 PageDirectory* memoryManager_getCurrentPageDirectory() {
     PageDirectory* value;
 
-    __asm__ __volatile__ ( "mov %%cr3, %0" : "=r"(value) );
+    __asm__ __volatile__( "mov %%cr3, %0" : "=r"(value) );
     return value;
 }
 
@@ -32,68 +32,61 @@ void memoryManager_mapPhysicalMemoryPage(PageDirectory* directory, void* startLo
 
     // IMPROVEMENTS:
 
-    for(int i = 0; i < count; i++) {
+    for (uint32 i = 0; i < count; i++) {
         
 
-        uint32 pageDirectoryIndex = (uint32)startLogicalAddress >> 22;
-        uint32 pageTableIndex = ((uint32)startLogicalAddress >> 12) & 0x3FF;
+        uint32 pageDirectoryIndex = ((uint32)startLogicalAddress + (i * 0x1000)) >> 22;
+        uint32 pageTableIndex = (((uint32)startLogicalAddress + (i * 0x1000)) >> 12) & 0x3FF;
         
         debug(LOGLEVEL_TRACE, "Indexes: %h, %h", pageDirectoryIndex, pageTableIndex);
 
         pageDirectoryEntry* directoryEntry = &((pageDirectoryEntry*)((uint32)directory + 0xC0000000))[pageDirectoryIndex];
 
-        if(!directoryEntry->p) {
+        if (!directoryEntry->p) {
             // page table doesn't exist, we need to create one.
             debug(LOGLEVEL_TRACE, "Creating new page table.");
 
-            uint32 pageAddress = physicalMemory_allocate();
+            void* pageAddress = physicalMemory_allocate();
 
-            // TODO: fix the problem where our page table might be put in virtual memory we don't have access to.
+            // TODO(JackScottAU): fix the problem where our page table might be
+            // put in virtual memory we don't have access to.
 
             directoryEntry->rw = true;
             directoryEntry->p = true;
-            directoryEntry->address = pageAddress >> 12; // hard code the page table address for now.
+            directoryEntry->address = (uint32)pageAddress >> 12;    // hard code the page table address for now.
             debug(LOGLEVEL_TRACE, "Created new page table.");
         }
 
         // we now have a valid page table. get the address of the entries.
-        pageTableEntry* tableEntries = ((uint32)(directoryEntry->address << 12) + 0xC0000000);
+        pageTableEntry* tableEntries = (pageTableEntry*)((uint32)(directoryEntry->address << 12) + 0xC0000000);
         debug(LOGLEVEL_TRACE, "Page table start: %h", tableEntries);
 
-      //  pageTableEntry tableEntry = tableEntries[pageTableIndex];
-        
         debug(LOGLEVEL_TRACE, "Page table entry: %h", tableEntries[pageTableIndex]);
 
-        tableEntries[pageTableIndex].address = (uint32)physicalMemory >> 12;
+        tableEntries[pageTableIndex].address = ((uint32)physicalMemory + (i * 0x1000)) >> 12;
         tableEntries[pageTableIndex].p = true;
         tableEntries[pageTableIndex].rw = true;
-
-        // get ready to go again.
-        physicalMemory += 0x1000;
-        startLogicalAddress += 0x1000;
     }
 }
 
-void memoryManager_printMemoryMap(PageDirectory* directory)
-{
-    pageDirectoryEntry* directoryEntries = ((uint32)directory + 0xC0000000);
+void memoryManager_printMemoryMap(PageDirectory* directory) {
+    pageDirectoryEntry* directoryEntries = (pageDirectoryEntry*)((uint32)directory + 0xC0000000);
 
         debug(LOGLEVEL_TRACE, "directory: %h", directoryEntries);
 
-    for(uint32 i = 0; i < 1024; i++) {
-
-        if(directoryEntries[i].p == 0) {
+    for (uint32 i = 0; i < 1024; i++) {
+        if (directoryEntries[i].p == 0) {
             continue;
         }
 
         debug(LOGLEVEL_TRACE, "directory[%d]: %h", i, directoryEntries[i].address);
 
-        pageTableEntry* tableEntries = ((uint32)(directoryEntries[i].address << 12) + 0xC0000000);
+        pageTableEntry* tableEntries = (pageTableEntry*)((uint32)(directoryEntries[i].address << 12) + 0xC0000000);
 
         debug(LOGLEVEL_TRACE, "table: %h", tableEntries);
 
-        for(uint32 j = 0; j < 1024; j++) {
-            if(tableEntries[j].p == 0) {
+        for (uint32 j = 0; j < 1024; j++) {
+            if (tableEntries[j].p == 0) {
                 continue;
             }
 
@@ -213,8 +206,8 @@ void memoryManager_init(struct multiboot_memoryMapNode* memNode, uint32 length, 
     memoryManager_firstFreeNode->next = (memoryManager_freeMemoryNode*)END_OF_MEMORY_LIST;
 
     // IMPORTANT: free the stuff
-    memset(0xC0060000, 0xFF, 0x1FFFF); // Set all pages in the physical bitmap as free.
-    memset(0xC0060000, 0x00, 1023 / 8); // set first 1024 bits to 1 (first page table filled in entry.S).
+    memset((void*)0xC0060000, 0xFF, 0x1FFFF);   // Set all pages in the physical bitmap as free.
+    memset((void*)0xC0060000, 0x00, 1023 / 8);  // set first 1024 bits to 1 (first page table filled in entry.S).
 
     /*memNode = (uint32) memNode + 0xC0000000;
 

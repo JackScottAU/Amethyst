@@ -22,24 +22,22 @@ A 'device' is a node in a tree that can either implement a class of device (vide
 
 ## Driver Ideas
 
--   Don't bother implementing ISA DMA - just use port I/O for everything non-PCI. Since we are targeting 686 and above, we can assume that most devices that need fastness will be on PCI.
+- Don't bother implementing ISA DMA - just use port I/O for everything non-PCI. Since we are targeting 686 and above, we can assume that most devices that need fastness will be on PCI.
 
 ## Resources
 
 Every item in the tree can have resources attached to it. Resources are of type I/O, memory, or IRQ.
 
-
-
 ## Bus Devices & Drivers
 
 ### Platform Devices
- 
+
 Each platform has one root platform device, such as "x86-64 PC", and that root device is a bus driver which finds and initialises other bus and device drivers. That way SoC can be accomodated. On x86 it would do something like try to initialise ACPI, and if that fails, try to manually init the PCI bus.
 
 The platform driver lives in the architecture-specific folder. All other devices live in the devices folder. A platform driver is simply a bus driver.
 
 ## Node Devices & Drivers
- 
+
 ## Filter Devices
 
 For example, turns scancodes into ascii keys.

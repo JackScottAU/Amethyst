@@ -75,8 +75,8 @@ void deviceTree_printInternal(void (*putChar)(char), deviceTree_Entry* device, u
         }
 
         // then interate through attached i/o, mem, irq resources, etc
-        for(int i = 0; i < device->ResourceCount; i++) {
-            for (int i = 0; i < depth; i++) {
+        for(uint32 i = 0; i < device->ResourceCount; i++) {
+            for (uint8 j = 0; j < depth; j++) {
                 stream_printf(putChar, " |  ");
             }
 
