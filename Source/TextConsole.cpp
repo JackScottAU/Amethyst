@@ -20,7 +20,7 @@ TextConsole::TextConsole(Canvas* canvas, ScreenFont* font, uint32 x, uint32 y, u
     this->characterBuffer = (char**)memoryManager_allocate(sizeof(char*) * rows);
     for(int i = 0; i < rows; i++){
         this->characterBuffer[i] = (char*)memoryManager_allocate(sizeof(char) * columns);
-        memset(this->characterBuffer[i], '    ', columns);
+        memset(this->characterBuffer[i], ' ', columns);
     }
 
     Redraw();

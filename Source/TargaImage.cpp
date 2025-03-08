@@ -104,8 +104,8 @@ this->pixels = &data[2];
 
 void TargaImage::Redraw() {
     // draw.
-    for(int i = 0; i < h; i++) {
-        for(int j = 0; j < w; j++) {
+    for(uint32 i = 0; i < h; i++) {
+        for(uint32 j = 0; j < w; j++) {
             uint32 pixel = pixels[(j * h + i)];
 
             vga_putPixel(canvas, x + j, y + i, pixel);
