@@ -20,6 +20,8 @@
 #define ATA_DRIVE_SLAVE             1 << 4
 
 void piixide_probeChannel(deviceTree_Entry* channelDevice);
+void piixide_softwareReset(deviceTree_Entry* channelDevice);
+void piixide_selectDrive(deviceTree_Entry* channelDevice, uint8 driveNumber);
 
 deviceTree_Entry* piixide_decodeDriveSignature(uint32 cl, uint32 ch) {
     if (cl==0x14 && ch==0xEB) {

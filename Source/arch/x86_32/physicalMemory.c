@@ -4,7 +4,7 @@
 /**
  * The virtual (so we can access it) address of the physical memory allocation bitmap.
  */
-#define PHYSICALMEMORY_BITMAPADDRESS    0xC0060000
+#define PHYSICALMEMORY_BITMAPADDRESS    (void*)0xC0060000
 
 /**
  * The size of the physical memory allocation bitmap, in bytes.
@@ -46,7 +46,7 @@ void physicalMemory_initialise(struct multiboot_info* multibootData) {
 
             // TODO(JackScottAU): Make this something other than the least efficient way possible of doing this.
             for(int j = 0; j < pages; j++) {
-                physicalMemory_free(mem.addr);
+                physicalMemory_free((void*)mem.addr);
             }
         }
     }
@@ -58,7 +58,7 @@ void physicalMemory_initialise(struct multiboot_info* multibootData) {
 
     // TODO(JackScottAU): Make this something other than the least efficient way possible of doing this.
     for(int j = 0; j < mpages; j++) {
-        physicalMemory_markAllocated(j << 12);
+        physicalMemory_markAllocated((void*)(j << 12));
     }
 }
 
@@ -78,7 +78,7 @@ void* physicalMemory_allocate() {
                     uint8 mask = 0x01 << b;
                     bitmap[i] = bitmap[i] & !mask;
 
-                    return ((i * 8) + b) << 12;
+                    return (void*)(((i * 8) + b) << 12);
                 }
             }
 
@@ -86,7 +86,7 @@ void* physicalMemory_allocate() {
         }
     }
 
-    return 0xFFFFFFFF; // no memory found.
+    return (void*)0xFFFFFFFF; // no memory found.
 }
 
 // not sure this is actually needed?

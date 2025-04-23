@@ -66,6 +66,7 @@ The following packages are needed:
 * xorriso
 * cpplint
 * qemu-system-x86
+* nasm
 
 You will also need cross-compilers for the supported platforms:
 
