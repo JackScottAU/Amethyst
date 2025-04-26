@@ -240,7 +240,7 @@ uint32 memoryManager_printPhysicalMemoryMap(StandardIO* stdio) {
 
         uint64 end = mem.addr + mem.len - 1;
 
-        char* type;
+        const char* type;
 
         switch(mem.type) {
             case 1:

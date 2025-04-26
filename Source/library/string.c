@@ -62,7 +62,7 @@ char** string_split(char* string, char splitter) {
     return strings;
 }
 
-uint32 string_length(char* string) {
+uint32 string_length(const char* string) {
     uint32 len = 0;
 
     while (*string) {

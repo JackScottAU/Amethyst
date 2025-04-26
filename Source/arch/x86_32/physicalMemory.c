@@ -37,7 +37,7 @@ void physicalMemory_initialise(struct multiboot_info* multibootData) {
     for(uint32 i = 0; i < (multibootData->memoryMapLength / 20) - 1; i++) {
         struct multiboot_memoryMapNode mem = (multibootData->memoryMapAddress[i]);
 
-        uint64 end = mem.addr + mem.len - 1;
+        // uint64 end = mem.addr + mem.len - 1;
 
         if(mem.type == 1) {
             // mark free.
@@ -45,7 +45,7 @@ void physicalMemory_initialise(struct multiboot_info* multibootData) {
             uint32 pages = mem.len >> 12;
 
             // TODO(JackScottAU): Make this something other than the least efficient way possible of doing this.
-            for(int j = 0; j < pages; j++) {
+            for(uint32 j = 0; j < pages; j++) {
                 physicalMemory_free((void*)mem.addr);
             }
         }
@@ -57,7 +57,7 @@ void physicalMemory_initialise(struct multiboot_info* multibootData) {
     uint32 mpages = end >> 12;
 
     // TODO(JackScottAU): Make this something other than the least efficient way possible of doing this.
-    for(int j = 0; j < mpages; j++) {
+    for(uint32 j = 0; j < mpages; j++) {
         physicalMemory_markAllocated((void*)(j << 12));
     }
 }

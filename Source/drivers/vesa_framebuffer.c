@@ -40,7 +40,7 @@ void vga_drawChar(Canvas* canvas, ScreenFont* font, uint16 x, uint16 y, uint32 c
     }
 }
 
-void vga_drawWord(Canvas* canvas, ScreenFont* font, uint16 x, uint16 y, uint32 colour, char* a) {
+void vga_drawWord(Canvas* canvas, ScreenFont* font, uint16 x, uint16 y, uint32 colour, const char* a) {
     int i = 0;
 
     while (a[i]) {

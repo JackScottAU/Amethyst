@@ -22,10 +22,10 @@ Shell::Shell(StandardIO* stdio) {
     this->commands = new LinkedList<ShellCommand*>();
 }
 
-void Shell::RegisterCommand(char* commandString, uint32 (* callback)(StandardIO*)) {
+void Shell::RegisterCommand(const char* commandString, uint32 (* callback)(StandardIO*)) {
     ShellCommand* command = new ShellCommand();
     command->callback = callback;
-    command->command = commandString;
+    command->command = (char*) commandString;
 
     commands->Add(command);
 }

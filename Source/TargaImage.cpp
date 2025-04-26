@@ -13,9 +13,9 @@ TargaImage::TargaImage(uint8* ptr, uint32 length, uint32 locx, uint32 locy, Canv
     this->y = locy;
 
     uint32* data;
-    int i, j, k, x, y;
-    int o = (ptr[11] << 8) + ptr[10];
-    int m = ((ptr[1]? (ptr[7]>>3)*ptr[5] : 0) + 18);
+    uint32 i, j, k, x, y;
+    uint32 o = (ptr[11] << 8) + ptr[10];
+    uint32 m = ((ptr[1]? (ptr[7]>>3)*ptr[5] : 0) + 18);
 
     this->w = (ptr[13] << 8) + ptr[12];
     this->h = (ptr[15] << 8) + ptr[14];

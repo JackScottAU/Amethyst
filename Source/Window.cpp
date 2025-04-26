@@ -3,7 +3,7 @@
 #include "drivers/vesa_framebuffer.h"
 #include <string.h>
 
-Window::Window(ScreenFont* font, uint32 locx, uint32 locy, uint32 w, uint32 h, Canvas* canvas, char* text)
+Window::Window(ScreenFont* font, uint32 locx, uint32 locy, uint32 w, uint32 h, Canvas* canvas, const char* text)
 {
     this->children = new LinkedList<Widget*>();
     this->canvas = canvas;

@@ -8,7 +8,7 @@
  */
 class Window : public Widget {
   public:
-    Window(ScreenFont* font, uint32 x, uint32 y, uint32 w, uint32 h, Canvas* canvas, char* name);
+    Window(ScreenFont* font, uint32 x, uint32 y, uint32 w, uint32 h, Canvas* canvas, const char* name);
 
     void Redraw();
     void HandleUIEvent(void* eventData);
@@ -19,5 +19,5 @@ class Window : public Widget {
 
   private:
     ScreenFont* font;
-    char* text;
+    const char* text;
 };

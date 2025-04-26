@@ -29,7 +29,7 @@ class Shell {
     /// @brief Main shell loop.
     void Main();
 
-    void RegisterCommand(char* commandString, uint32 (* callback)(StandardIO*));
+    void RegisterCommand(const char* commandString, uint32 (* callback)(StandardIO*));
  private:
     void ProcessLine();
     StandardIO* stdio;

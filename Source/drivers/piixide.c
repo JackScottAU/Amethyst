@@ -22,6 +22,7 @@
 void piixide_probeChannel(deviceTree_Entry* channelDevice);
 void piixide_softwareReset(deviceTree_Entry* channelDevice);
 void piixide_selectDrive(deviceTree_Entry* channelDevice, uint8 driveNumber);
+deviceTree_Entry* piixide_decodeDriveSignature(uint32 cl, uint32 ch);
 
 deviceTree_Entry* piixide_decodeDriveSignature(uint32 cl, uint32 ch) {
     if (cl==0x14 && ch==0xEB) {
@@ -124,7 +125,6 @@ deviceTree_Entry* piixide_initialise(pciBus_Entry* pciDetails) {
 
 void piixide_probeChannel(deviceTree_Entry* channelDevice) {
     uint16 ioBase = channelDevice->Resources[0].StartAddress;
-    uint16 controlBase = channelDevice->Resources[1].StartAddress;
 
     piixide_softwareReset(channelDevice);
 
