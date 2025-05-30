@@ -4,12 +4,10 @@
  *  Released under the terms of the ISC license.
 */
 
-#include <keyboard.h>
+#include <Drivers/keyboard.h>
 #include <interrupts.h>
 #include <memoryManager.h>
 #include <portIO.h>
-#include <vgaConsole.h>
-#include <serial.h>
 #include <Structures/fifobuffer.h>
 #include <deviceTree.h>
 #include <stream.h>

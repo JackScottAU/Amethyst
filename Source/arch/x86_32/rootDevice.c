@@ -7,10 +7,9 @@
 #include <deviceTree.h>
 #include <memoryManager.h>
 #include <stream.h>
-#include <serial.h>
+#include <Drivers/serial.h>
 #include <Drivers/pciBus.h>
-#include <keyboard.h>
-#include <ps2controller.h>
+#include <Drivers/ps2controller.h>
 
 deviceTree_Entry* deviceTree_rootEntry = NULL;
 

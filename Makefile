@@ -24,7 +24,7 @@ kernel-x86_32: Build/kernel32
 image-x86_32: cd-image
 
 lint:
-	@cpplint --quiet --recursive --linelength=120 --filter=-readability/casting,-build/include_order --root=Source Source
+	@cpplint --quiet --recursive --linelength=160 --filter=-readability/casting,-build/include_order --root=Source Source
 
 qemu-x86_32: image-x86_32 cd-image
 	@qemu-system-i386 \
@@ -33,7 +33,6 @@ qemu-x86_32: image-x86_32 cd-image
 		-cdrom Amethyst.iso \
 		-vga std \
 		-serial stdio \
-		-net nic,model=rtl8139 \
 		-device pvpanic
 
 cd-image: Build/kernel32 resources

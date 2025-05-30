@@ -6,7 +6,6 @@
 
 #include <Types.h>
 #include <portIO.h>
-#include <vgaConsole.h>
 #include <Drivers/pciBus.h>
 #include <Drivers/piixide.h>
 #include <stream.h>
@@ -14,7 +13,7 @@
 #include <deviceTree.h>
 #include "pci/deviceNames.h"
 #include <debug.h>
-#include <qemuVga.h>
+#include <Drivers/qemuVga.h>
 
 
 #define PCIBUS_IOPORT_REQUEST   0x0CF8
@@ -90,7 +89,7 @@ deviceTree_Entry* pci_addDevicesToTree(void) {
 
             deviceTree_Entry* device = deviceTree_createDevice(name, DEVICETREE_TYPE_PCI, pci_currentEntry);
 
-            device->Resources = memoryManager_allocate(sizeof(DeviceResource) * 7); // brute force maximum for a pci device
+            device->Resources = memoryManager_allocate(sizeof(DeviceResource) * 7);     // brute force maximum for a pci device
 
             int i = 0;
 
@@ -136,7 +135,7 @@ void pciBus_printDeviceInformation(void (*putChar)(char), pciBus_Entry* device, 
                 stream_printf(putChar, " |  ");
             }
     stream_printf(putChar, "PCI Details:    Location: %d:%d:%d | ", device->bus, device->slot, device->function);
-    
+
     stream_printf(putChar, "Vendor ID: %h | ", device->vendorID);
     stream_printf(putChar, "Model ID: %h | ", device->deviceID);
 

@@ -5,7 +5,6 @@
 */
 
 #include <string.h>
-#include <serial.h>
 #include <stream.h>
 #include <memoryManager.h>
 #include <debug.h>

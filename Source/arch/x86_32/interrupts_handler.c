@@ -10,7 +10,7 @@
 #include <interrupts.h>
 #include <memoryManager.h>
 #include <stream.h>
-#include <vgaConsole.h>
+#include <Drivers/vgaConsole.h>
 #include <thread.h>
 
 interrupts_handlerCallback* interrupts_callbacks = (interrupts_handlerCallback*) NULL;

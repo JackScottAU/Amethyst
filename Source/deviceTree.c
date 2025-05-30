@@ -58,24 +58,24 @@ void deviceTree_printInternal(void (*putChar)(char), deviceTree_Entry* device, u
         stream_printf(putChar, " +- ");
     }
 
-    // TODO: print this in bold.
+    // TODO(JackScottAU): print this in bold.
     stream_printf(putChar, "\033[32m");
     stream_printf(putChar, "%s\n", device->name);
     stream_printf(putChar, "\033[0m");
 
-    // TODO: print more info if detailedInfo is set (need to put resources and PCI class etc in here).
-    if(detailedInfo) {
+    // TODO(JackScottAU): print more info if detailedInfo is set (need to put resources and PCI class etc in here).
+    if (detailedInfo) {
         // todo
 
         // if(type = pci) { pci_printMoreInfo(entry, depth) } to show class/subclass/if/revision and Bus/Slot/Function
         // to make this work need to put bus/slot/function into devicetree entry.
 
-        if(device->type == DEVICETREE_TYPE_PCI) {
+        if (device->type == DEVICETREE_TYPE_PCI) {
             pciBus_printDeviceInformation(putChar, device->data, depth);
         }
 
         // then interate through attached i/o, mem, irq resources, etc
-        for(uint32 i = 0; i < device->ResourceCount; i++) {
+        for (uint32 i = 0; i < device->ResourceCount; i++) {
             for (uint8 j = 0; j < depth; j++) {
                 stream_printf(putChar, " |  ");
             }
@@ -84,8 +84,7 @@ void deviceTree_printInternal(void (*putChar)(char), deviceTree_Entry* device, u
 
             uint32 end = resource.StartAddress + resource.Length - 1;
 
-            switch(resource.Type)
-            {
+            switch (resource.Type) {
                 case DEVICE_RESOURCETYPE_MEM:
                     stream_printf(putChar, "Resource (MEM): %h -> %h (%h)\n", resource.StartAddress, end, resource.Length);
                     break;

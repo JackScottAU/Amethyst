@@ -12,21 +12,23 @@
 #include <multiboot.h>
 #include <portIO.h>
 #include <Types.h>
-#include <vgaConsole.h>
-#include <Drivers/pciBus.h>
-#include <keyboard.h>
-#include <serial.h>
 #include <stream.h>
 #include <string.h>
 #include <deviceTree.h>
-#include <ps2controller.h>
 #include <debug.h>
 #include <amethyst.h>
-#include <mouse.h>
 #include <thread.h>
 #include <Graphics/canvas.h>
-#include "drivers/vesa_framebuffer.h"
-#include <qemuVga.h>
+
+#include <Drivers/qemuVga.h>
+#include <Drivers/vgaConsole.h>
+
+#include <Drivers/serial.h>
+#include <Drivers/ps2controller.h>
+#include <Drivers/pciBus.h>
+#include <Drivers/keyboard.h>
+#include <Drivers/mouse.h>
+
 #include <Graphics/TextConsole.hpp>
 #include <Graphics/TextLabel.hpp>
 #include <Graphics/TargaImage.hpp>
@@ -167,14 +169,14 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 
     PageDirectory* pg = memoryManager_getCurrentPageDirectory();
 
-    memoryManager_mapPhysicalMemoryPage(pg, (void*)0xC0400000, (void*)0x00400000, 1024); // we now have another 4 megs to play with!
+    memoryManager_mapPhysicalMemoryPage(pg, (void*)0xC0400000, (void*)0x00400000, 1024);    // we now have another 4 megs to play with!
 
     deviceTree_build();
-    
+
     // We now have a QEMU display adapter somewhere in the device tree, and it knows where it is, so we can use it.
     qemuVga_setMode(1024, 768);
     Canvas* canvas = qemuVga_getCanvas();
-    
+
     multiboot_moduleNode* modules = multibootData->modsAddr;
 
     ScreenFont* font = (ScreenFont*)memoryManager_allocate(sizeof(ScreenFont));
@@ -198,9 +200,9 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 
   //  kernel_printBanner(textBoxPutChar);
 
-    for(int i = 0; i < 1000; i++) {
+    for (int i = 0; i < 1000; i++) {
         image->SetPosition(i, 100);
-   //     image->Redraw();
+    //  image->Redraw();
     }
 
   //  uint32 pageaddress = memoryManager_getPhysicalAddressOfFreePhysicalPage();
@@ -211,12 +213,12 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 
     // Start shells in new threads.
     thread_control_block* task2 = new_task(startShell, task1);
- //   thread_control_block* task3 = new_task(startSerialShell, task1);
+//  thread_control_block* task3 = new_task(startSerialShell, task1);
 
     // Because our scheduler is very stupid, we do this.
     task1->nextThread = task2;
     task2->nextThread = task1;
-//    task3->nextThread = task1;
+//  task3->nextThread = task1;
 
     thread_startScheduler();
 
@@ -225,7 +227,7 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
     interrupts_enableInterrupts();
 
     // The initial startup thread now becomes the system idle task for this CPU.
-    while(1) {
+    while (1) {
         debug(LOGLEVEL_TRACE, "System idle task running.");
 
     //    debug(LOGLEVEL_DEBUG, "CR3: %h\n", memoryManager_getCurrentPageDirectory());
@@ -235,14 +237,14 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 }
 
 uint32 memoryManager_printPhysicalMemoryMap(StandardIO* stdio) {
-    for(uint32 i = 0; i < (multiBootDataP->memoryMapLength / 20) - 1; i++) {
+    for (uint32 i = 0; i < (multiBootDataP->memoryMapLength / 20) - 1; i++) {
         multiboot_memoryMapNode mem = (multiBootDataP->memoryMapAddress[i]);
 
         uint64 end = mem.addr + mem.len - 1;
 
         const char* type;
 
-        switch(mem.type) {
+        switch (mem.type) {
             case 1:
                 type = "Available RAM";
                 break;
@@ -264,12 +266,7 @@ uint32 memoryManager_printPhysicalMemoryMap(StandardIO* stdio) {
                 break;
         }
 
-        stdio->Print("addrl: %H\tlen: %H\tend: %H\ttype: %d (%s)\n"
-        , (uint32) mem.addr
-        , (uint32) mem.len
-        , (uint32) end
-        , mem.type, type);
-        
+        stdio->Print("addrl: %H\tlen: %H\tend: %H\ttype: %d (%s)\n", (uint32) mem.addr, (uint32) mem.len, (uint32) end, mem.type, type);
     }
 
     return 42;

@@ -13,10 +13,9 @@
 
 #include <portIO.h>
 #include <Types.h>
-#include <vgaConsole.h>
+#include <Drivers/vgaConsole.h>
 #include <stdarg.h>
 #include <stream.h>
-#include <serial.h>
 #include <memoryManager.h>
 #include <string.h>
 

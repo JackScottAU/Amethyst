@@ -4,18 +4,15 @@
  *  Released under the terms of the ISC license.
 */
 
-#include <keyboard.h>
 #include <interrupts.h>
 #include <memoryManager.h>
 #include <portIO.h>
-#include <vgaConsole.h>
-#include <serial.h>
 #include <Structures/fifobuffer.h>
 #include <deviceTree.h>
 #include <stream.h>
 #include <debug.h>
-#include <ps2controller.h>
-#include <mouse.h>
+#include <Drivers/ps2controller.h>
+#include <Drivers/mouse.h>
 
 
 void mouse_interruptHandler(uint32 eventData);

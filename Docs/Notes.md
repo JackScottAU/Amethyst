@@ -10,6 +10,7 @@
 - Keep going with page management.
 - Make the scheduler a bit smarter
 - Refactor scheduler into thread.c (arch) and scheduler.c (generic)
+- Get rid of the VGA console on the interrupt panic handler (use debug device instead?)
 
 ### Drivers
 

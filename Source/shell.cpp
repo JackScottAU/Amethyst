@@ -14,7 +14,6 @@
 #include <interrupts.h>
 #include <Drivers/pciBus.h>
 #include <GDT.h>
-#include <vgaConsole.h>
 #include <debug.h>
 
 Shell::Shell(StandardIO* stdio) {

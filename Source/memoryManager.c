@@ -17,27 +17,15 @@ memoryManager_freeMemoryNode* memoryManager_firstFreeNode = (memoryManager_freeM
 PageDirectory* memoryManager_getCurrentPageDirectory() {
     PageDirectory* value;
 
-    __asm__ __volatile__( "mov %%cr3, %0" : "=r"(value) );
+    __asm__ __volatile__("mov %%cr3, %0" : "=r"(value));
     return value;
 }
 
-
 void memoryManager_mapPhysicalMemoryPage(PageDirectory* directory, void* startLogicalAddress, void* physicalMemory, uint32 count) {
-    // TODO:
-
-    // find the relevant page directory entry.
-    // if null, set up new page table.
-    // then find relevant page table entry.
-    // then set the bits appropriately.
-
-    // IMPROVEMENTS:
-
     for (uint32 i = 0; i < count; i++) {
-        
-
         uint32 pageDirectoryIndex = ((uint32)startLogicalAddress + (i * 0x1000)) >> 22;
         uint32 pageTableIndex = (((uint32)startLogicalAddress + (i * 0x1000)) >> 12) & 0x3FF;
-        
+
         debug(LOGLEVEL_TRACE, "Indexes: %h, %h", pageDirectoryIndex, pageTableIndex);
 
         pageDirectoryEntry* directoryEntry = &((pageDirectoryEntry*)((uint32)directory + 0xC0000000))[pageDirectoryIndex];

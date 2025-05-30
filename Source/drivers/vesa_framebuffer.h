@@ -23,7 +23,7 @@ void vga_drawWord(Canvas* canvas, ScreenFont* font, uint16 x, uint16 y, uint32 c
 /**
  * Copies width*height pixels from startx,starty to endx,endy.
  */
-//void canvas_copy(Canvas* canvas, uint32 startx, uint32 starty, uint32 endx, uint32 endy, uint32 width, uint32 height);
+// void canvas_copy(Canvas* canvas, uint32 startx, uint32 starty, uint32 endx, uint32 endy, uint32 width, uint32 height);
 
 #ifdef __cplusplus
 }

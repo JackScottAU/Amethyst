@@ -7,8 +7,7 @@
 #include <interrupts.h>
 #include <memoryManager.h>
 #include <portIO.h>
-#include <vgaConsole.h>
-#include <serial.h>
+#include <Drivers/serial.h>
 #include <Structures/fifobuffer.h>
 
 #define SERIAL_CLOCKSPEED 115200

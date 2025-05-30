@@ -5,7 +5,7 @@
 */
 
 #include <Types.h>
-#include <serial.h>
+#include <Drivers/serial.h>
 #include <amethyst.h>
 #include <stdarg.h>
 #include <stream.h>

@@ -10,12 +10,12 @@
 #include <portIO.h>
 #include <memoryManager.h>
 #include <deviceTree.h>
-#include <serial.h>
-#include <ps2controller.h>
 #include <stream.h>
 #include <debug.h>
-#include <keyboard.h>
-#include <mouse.h>
+
+#include <Drivers/ps2controller.h>
+#include <Drivers/keyboard.h>
+#include <Drivers/mouse.h>
 
 #define PS2CONTROLLER_DATAPORT      0x60
 #define PS2CONTROLLER_CONTROLPORT   0x64    // reading = status register, writing = command register.
