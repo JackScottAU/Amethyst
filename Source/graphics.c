@@ -1,5 +1,5 @@
 /**
- *  Amethyst Operating System - VESA Framebuffer.
+ *  Amethyst Operating System - Random graphics functions.
  *  Copyright 2024 Jack Scott <jack@jackscott.id.au>.
  *  Released under the terms of the ISC license.
 */
