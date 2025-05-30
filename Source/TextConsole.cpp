@@ -3,6 +3,7 @@
 #include <debug.h>
 #include <memory.h>
 #include <string.h>
+#include <Graphics/screenfont.h>
 
 TextConsole::TextConsole(Canvas* canvas, ScreenFont* font, uint32 x, uint32 y, uint16 rows, uint16 columns) {
     this->x = x;
@@ -49,7 +50,7 @@ void TextConsole::PutChar(char c) {
             }
             
             this->characterBuffer[this->currentRow][this->currentColumn] = ' ';
-            vga_drawRect(canvas, x + (currentColumn * 8), y + (currentRow * 16), 8, 16, backcolour);
+            canvas_drawRect(canvas, x + (currentColumn * 8), y + (currentRow * 16), 8, 16, backcolour);
             break;
 
         case 0x09:    // Tab
@@ -68,7 +69,7 @@ void TextConsole::PutChar(char c) {
         default:
             //printable character.
             this->characterBuffer[this->currentRow][this->currentColumn] = c;
-            vga_drawChar(canvas, font, x + (currentColumn * 8), y + (currentRow * 16), this->colour, c);
+            screenfont_drawChar(canvas, font, x + (currentColumn * 8), y + (currentRow * 16), this->colour, c);
 
             currentColumn++;
 
@@ -225,11 +226,11 @@ void TextConsole::Scroll() {
 }
 
 void TextConsole::Redraw() {
-    vga_drawRect(canvas, x, y, x + (columns * 8), y + (rows * 16), backcolour);
+    canvas_drawRect(canvas, x, y, x + (columns * 8), y + (rows * 16), backcolour);
 
     for(int row = 0; row < rows; row++) {
         for(int column = 0; column < columns; column++) {
-            vga_drawChar(canvas, font, x + (column * 8), y + (row * 16), this->colour, characterBuffer[row][column]);
+            screenfont_drawChar(canvas, font, x + (column * 8), y + (row * 16), this->colour, characterBuffer[row][column]);
         }
     }
 

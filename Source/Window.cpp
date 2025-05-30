@@ -1,6 +1,6 @@
 #include <Graphics/Window.hpp>
 #include <Graphics/TextLabel.hpp>
-#include "drivers/vesa_framebuffer.h"
+#include <Graphics/screenfont.h>
 #include <string.h>
 
 Window::Window(ScreenFont* font, uint32 locx, uint32 locy, uint32 w, uint32 h, Canvas* canvas, const char* text)
@@ -24,11 +24,11 @@ Window::Window(ScreenFont* font, uint32 locx, uint32 locy, uint32 w, uint32 h, C
 
 void Window::Redraw() {
     // Window Decoration
-    vga_drawRect(canvas, x, y, w, 32, 0x008000C0);
+    canvas_drawRect(canvas, x, y, w, 32, 0x008000C0);
 
     uint32 textx = (w / 2) - (8 * string_length(text) / 2);
 
-    vga_drawWord(canvas, font, x + textx, y + 8, 0xFFFFFFFF, text);
+    screenfont_drawWord(canvas, font, x + textx, y + 8, 0xFFFFFFFF, text);
 
     RedrawChildren();
 }

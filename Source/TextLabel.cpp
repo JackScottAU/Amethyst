@@ -1,5 +1,5 @@
 #include <Graphics/TextLabel.hpp>
-#include "drivers/vesa_framebuffer.h"
+#include <Graphics/screenfont.h>
 #include <string.h>
 
 TextLabel::TextLabel(ScreenFont* font, uint32 locx, uint32 locy, Canvas* canvas, char* text, uint32 colour)
@@ -20,7 +20,7 @@ TextLabel::TextLabel(ScreenFont* font, uint32 locx, uint32 locy, Canvas* canvas,
 
 void TextLabel::Redraw() {
     // TODO
-    vga_drawWord(canvas, font, x, y, colour, text);
+    screenfont_drawWord(canvas, font, x, y, colour, text);
 }
 
 void TextLabel::HandleUIEvent(void* eventData) {

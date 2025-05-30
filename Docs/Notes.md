@@ -10,7 +10,6 @@
 - Keep going with page management.
 - Make the scheduler a bit smarter
 - Refactor scheduler into thread.c (arch) and scheduler.c (generic)
-- Get rid of the VGA console on the interrupt panic handler (use debug device instead?)
 
 ### Drivers
 
@@ -158,6 +157,10 @@ Get rid of EGA text mode from the kernel, it's obsolete even in 1995. Instead, w
 By doing that we can support pretty much any emulated system, as well as most graphics card pre-UEFI (when new video cards stopped supporting VGA APIs).
 
 Will need to write more drivers to support newer UEFI cards.
+
+### VGA Fallback
+
+We should implement the VGA fallback as a common driver based on PCI class/subclass etc. Basically sets a known video mode (800x600 w. 16 colours in a known palette) and gives a canvas (800x600 1bpp).
 
 ## Executables
 

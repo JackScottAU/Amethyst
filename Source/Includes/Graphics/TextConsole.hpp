@@ -1,6 +1,5 @@
 #include <Graphics/canvas.h>
 #include <Graphics/screenfont.h>
-#include "../../drivers/vesa_framebuffer.h"
 
 /***
  * Implements a scrolling ANSI compliant terminal within a framebuffer canvas.

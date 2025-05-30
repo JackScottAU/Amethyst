@@ -8,6 +8,7 @@
 #define INCLUDES_GRAPHICS_SCREENFONT_H_
 
 #include <Types.h>
+#include <Graphics/canvas.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,6 +29,10 @@ typedef struct {
     ScreenFontHeader* header;
     uint8* characterData;
 } ScreenFont;
+
+
+void screenfont_drawChar(Canvas* canvas, ScreenFont* font, uint16 x, uint16 y, uint32 colour, char a);
+void screenfont_drawWord(Canvas* canvas, ScreenFont* font, uint16 x, uint16 y, uint32 colour, const char* a);
 
 #define SCREENFONT_MAGIC 0x72B54A86
 

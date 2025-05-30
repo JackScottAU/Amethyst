@@ -1,8 +1,8 @@
 #include <Graphics/TargaImage.hpp>
 #include <memoryManager.h>
 #include <Types.h>
-#include "drivers/vesa_framebuffer.h"
 #include <debug.h>
+#include <Graphics/canvas.h>
 
 // Code ripped wholesale from https://wiki.osdev.org/Loading_Icons
 TargaImage::TargaImage(uint8* ptr, uint32 length, uint32 locx, uint32 locy, Canvas* canvas)
@@ -108,7 +108,7 @@ void TargaImage::Redraw() {
         for(uint32 j = 0; j < w; j++) {
             uint32 pixel = pixels[(j * h + i)];
 
-            vga_putPixel(canvas, x + j, y + i, pixel);
+            canvas_putPixel(canvas, x + j, y + i, pixel);
         }
     }
 }
