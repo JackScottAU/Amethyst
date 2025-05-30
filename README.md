@@ -44,7 +44,7 @@ The 'x86-32' architecture attempts to follow the [PC-97 design standard](https:/
 * CD-ROM drive
 * Keyboard
 * PCI Bus
-* VGA-compatible Video card and Monitor
+* QEMU graphics adapter (good luck on real hardware for now...)
 
 Testing is done via Hyper-V, VirtualBox, QEMU, etc. Initial driver efforts will be focused on i440 northbridges and PIIX1/3/4 southbridges.
 

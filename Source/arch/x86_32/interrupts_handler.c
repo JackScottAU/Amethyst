@@ -10,8 +10,8 @@
 #include <interrupts.h>
 #include <memoryManager.h>
 #include <stream.h>
-#include <Drivers/vgaConsole.h>
 #include <thread.h>
+#include <debug.h>
 
 interrupts_handlerCallback* interrupts_callbacks = (interrupts_handlerCallback*) NULL;
 
@@ -21,17 +21,17 @@ interrupts_handlerCallback* interrupts_callbacks = (interrupts_handlerCallback*)
 void interrupts_handler(struct Registers_S *Registers) {
     // If it is an exception.
     if (Registers->IntNum <= 0x1F) {
-        stream_printf(vgaConsole_putChar, "\033[37m\033[41m\n");
-        stream_printf(vgaConsole_putChar, "                                                                                ");
-        stream_printf(vgaConsole_putChar, "                                ! SYSTEM PANIC !                                ");
-        stream_printf(vgaConsole_putChar, "                                                                                ");
-        stream_printf(vgaConsole_putChar, "\033[0m\n");
+        debug(LOGLEVEL_CRITICAL, "\033[37m\033[41m\n");
+        debug(LOGLEVEL_CRITICAL, "                                                                                ");
+        debug(LOGLEVEL_CRITICAL, "                                ! SYSTEM PANIC !                                ");
+        debug(LOGLEVEL_CRITICAL, "                                                                                ");
+        debug(LOGLEVEL_CRITICAL, "\033[0m\n");
 
-        stream_printf(vgaConsole_putChar, "Interrupt number: %d\tError code: %h\n", Registers->IntNum, Registers->ErrorCode);
-        stream_printf(vgaConsole_putChar, "EAX: %h\tEBX: %h\tECX: %h\tEDX: %h\n", Registers->EAX, Registers->EBX, Registers->ECX, Registers->EDX);
-        stream_printf(vgaConsole_putChar, "CS: %h\tDS: %h\tES: %h\tFS: %h\tGS: %h\t\n", Registers->CS, Registers->DS, Registers->ES, Registers->FS, Registers->GS);
-        stream_printf(vgaConsole_putChar, "EDI: %h\tESI: %h\tEBP: %h\tESP: %h\n", Registers->EDI, Registers->ESI, Registers->EBP, Registers->ESP);
-        stream_printf(vgaConsole_putChar, "EIP: %h\tEFlags: %h\tUserESP: %h\tSS: %h\n", Registers->EIP, Registers->EFlags, Registers->UserESP, Registers->SS);
+        debug(LOGLEVEL_CRITICAL, "Interrupt number: %d\tError code: %h\n", Registers->IntNum, Registers->ErrorCode);
+        debug(LOGLEVEL_CRITICAL, "EAX: %h\tEBX: %h\tECX: %h\tEDX: %h\n", Registers->EAX, Registers->EBX, Registers->ECX, Registers->EDX);
+        debug(LOGLEVEL_CRITICAL, "CS: %h\tDS: %h\tES: %h\tFS: %h\tGS: %h\t\n", Registers->CS, Registers->DS, Registers->ES, Registers->FS, Registers->GS);
+        debug(LOGLEVEL_CRITICAL, "EDI: %h\tESI: %h\tEBP: %h\tESP: %h\n", Registers->EDI, Registers->ESI, Registers->EBP, Registers->ESP);
+        debug(LOGLEVEL_CRITICAL, "EIP: %h\tEFlags: %h\tUserESP: %h\tSS: %h\n", Registers->EIP, Registers->EFlags, Registers->UserESP, Registers->SS);
 
         interrupts_disableInterrupts();
         haltCPU();

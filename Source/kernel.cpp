@@ -21,8 +21,6 @@
 #include <Graphics/canvas.h>
 
 #include <Drivers/qemuVga.h>
-#include <Drivers/vgaConsole.h>
-
 #include <Drivers/serial.h>
 #include <Drivers/ps2controller.h>
 #include <Drivers/pciBus.h>
@@ -125,9 +123,6 @@ multiboot_info* multiBootDataP;
  * @param multibootData The info data structure passed from the multiboot loader.
  */
 void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData) {
-    vgaConsole_initialise();
-  //  vgaConsole_clearScreen();
-
     // Before we can do anything else, we need to do three things:
     // 1.  Check the multiboot data for a valid boot environment.
     // 2.  Set up a basic IDT and GDT.
@@ -136,7 +131,7 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 
     debug(LOGLEVEL_INFO, "Checking Multiboot data...\n");
     if (magicNumber != MULTIBOOT_MAGIC_NUMBER) {
-        stream_printf(vgaConsole_putChar, "\nMultiboot error found. Halting...");
+        debug(LOGLEVEL_CRITICAL, "\nMultiboot error found. Halting...");
         interrupts_disableInterrupts();
         haltCPU();
     } else {
