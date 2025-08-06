@@ -18,7 +18,6 @@
 #include <debug.h>
 #include <amethyst.h>
 #include <thread.h>
-#include <Graphics/canvas.h>
 
 #include <Drivers/qemuVga.h>
 #include <Drivers/serial.h>
@@ -27,6 +26,7 @@
 #include <Drivers/keyboard.h>
 #include <Drivers/mouse.h>
 
+#include <Graphics/canvas.h>
 #include <Graphics/TextConsole.hpp>
 #include <Graphics/TextLabel.hpp>
 #include <Graphics/TargaImage.hpp>
