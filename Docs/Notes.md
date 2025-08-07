@@ -10,6 +10,7 @@
 - Keep going with page management.
 - Make the scheduler a bit smarter
 - Refactor scheduler into thread.c (arch) and scheduler.c (generic)
+- Seperate kernel clock mechanism from PIT.
 
 ### Drivers
 
@@ -28,6 +29,7 @@ While we work on core microkernel stuff, we should also be working on drivers:
 
 1. QEMU/Bochs Display Adapter (enough to set a mode and get a framebuffer)
 2. IDE
+3. Mouse
 
 ### User Space
 
@@ -122,13 +124,6 @@ NET? no these are something other than file://
 Thread.h contains stuff for creating, destroying and switching threads, and is processor-specific.
 
 Scheduler.h contains the main scheduler, and can have threads added and removed, and is processor agnostic.
-
-Use kernel threading in 1:1:N model (kernel knows about all threads, but has no idea about fibres).
-
-Session:    Console, Security
-Process:    Code / Data / Heap (Virtual Address Space - CR3), File Pointers, working directory etc
-Thread:     Registers / Stack (Stack Top)
-Fibres:     User-mode co-operative thread. Invisible to the kernel, but implemented in the standard library.
 
 ## Colour
 

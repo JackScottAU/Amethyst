@@ -22,6 +22,13 @@ All three will use the same ABI (kernel will provide all calls for all processes
 
 ## Process Model
 
+Use kernel threading in 1:1:N model (kernel knows about all threads, but has no idea about fibres).
+
+Session:    Console, Security
+Process:    Code / Data / Heap (Virtual Address Space - CR3), File Pointers, working directory etc
+Thread:     Registers / Stack (Stack Top)
+Fibres:     User-mode co-operative thread. Invisible to the kernel, but implemented in the standard library.
+
 Session is a collection of processes sharing a security context (user, etc) and user interface (GUI / terminal session / etc).
 Process is code/data/heap shared.
 Thread is instruction pointer and stack.
