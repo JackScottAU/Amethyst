@@ -9,7 +9,7 @@
 #include <Types.h>
 #include <memoryManager.h>
 
-void stream_putDecimal(void (*putChar)(char), uint32 arg);
+void stream_putDecimal(void (*putChar)(char), sint32 arg);
 void stream_putHexadecimal(void (*putChar)(char), uint32 arg, uint8 leadingZeroes);
 void stream_putHexadecimalInternal(void (*putChar)(char), uint32 arg);
 
@@ -107,7 +107,12 @@ void stream_vprintf(void (*putChar)(char), const char* formatString, va_list arg
     }
 }
 
-void stream_putDecimal(void (*putChar)(char), uint32 arg) {
+void stream_putDecimal(void (*putChar)(char), sint32 arg) {
+    if(arg > 0x80000000) {
+        putChar('-');
+        arg = arg * -1;
+    }
+
     if (arg/10 >= 1) {
         stream_putDecimal(putChar, arg/10);
     }
