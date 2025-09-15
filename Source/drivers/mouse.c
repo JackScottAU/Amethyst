@@ -13,6 +13,8 @@
 #include <debug.h>
 #include <Drivers/ps2controller.h>
 #include <Drivers/mouse.h>
+#include <Graphics/canvas.h>
+#include <Drivers/qemuVga.h>
 
 typedef struct {
     sint16 x;
@@ -25,6 +27,12 @@ uint8 currentMouseByte;
 uint8 numberOfMouseBytes;
 
 uint8 mouseBytes[4];
+
+uint16 mouse_maxX;
+uint16 mouse_maxY;
+
+uint16 mouse_currentX;
+uint16 mouse_currentY;
 
 void mouse_interruptHandler(uint32 eventData);
 
@@ -56,7 +64,31 @@ void mouse_interruptHandler(uint32 eventData) {
         }
 
         debug(LOGLEVEL_INFO, "Mouse X: %d, Mouse Y: %d", mouseEvent.x, mouseEvent.y);
+
+        mouse_currentX += mouseEvent.x;
+        if(mouse_currentX >= mouse_maxX) {
+            mouse_currentX = mouse_maxX -1;
+        }
+        
+        mouse_currentY += mouseEvent.y * -1;
+        if(mouse_currentY >= mouse_maxY) {
+            mouse_currentY = mouse_maxY -1;
+        }
+
+        Canvas* canvas = qemuVga_getCanvas();
+
+        canvas_drawRect(canvas, mouse_currentX, mouse_currentY, 1, 8, 0xFFFFFFFF);
+        canvas_drawRect(canvas, mouse_currentX, mouse_currentY, 8, 1, 0xFFFFFFFF);
     }
+}
+
+uint16 mouse_getX() {
+    return mouse_currentX;
+}
+
+
+uint16 mouse_getY() {
+    return mouse_currentY;
 }
 
 deviceTree_Entry* mouse_initialise() {
@@ -72,7 +104,7 @@ deviceTree_Entry* mouse_initialise() {
     debug(LOGLEVEL_DEBUG, "PS/2 Mouse: Setting sample rate...");
     ps2controller_sendByteToDevice(2, 0xF3);    // set rate.
     ps2controller_receiveByteFromDevice(2);
-    ps2controller_sendByteToDevice(2, 100);     // 100 samples per second.
+    ps2controller_sendByteToDevice(2, 300);     // 100 samples per second.
     ps2controller_receiveByteFromDevice(2);
 
     debug(LOGLEVEL_DEBUG, "PS/2 Mouse: Enabling data sending...");
@@ -81,6 +113,12 @@ deviceTree_Entry* mouse_initialise() {
 
     currentMouseByte = 0;
     numberOfMouseBytes = 3;
+
+    mouse_maxX = 1024;
+    mouse_maxY = 768;
+
+    mouse_currentX = mouse_maxX / 2;
+    mouse_currentY = mouse_maxY / 2;
 
     return deviceTree_createDevice("Generic PS/2 Mouse", DEVICETREE_TYPE_OTHER, NULL);
 }

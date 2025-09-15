@@ -17,6 +17,9 @@ extern "C" {
 
 deviceTree_Entry* mouse_initialise(void);
 
+uint16 mouse_getX(void);
+uint16 mouse_getY(void);
+
 #ifdef __cplusplus
 }
 #endif
