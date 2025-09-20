@@ -9,19 +9,24 @@
 #define ATA_REGISTER_IO_LBAHIGH     5
 
 /**
- * The drive number, whether to use CHS or LBA (our OS only supports LBA), and the top four bits of LBA.
+ * The drive number (bit 4), whether to use CHS or LBA (our OS only supports LBA) (bit 6), and the top four bits of LBA (bits 0-3).
  */
-#define ATA_REGISTER_IO_DRIVE       6
+#define ATA_REGISTEROFFSET_IO_DRIVE         6
 
-#define ATA_REGISTER_CONTROL_STATUS 0
-#define ATA_REGISTER_CONTROL_SELECT 1
+#define ATA_REGISTEROFFSET_IO_STATUS        7
 
-#define ATA_DRIVE_MASTER            0 << 4
-#define ATA_DRIVE_SLAVE             1 << 4
+#define ATA_REGISTEROFFSET_CONTROL_STATUS   0
+#define ATA_REGISTEROFFSET_CONTROL_SELECT   1
+
+#define ATA_DRIVE_MASTER            (0 << 4)
+#define ATA_DRIVE_SLAVE             (1 << 4)
 
 void piixide_probeChannel(deviceTree_Entry* channelDevice);
 void piixide_softwareReset(deviceTree_Entry* channelDevice);
 void piixide_selectDrive(deviceTree_Entry* channelDevice, uint8 driveNumber);
+void piixide_wait(deviceTree_Entry* channelDevice);
+void piixide_waitForReady(deviceTree_Entry* channelDevice);
+
 deviceTree_Entry* piixide_decodeDriveSignature(uint32 cl, uint32 ch);
 
 deviceTree_Entry* piixide_decodeDriveSignature(uint32 cl, uint32 ch) {
@@ -130,22 +135,56 @@ void piixide_probeChannel(deviceTree_Entry* channelDevice) {
 
     piixide_selectDrive(channelDevice, ATA_DRIVE_MASTER);
 	
+    uint8 status = portIO_read8(ioBase + 7);
 
-	unsigned cl=portIO_read8(ioBase + 4);	/* get the "signature bytes" */
-	unsigned ch=portIO_read8(ioBase + 5);
+    if(status != 0xFF && status != 0x00) {
+        piixide_waitForReady(channelDevice);
 
-    deviceTree_addChild(channelDevice, piixide_decodeDriveSignature(cl, ch));
+        unsigned cl=portIO_read8(ioBase + 4);	/* get the "signature bytes" */
+        unsigned ch=portIO_read8(ioBase + 5);
 
-    debug(LOGLEVEL_DEBUG, "ATA PM: %h %h", cl, ch);
+        deviceTree_addChild(channelDevice, piixide_decodeDriveSignature(cl, ch));
+
+        debug(LOGLEVEL_DEBUG, "ATA Master Status: %h", status);
+        debug(LOGLEVEL_DEBUG, "ATA Master: %h %h", cl, ch);
+    }
+
+	
 
     piixide_selectDrive(channelDevice, ATA_DRIVE_SLAVE);
 
-	cl=portIO_read8(ioBase + 4);	/* get the "signature bytes" */
-	ch=portIO_read8(ioBase + 5);
+    status = portIO_read8(ioBase + 7);
 
-    debug(LOGLEVEL_DEBUG, "ATA PS: %h %h", cl, ch);
+    if(status != 0xFF && status != 0x00) {
+        piixide_waitForReady(channelDevice);
+        uint8 cl=portIO_read8(ioBase + 4);	/* get the "signature bytes" */
+        uint8 ch=portIO_read8(ioBase + 5);
 
-    deviceTree_addChild(channelDevice, piixide_decodeDriveSignature(cl, ch));
+        debug(LOGLEVEL_DEBUG, "ATA Slave Status: %h", status);
+        debug(LOGLEVEL_DEBUG, "ATA Slave: %h %h", cl, ch);
+
+        deviceTree_addChild(channelDevice, piixide_decodeDriveSignature(cl, ch));
+    }
+}
+
+void piixide_waitForReady(deviceTree_Entry* channelDevice) {
+    // Read the Regular Status port until bit 7 (BSY, value = 0x80) clears, and bit 3 (DRQ, value = 8) sets -- or until bit 0 (ERR, value = 1) or bit 5 (DF, value = 0x20) sets. If neither error bit is set, the device is ready right then.
+    bool notReady = true;
+    uint16 ioBase = channelDevice->Resources[0].StartAddress;
+
+    // 0xDO = 11010000 = BSY | RDY | SRV
+
+    while(notReady) {
+        uint8 status = portIO_read8(ioBase + 7);
+
+        // Check if BUSY is set.
+        if(status >> 7) {
+
+        }
+        else {
+            notReady = false;
+        }
+    }
 }
 
 void piixide_selectDrive(deviceTree_Entry* channelDevice, uint8 driveNumber) {
@@ -153,25 +192,33 @@ void piixide_selectDrive(deviceTree_Entry* channelDevice, uint8 driveNumber) {
     uint16 controlBase = channelDevice->Resources[1].StartAddress;
 
         /* waits until master drive is ready again */
-	portIO_write8(ioBase + 6, 0xE0 | driveNumber);
-	portIO_read8 (controlBase + ATA_REGISTER_CONTROL_STATUS);			/* wait 400ns for drive select to work */
-	portIO_read8 (controlBase + ATA_REGISTER_CONTROL_STATUS);
-	portIO_read8 (controlBase + ATA_REGISTER_CONTROL_STATUS);
-	portIO_read8 (controlBase + ATA_REGISTER_CONTROL_STATUS);
+	portIO_write8(ioBase + ATA_REGISTEROFFSET_IO_DRIVE, 0xE0 | driveNumber);
+    piixide_wait(channelDevice);
 }
 
 void piixide_softwareReset(deviceTree_Entry* channelDevice) {
     uint16 controlBase = channelDevice->Resources[1].StartAddress;
 
     // reset
-    portIO_write8(controlBase + ATA_REGISTER_CONTROL_STATUS, 4); // SRST
-	portIO_read8 (controlBase + ATA_REGISTER_CONTROL_STATUS);			/* wait 400ns for drive select to work */
-	portIO_read8 (controlBase + ATA_REGISTER_CONTROL_STATUS);
-	portIO_read8 (controlBase + ATA_REGISTER_CONTROL_STATUS);
-	portIO_read8 (controlBase + ATA_REGISTER_CONTROL_STATUS);
-    portIO_write8(controlBase + ATA_REGISTER_CONTROL_STATUS, 0);
-	portIO_read8 (controlBase + ATA_REGISTER_CONTROL_STATUS);			/* wait 400ns for drive select to work */
-	portIO_read8 (controlBase + ATA_REGISTER_CONTROL_STATUS);
-	portIO_read8 (controlBase + ATA_REGISTER_CONTROL_STATUS);
-	portIO_read8 (controlBase + ATA_REGISTER_CONTROL_STATUS);
+    portIO_write8(controlBase + ATA_REGISTEROFFSET_CONTROL_STATUS, 4); // SRST
+	portIO_read8 (controlBase + ATA_REGISTEROFFSET_CONTROL_STATUS);			/* wait 400ns for drive select to work */
+	portIO_read8 (controlBase + ATA_REGISTEROFFSET_CONTROL_STATUS);
+	portIO_read8 (controlBase + ATA_REGISTEROFFSET_CONTROL_STATUS);
+	portIO_read8 (controlBase + ATA_REGISTEROFFSET_CONTROL_STATUS);
+    portIO_write8(controlBase + ATA_REGISTEROFFSET_CONTROL_STATUS, 0);
+    piixide_wait(channelDevice);
+	portIO_read8 (controlBase + ATA_REGISTEROFFSET_CONTROL_STATUS);			/* wait 400ns for drive select to work */
+	portIO_read8 (controlBase + ATA_REGISTEROFFSET_CONTROL_STATUS);
+	portIO_read8 (controlBase + ATA_REGISTEROFFSET_CONTROL_STATUS);
+	portIO_read8 (controlBase + ATA_REGISTEROFFSET_CONTROL_STATUS);
+}
+
+/// @brief We really only need to use this when selecting a drive, as the status update is immediate when not drive switching.
+/// @param channelDevice 
+void piixide_wait(deviceTree_Entry* channelDevice) {
+    uint16 controlBase = channelDevice->Resources[1].StartAddress;
+
+    for(int i = 0; i < 16; i++) {
+	    portIO_read8 (controlBase + ATA_REGISTEROFFSET_CONTROL_STATUS);
+    }    
 }

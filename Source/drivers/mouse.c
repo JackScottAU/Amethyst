@@ -104,11 +104,11 @@ deviceTree_Entry* mouse_initialise() {
     debug(LOGLEVEL_DEBUG, "PS/2 Mouse: Setting sample rate...");
     ps2controller_sendByteToDevice(2, 0xF3);    // set rate.
     ps2controller_receiveByteFromDevice(2);
-    ps2controller_sendByteToDevice(2, 300);     // 100 samples per second.
+    ps2controller_sendByteToDevice(2, 200);     // 100 samples per second.
     ps2controller_receiveByteFromDevice(2);
 
     debug(LOGLEVEL_DEBUG, "PS/2 Mouse: Enabling data sending...");
-    ps2controller_sendByteToDevice(2, 0xF4);    // set rate.
+    ps2controller_sendByteToDevice(2, 0xF4);    // enable data
     ps2controller_receiveByteFromDevice(2);
 
     currentMouseByte = 0;
