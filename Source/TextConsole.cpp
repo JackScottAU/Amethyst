@@ -19,8 +19,12 @@ TextConsole::TextConsole(Canvas* canvas, ScreenFont* font, uint32 x, uint32 y, u
     // do stuff.
 
     this->characterBuffer = (char**)memoryManager_allocate(sizeof(char*) * rows);
+    this->foreColourBuffer = (uint32**)memoryManager_allocate(sizeof(uint32*) * rows);
+    this->backColourBuffer = (uint32**)memoryManager_allocate(sizeof(uint32*) * rows);
     for(int i = 0; i < rows; i++){
         this->characterBuffer[i] = (char*)memoryManager_allocate(sizeof(char) * columns);
+        this->foreColourBuffer[i] = (uint32*)memoryManager_allocate(sizeof(uint32) * columns);
+        this->backColourBuffer[i] = (uint32*)memoryManager_allocate(sizeof(uint32) * columns);
         memset(this->characterBuffer[i], ' ', columns);
     }
 
@@ -69,6 +73,8 @@ void TextConsole::PutChar(char c) {
         default:
             //printable character.
             this->characterBuffer[this->currentRow][this->currentColumn] = c;
+            this->foreColourBuffer[this->currentRow][this->currentColumn] = colour;
+            this->backColourBuffer[this->currentRow][this->currentColumn] = backcolour;
             screenfont_drawChar(canvas, font, x + (currentColumn * 8), y + (currentRow * 16), this->colour, c);
 
             currentColumn++;
@@ -202,17 +208,28 @@ void TextConsole::DecodeSGR(uint32 parameter) {
     }
 }
 
+
+void TextConsole::HandleUIEvent(void* eventData) {
+
+}
+
 void TextConsole::Scroll() {
     debug(LOGLEVEL_TRACE, "Scrolling...");
     // save address of top row.
     char* oldTopRow = characterBuffer[0];
+    uint32* oldTopRowF = foreColourBuffer[0];
+    uint32* oldTopRowB = backColourBuffer[0];
 
     // move every row up one except first row
     for(int i = 1; i < rows; i++) {
         characterBuffer[i-1] = characterBuffer[i];
+        foreColourBuffer[i-1] = foreColourBuffer[i];
+        backColourBuffer[i-1] = backColourBuffer[i];
     }
     // set last row as old first row.
     characterBuffer[rows - 1] = oldTopRow;
+    foreColourBuffer[rows - 1] = oldTopRowF;
+    backColourBuffer[rows - 1] = oldTopRowB;
 
     // empty new last row
     for(int i = 0; i < columns; i++) {
@@ -230,7 +247,15 @@ void TextConsole::Redraw() {
 
     for(int row = 0; row < rows; row++) {
         for(int column = 0; column < columns; column++) {
-            screenfont_drawChar(canvas, font, x + (column * 8), y + (row * 16), this->colour, characterBuffer[row][column]);
+            uint32 foreColour = foreColourBuffer[row][column];
+            uint32 backColour = backColourBuffer[row][column];
+
+            if(backcolour != backColour) {
+                // draw a square where we need one.
+                canvas_drawRect(canvas, x + (column * 8), y + (row * 16), 8, 16, backColour);
+            }
+
+            screenfont_drawChar(canvas, font, x + (column * 8), y + (row * 16), foreColour, characterBuffer[row][column]);
         }
     }
 
