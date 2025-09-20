@@ -39,6 +39,8 @@ void ps2controller_setConfigurationByte(uint8 configByte);
 void ps2controller_enableInterrupts(void);
 void ps2controller_disableInterrupts(void);
 
+uint8 ps2controller_getFirstIdentifyByte(uint8 channel);
+
 /**
  * 
  */
@@ -107,13 +109,25 @@ deviceTree_Entry* ps2controller_initialise(void) {
     // TODO: add code to detect what is plugged in where, so we could have two keyboards or two mice or mouse on channel 1 and keyboard on channel 2.
 
     if(channel1Status) {
+        // Send identify command.
+        uint8 identification = ps2controller_getFirstIdentifyByte(1);
+
+        debug(LOGLEVEL_DEBUG, "Channel 1 Identification: %h", identification);
+
         deviceTree_addChild(parent, keyboard_initialise());
+
         parent->Resources[1].Type = DEVICE_RESOURCETYPE_IRQ;
         parent->Resources[1].Flags = 1;
     }
 
     if(channel2Status) {
+        // Send identify command.
+        uint8 identification = ps2controller_getFirstIdentifyByte(1);
+
+        debug(LOGLEVEL_DEBUG, "Channel 2 Identification: %h", identification);
+        
         deviceTree_addChild(parent, mouse_initialise());
+
         parent->Resources[2].Type = DEVICE_RESOURCETYPE_IRQ;
         parent->Resources[2].Flags = 12;
     }
@@ -123,6 +137,36 @@ deviceTree_Entry* ps2controller_initialise(void) {
     debug(LOGLEVEL_INFO, "PS/2 Controller initialisation complete.");
 
     return parent;
+}
+
+uint8 ps2controller_getFirstIdentifyByte(uint8 channel)
+{
+    //Send the Disable Scanning command 0xF5 to the device
+    ps2controller_sendByteToDevice(channel, 0xF5);
+    
+    //Wait for the device to send ACK back (0xFA)
+    ps2controller_waitForRead();
+    ps2controller_receiveByteFromDevice(channel);
+    
+    //Send the Identify command 0xF2 to the device
+    ps2controller_sendByteToDevice(channel, 0xF5);
+
+    //Wait for the device to send ACK back (0xFA)
+    ps2controller_waitForRead();
+    ps2controller_receiveByteFromDevice(channel);
+
+    //Wait for the device to send up to 2 bytes of reply, with a time-out to determine when it's finished (e.g. in case it only sends 1 byte)
+    ps2controller_waitForRead();
+    uint8 ident = ps2controller_receiveByteFromDevice(channel);
+    if(ident > 128) {
+        ps2controller_waitForRead();
+        ps2controller_receiveByteFromDevice(channel);
+    }
+
+    //Send the Enable Scanning command 0xF4 to the device
+    ps2controller_sendByteToDevice(channel, 0xF4);
+    ps2controller_waitForRead();
+    ps2controller_receiveByteFromDevice(channel);
 }
 
 void ps2controller_disableInterrupts() {
