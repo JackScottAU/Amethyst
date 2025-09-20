@@ -1,6 +1,15 @@
 # Notes
 
+## GUI
+
+Need a "Desktop" object that is the root of the GUI tree, and can have events from mouse/keyboard/etc posted to it.
+    Desktop object is where the mouse coordinates are stored, not in the PS2 mouse driver (because there could be multiple mice, eg USB + PS2).
+
+Need an "Event" class with subclasses "AsciiEvent" and "MouseMove" and "MouseDown" events.
+
 ## TODOs
+
+Currently working on GUI events, ring 3, IDE.
 
 ### Micro Kernel (C only)
 

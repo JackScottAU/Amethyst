@@ -26,6 +26,10 @@ void Window::Redraw() {
     // Window Decoration
     canvas_drawRect(canvas, x, y, w, 32, 0x008000C0);
 
+    canvas_drawRect(canvas, x + w - 24, y + 8, 16, 16, 0x00FF0000);
+    canvas_drawRect(canvas, x + w - 32- 24, y + 8, 16, 16, 0x00FF00FF);
+    canvas_drawRect(canvas, x + w - 32- 32-24, y + 8, 16, 16, 0x00FFFF00);
+
     uint32 textx = (w / 2) - (8 * string_length(text) / 2);
 
     screenfont_drawWord(canvas, font, x + textx, y + 8, 0xFFFFFFFF, text);
