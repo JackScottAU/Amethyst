@@ -37,7 +37,7 @@ void Window::Redraw() {
     RedrawChildren();
 }
 
-void Window::HandleUIEvent(void* eventData) {
+void Window::HandleUIEvent(MouseMoveEvent* eventData) {
 
 }
 

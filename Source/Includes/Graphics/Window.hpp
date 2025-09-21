@@ -11,7 +11,7 @@ class Window : public Widget {
     Window(ScreenFont* font, uint32 x, uint32 y, uint32 w, uint32 h, Canvas* canvas, const char* name);
 
     void Redraw();
-    void HandleUIEvent(void* eventData);
+    void HandleUIEvent(MouseMoveEvent* eventData);
 
     void SetName(char* text);
 

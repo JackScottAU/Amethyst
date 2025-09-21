@@ -17,6 +17,8 @@ extern "C" {
 
 deviceTree_Entry* mouse_initialise(void);
 
+void sortOfMouse_HandleEvent(sint16 moveX, sint16 moveY);
+
 uint16 mouse_getX(void);
 uint16 mouse_getY(void);
 

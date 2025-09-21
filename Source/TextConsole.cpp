@@ -209,7 +209,7 @@ void TextConsole::DecodeSGR(uint32 parameter) {
 }
 
 
-void TextConsole::HandleUIEvent(void* eventData) {
+void TextConsole::HandleUIEvent(MouseMoveEvent* eventData) {
 
 }
 

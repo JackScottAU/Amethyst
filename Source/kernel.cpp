@@ -31,6 +31,7 @@
 #include <Graphics/TextLabel.hpp>
 #include <Graphics/TargaImage.hpp>
 #include <Graphics/Window.hpp>
+#include <Graphics/Desktop.hpp>
 
 #include <Structures/linkedlist.hpp>
 
@@ -48,6 +49,8 @@ void kernel_printBanner(void (*putChar)(char));
 uint32 memoryManager_printPhysicalMemoryMap(StandardIO* stdio);
 
 TextConsole* stdioTextBox;
+
+Widget* rootWidget;
 
 void textBoxPutChar(char c) {
     stdioTextBox->PutChar(c);
@@ -187,13 +190,19 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 
     TargaImage* image = new TargaImage((uint8*)modules[1].start, length, 200, 300, canvas);
 
+    Desktop* desktop = new Desktop(canvas);
+    rootWidget = desktop;
+
     Window* window = new Window(font2, 0, 0, 1024, 768, canvas, "Amethyst OS");
+
+    desktop->AddChild(window);
 
   //  vga_drawRect(canvas, 0, 0, canvas->width, 32, 0x008000C0);
 
     stdioTextBox = new TextConsole(canvas, font, 0, 32, 46, 128);
 
     window->AddChild(stdioTextBox);
+ //   window->AddChild(image);
 
   //  kernel_printBanner(textBoxPutChar);
 
@@ -231,6 +240,12 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 
         haltCPU();
     }
+}
+
+void sortOfMouse_HandleEvent(sint16 moveX, sint16 moveY) {
+    MouseMoveEvent* event = new MouseMoveEvent(moveX, moveY);
+
+    rootWidget->HandleUIEvent(event);
 }
 
 uint32 memoryManager_printPhysicalMemoryMap(StandardIO* stdio) {

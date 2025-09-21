@@ -113,7 +113,7 @@ void TargaImage::Redraw() {
     }
 }
 
-void TargaImage::HandleUIEvent(void* eventData) {
+void TargaImage::HandleUIEvent(MouseMoveEvent* eventData) {
 
 }
 

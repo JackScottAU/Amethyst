@@ -10,6 +10,7 @@
 #include <Types.h>
 #include <Graphics/canvas.h>
 #include <Structures/linkedlist.hpp>
+#include <Graphics/MouseMoveEvent.hpp>
 
 /**
  * Abstract class for a graphical widget. Has an X and Y, width and height, knows how to draw itself and accept UI events, and has children it can draw and pass events to.
@@ -17,7 +18,7 @@
 class Widget {
   public:
     virtual void Redraw() = 0;
-    virtual void HandleUIEvent(void* eventData) = 0;
+    virtual void HandleUIEvent(MouseMoveEvent* eventData) = 0;
 
     void SetPosition(sint32 x, sint32 y);
 

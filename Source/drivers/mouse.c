@@ -65,20 +65,9 @@ void mouse_interruptHandler(uint32 eventData) {
 
         debug(LOGLEVEL_INFO, "Mouse X: %d, Mouse Y: %d", mouseEvent.x, mouseEvent.y);
 
-        mouse_currentX += mouseEvent.x;
-        if(mouse_currentX >= mouse_maxX) {
-            mouse_currentX = mouse_maxX -1;
-        }
+        sortOfMouse_HandleEvent(mouseEvent.x, mouseEvent.y * -1);
+
         
-        mouse_currentY += mouseEvent.y * -1;
-        if(mouse_currentY >= mouse_maxY) {
-            mouse_currentY = mouse_maxY -1;
-        }
-
-        Canvas* canvas = qemuVga_getCanvas();
-
-        canvas_drawRect(canvas, mouse_currentX, mouse_currentY, 1, 8, 0xFFFFFFFF);
-        canvas_drawRect(canvas, mouse_currentX, mouse_currentY, 8, 1, 0xFFFFFFFF);
     }
 }
 
