@@ -11,7 +11,7 @@ class Desktop : public Widget {
     Desktop(Canvas* canvas);
 
     void Redraw();
-    void HandleUIEvent(MouseMoveEvent* eventData);
+    void HandleUIEvent(GuiEvent* eventData);
 
     using Widget::SetPosition;
 

@@ -1,12 +1,5 @@
 # Notes
 
-## GUI
-
-Need a "Desktop" object that is the root of the GUI tree, and can have events from mouse/keyboard/etc posted to it.
-    Desktop object is where the mouse coordinates are stored, not in the PS2 mouse driver (because there could be multiple mice, eg USB + PS2).
-
-Need an "Event" class with subclasses "AsciiEvent" and "MouseMove" and "MouseDown" events.
-
 ## TODOs
 
 Currently working on GUI events, ring 3, IDE.
@@ -46,6 +39,7 @@ While we work on core microkernel stuff, we should also be working on drivers:
 - Finish the windowing toolkit
 - Fix the memory leak in stream_readLine() caused by multitasking.
 - Make the shell better
+- Improve performance of GUI by marking widgets as dirty on event processing, they clean themselves when Redraw() is called. Then only redraw dirty things on mouse move. Something like that.
 
 ## Source Tree Layout
 

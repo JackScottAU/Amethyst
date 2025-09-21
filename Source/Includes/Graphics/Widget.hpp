@@ -18,7 +18,7 @@
 class Widget {
   public:
     virtual void Redraw() = 0;
-    virtual void HandleUIEvent(MouseMoveEvent* eventData) = 0;
+    virtual void HandleUIEvent(GuiEvent* eventData) = 0;
 
     void SetPosition(sint32 x, sint32 y);
 
@@ -36,6 +36,7 @@ class Widget {
     uint32 w;
 
     void RedrawChildren();
+    void SendGuiEventToChildren(GuiEvent* eventData, uint32 x, uint32 y);
 };
 
 #endif  // INCLUDES_GRAPHICS_WIDGET_HPP_

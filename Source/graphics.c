@@ -23,7 +23,7 @@ void canvas_drawRect(Canvas* canvas, uint16 x, uint16 y, uint16 w, uint16 h, uin
 void screenfont_drawChar(Canvas* canvas, ScreenFont* font, uint16 x, uint16 y, uint32 colour, char a) {
     // go to top level.
     uint8* charData = font->characterData;
-    charData += a * font->header->height;
+    charData += a * font->header->glyphSize;
 
     for (uint32 r = 0; r < font->header->height; r++) {
         // draw each row.

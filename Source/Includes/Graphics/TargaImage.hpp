@@ -9,7 +9,7 @@ class TargaImage : public Widget {
     TargaImage(uint8* ptr, uint32 length, uint32 x, uint32 y, Canvas* canvas);
 
     void Redraw();
-    void HandleUIEvent(MouseMoveEvent* eventData);
+    void HandleUIEvent(GuiEvent* eventData);
 
     using Widget::SetPosition;
 

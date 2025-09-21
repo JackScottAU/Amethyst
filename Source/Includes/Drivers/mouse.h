@@ -19,6 +19,7 @@ deviceTree_Entry* mouse_initialise(void);
 
 // When we convert mouse to be a C++ file we can do something like mouse_registerRootWidget() instead.
 void sortOfMouse_HandleEvent(sint16 moveX, sint16 moveY);
+void sortOfMouse_HandleClickEvent();
 
 #ifdef __cplusplus
 }

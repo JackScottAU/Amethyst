@@ -23,7 +23,7 @@ void TextLabel::Redraw() {
     screenfont_drawWord(canvas, font, x, y, colour, text);
 }
 
-void TextLabel::HandleUIEvent(MouseMoveEvent* eventData) {
+void TextLabel::HandleUIEvent(GuiEvent* eventData) {
 
 }
 

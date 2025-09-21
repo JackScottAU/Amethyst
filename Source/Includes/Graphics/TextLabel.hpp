@@ -11,7 +11,7 @@ class TextLabel : public Widget {
     TextLabel(ScreenFont* font, uint32 x, uint32 y, Canvas* canvas, char* text, uint32 colour);
 
     void Redraw();
-    void HandleUIEvent(MouseMoveEvent* eventData);
+    void HandleUIEvent(GuiEvent* eventData);
 
     void SetFont(ScreenFont* font);
     void SetText(char* text);

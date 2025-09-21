@@ -28,6 +28,8 @@ uint8 numberOfMouseBytes;
 
 uint8 mouseBytes[4];
 
+bool leftDown;
+
 void mouse_interruptHandler(uint32 eventData);
 
 void mouse_interruptHandler(uint32 eventData) {
@@ -62,7 +64,18 @@ void mouse_interruptHandler(uint32 eventData) {
         // The intermediary that sends the mouse event to the GUI.
         sortOfMouse_HandleEvent(mouseEvent.x, mouseEvent.y * -1);
 
-        
+        bool leftNewDown = mouseBytes[0] & 0x01;
+
+        if(leftDown && !leftNewDown) {
+            // Mouse up
+            sortOfMouse_HandleClickEvent();
+        }
+
+        if(!leftDown && leftNewDown) {
+            // mouse down
+        }
+
+        leftDown = leftNewDown;
     }
 }
 
@@ -88,6 +101,7 @@ deviceTree_Entry* mouse_initialise() {
 
     currentMouseByte = 0;
     numberOfMouseBytes = 3;
+    leftDown = false;
 
     return deviceTree_createDevice("Generic PS/2 Mouse", DEVICETREE_TYPE_OTHER, NULL);
 }

@@ -197,14 +197,10 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 
     desktop->AddChild(window);
 
-  //  vga_drawRect(canvas, 0, 0, canvas->width, 32, 0x008000C0);
-
     stdioTextBox = new TextConsole(canvas, font, 0, 32, 46, 128);
 
     window->AddChild(stdioTextBox);
  //   window->AddChild(image);
-
-  //  kernel_printBanner(textBoxPutChar);
 
     for (int i = 0; i < 1000; i++) {
         image->SetPosition(i, 100);
@@ -244,6 +240,12 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 
 void sortOfMouse_HandleEvent(sint16 moveX, sint16 moveY) {
     MouseMoveEvent* event = new MouseMoveEvent(moveX, moveY);
+
+    rootWidget->HandleUIEvent(event);
+}
+
+void sortOfMouse_HandleClickEvent() {
+    MouseClickEvent* event = new MouseClickEvent();
 
     rootWidget->HandleUIEvent(event);
 }

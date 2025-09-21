@@ -2,6 +2,7 @@
 #include <Graphics/TextLabel.hpp>
 #include <Graphics/screenfont.h>
 #include <string.h>
+#include <debug.h>
 
 Window::Window(ScreenFont* font, uint32 locx, uint32 locy, uint32 w, uint32 h, Canvas* canvas, const char* text)
 {
@@ -37,8 +38,8 @@ void Window::Redraw() {
     RedrawChildren();
 }
 
-void Window::HandleUIEvent(MouseMoveEvent* eventData) {
-
+void Window::HandleUIEvent(GuiEvent* eventData) {
+    debug(LOGLEVEL_ERROR, "WINDOW HANDLING EVENT?!");
 }
 
 void Window::SetName(char* text) {

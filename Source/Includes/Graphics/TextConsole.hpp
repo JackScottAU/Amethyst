@@ -8,7 +8,7 @@
 class TextConsole : public Widget {
   public:
     TextConsole(Canvas* canvas, ScreenFont* font, uint32 x, uint32 y, uint16 rows, uint16 columns);
-    void HandleUIEvent(MouseMoveEvent* eventData);
+    void HandleUIEvent(GuiEvent* eventData);
 
     void PutChar(char c);
 

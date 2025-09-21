@@ -2,6 +2,7 @@
 #include <Graphics/TextLabel.hpp>
 #include <Graphics/screenfont.h>
 #include <string.h>
+#include <debug.h>
 
 Desktop::Desktop(Canvas* canvas)
 {
@@ -26,16 +27,33 @@ void Desktop::Redraw() {
     DrawMouse();
 }
 
-void Desktop::HandleUIEvent(MouseMoveEvent* eventData) {
-    this->mouseX = this->mouseX + eventData->getMouseX();
-    this->mouseY = this->mouseY + eventData->getMouseY();
+void Desktop::HandleUIEvent(GuiEvent* eventData) {
 
-    if(this->mouseX >= this->w) {
-        this->mouseX = this->w - 1;
-    }
-    
-    if(this->mouseY >= this->h) {
-        this->mouseY = this->h - 1;
+    switch(eventData->GetEventType())
+    {
+        case GuiEventType::MOUSE_CLICK:
+            debug(LOGLEVEL_DEBUG, "CLICK");
+            // TODO: find out which child item has been clicked, and pass the click down to that child so it can process the event there.
+            SendGuiEventToChildren(eventData, mouseX, mouseY);
+            break;
+
+        case GuiEventType::MOUSE_MOVE: {
+            MouseMoveEvent* move = (MouseMoveEvent*) eventData;
+            this->mouseX = this->mouseX + move->getMouseX();
+            this->mouseY = this->mouseY + move->getMouseY();
+
+            if(this->mouseX >= this->w) {
+                this->mouseX = this->w - 1;
+            }
+            
+            if(this->mouseY >= this->h) {
+                this->mouseY = this->h - 1;
+            }
+            break;}
+
+        default:
+            debug(LOGLEVEL_ERROR, "UNKNOWN GUI EVENT!?");
+            break;
     }
 
     Redraw();

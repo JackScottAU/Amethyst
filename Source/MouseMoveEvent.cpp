@@ -13,3 +13,13 @@ sint8 MouseMoveEvent::getMouseX() {
 sint8 MouseMoveEvent::getMouseY() {
     return this->mouseY;
 }
+
+GuiEventType MouseMoveEvent::GetEventType()
+{
+    return GuiEventType::MOUSE_MOVE;
+}
+
+GuiEventType MouseClickEvent::GetEventType()
+{
+    return GuiEventType::MOUSE_CLICK;
+}
