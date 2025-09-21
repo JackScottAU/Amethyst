@@ -28,12 +28,6 @@ uint8 numberOfMouseBytes;
 
 uint8 mouseBytes[4];
 
-uint16 mouse_maxX;
-uint16 mouse_maxY;
-
-uint16 mouse_currentX;
-uint16 mouse_currentY;
-
 void mouse_interruptHandler(uint32 eventData);
 
 void mouse_interruptHandler(uint32 eventData) {
@@ -65,19 +59,11 @@ void mouse_interruptHandler(uint32 eventData) {
 
         debug(LOGLEVEL_INFO, "Mouse X: %d, Mouse Y: %d", mouseEvent.x, mouseEvent.y);
 
+        // The intermediary that sends the mouse event to the GUI.
         sortOfMouse_HandleEvent(mouseEvent.x, mouseEvent.y * -1);
 
         
     }
-}
-
-uint16 mouse_getX() {
-    return mouse_currentX;
-}
-
-
-uint16 mouse_getY() {
-    return mouse_currentY;
 }
 
 deviceTree_Entry* mouse_initialise() {
@@ -102,12 +88,6 @@ deviceTree_Entry* mouse_initialise() {
 
     currentMouseByte = 0;
     numberOfMouseBytes = 3;
-
-    mouse_maxX = 1024;
-    mouse_maxY = 768;
-
-    mouse_currentX = mouse_maxX / 2;
-    mouse_currentY = mouse_maxY / 2;
 
     return deviceTree_createDevice("Generic PS/2 Mouse", DEVICETREE_TYPE_OTHER, NULL);
 }
