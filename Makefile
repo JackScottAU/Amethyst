@@ -26,12 +26,14 @@ image-x86_32: cd-image
 lint:
 	@cpplint --quiet --recursive --linelength=160 --filter=-readability/casting,-build/include_order --root=Source Source
 
+# We add bochs-display so we can get a QEMU framebuffer, and an ATI card so we can start writing a driver for that.
 qemu-x86_32: image-x86_32 cd-image
 	@qemu-system-i386 \
 		-no-reboot -no-shutdown \
 		--machine pc -cpu pentium -m 16  \
 		-cdrom Amethyst.iso \
-		-vga std \
+		-device bochs-display  \
+		-device ati-vga,model=rage128pro \
 		-serial stdio \
 		-device pvpanic
 
@@ -68,11 +70,12 @@ resources:
 	@cp Resources/Images Build -r
 
 #Custom file build targets:
-Build/kernel32: Source/arch/x86_32/entry.o Source/kernel.o Source/shell.o Source/MouseMoveEvent.o Source/drivers/qemu_display_driver.o Source/arch/x86_32/physicalMemory.o Source/drivers/piixide.o  \
-				Source/graphics.o Source/StandardIO.o Source/arch/x86_32/taskswitch.o Source/arch/x86_32/thread.o Source/drivers/mouse.o Source/library/memory.o Source/cpuid.o Source/debug.o Source/library/fifobuffer.o \
-	 			Source/drivers/pci/deviceNames.o Source/drivers/ps2controller.o Source/arch/x86_32/rootDevice.o Source/stream.o Source/deviceTree.o Source/arch/x86_32/portIO.o Source/drivers/pciBus.o Source/drivers/keyboard.o Source/drivers/serial.o Source/arch/x86_32/gdt.o \
+Build/kernel32: Source/arch/x86_32/entry.o Source/kernel.o Source/shell.o Source/MouseMoveEvent.o Source/arch/x86_32/physicalMemory.o  \
+				Source/graphics.o Source/StandardIO.o Source/arch/x86_32/taskswitch.o Source/arch/x86_32/thread.o Source/library/memory.o Source/cpuid.o Source/debug.o Source/library/fifobuffer.o \
+	 			Source/arch/x86_32/rootDevice.o Source/stream.o Source/deviceTree.o Source/arch/x86_32/portIO.o Source/arch/x86_32/gdt.o \
 	  			Source/arch/x86_32/interrupts_setup.o Source/arch/x86_32/interrupts_handler.o Source/arch/x86_32/interrupts_stubs.o Source/Clock.o Source/memoryManager.o Source/library/string.o \
-				Source/GUI/Widget.o Source/GUI/Desktop.o Source/GUI/Window.o Source/GUI/TextConsole.o Source/GUI/TextLabel.o Source/GUI/TargaImage.o		# GUI Toolkit
+				Source/drivers/pciBus.o Source/drivers/pci/deviceNames.o Source/drivers/ps2controller.o Source/drivers/keyboard.o Source/drivers/mouse.o Source/drivers/serial.o Source/drivers/piixide.o Source/drivers/qemu_display_driver.o \
+				Source/GUI/Widget.o Source/GUI/Desktop.o Source/GUI/Window.o Source/GUI/TextConsole.o Source/GUI/TextLabel.o Source/GUI/TargaImage.o
 	-@mkdir -p Build
 	@$(LD) -T Resources/Linker-Script.ld -ffreestanding -nostdlib -lgcc -o $@ $^
 

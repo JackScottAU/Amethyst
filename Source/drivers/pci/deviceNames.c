@@ -5,11 +5,15 @@
 */
 
 #include "deviceNames.h"
+#include <deviceTree.h>
+#include <Drivers/pciBus.h>
+#include <Drivers/qemuVga.h>
 
 struct pci_deviceName {
     uint16 vendor;
     uint16 device;
     char* name;
+    deviceTree_Entry* (* initialisationFunction)(pciBus_Entry*);
 };
 
 const struct pci_deviceName deviceNames[] = {
@@ -29,7 +33,12 @@ const struct pci_deviceName deviceNames[] = {
 
     { 0x10EC, 0x8139, "Realtek 8139 Network Adapter" },
 
-    { 0x1234, 0x1111, "QEMU Standard VGA Graphics Adapter" },
+    { 0x1000, 0x0012, "LSI 53C895A SCSI Controller"},
+    { 0x1000, 0x0060, "LSI MegaRAID 1078 SAS Controller" },
+
+    { 0x1002, 0x5046, "ATI Rage 128 Pro Display Adapter"},
+
+    { 0x1234, 0x1111, "QEMU Standard VGA Graphics Adapter", qemuVga_initialise },
     { 0x1B36, 0x0011, "QEMU PVPANIC Device"},
 
     { 0x1414, 0x5353, "Microsoft Hyper-V Graphics Adapter" },

@@ -200,15 +200,15 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
     stdioTextBox = new TextConsole(canvas, font, 0, 32, 46, 128);
 
     window->AddChild(stdioTextBox);
- //   window->AddChild(image);
+    //   window->AddChild(image);
 
     for (int i = 0; i < 1000; i++) {
         image->SetPosition(i, 100);
     //  image->Redraw();
     }
 
-  //  uint32 pageaddress = memoryManager_getPhysicalAddressOfFreePhysicalPage();
-  //  debug(LOGLEVEL_ERROR, "page address: %h", pageaddress);
+    //  uint32 pageaddress = memoryManager_getPhysicalAddressOfFreePhysicalPage();
+    //  debug(LOGLEVEL_ERROR, "page address: %h", pageaddress);
 
     // Sets up the initial TCB.
     thread_control_block* task1 = initialise_multitasking();
