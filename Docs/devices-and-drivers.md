@@ -43,3 +43,11 @@ The platform driver lives in the architecture-specific folder. All other devices
 For example, turns scancodes into ascii keys.
 
 ## Device Classes
+
+## Video driver API
+
+init()
+getFeatures() > FEATURE_CURSOR | FEATURE_DOUBLEBUFFERING| FEATURE_etc
+getModes() - list in order, most preferred first (so most software can just set the first mode)
+setMode(mode)
+getCanvas() -> object has links to methods to draw cursor, switch buffers, etc

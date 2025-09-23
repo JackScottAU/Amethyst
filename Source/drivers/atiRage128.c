@@ -65,8 +65,14 @@ deviceTree_Entry* atiRage128_initialise(pciBus_Entry* pciDetails) {
 
     deviceTree_Entry* device = deviceTree_createDevice("ATI Rage Pro DIsplay Adapter", DEVICETREE_TYPE_PCI, pciDetails);
 
-    device->Resources = memoryManager_allocate(sizeof(DeviceResource) * 2);
-    device->ResourceCount = 2;
+    uint32 irq = pci_readConfigurationRegister(pciDetails->bus, pciDetails->slot, pciDetails->function, 0x3C) & 0x000000FF;
+
+    int resourceCount = 2;
+
+    if(irq > 0) {resourceCount = 3;}
+
+    device->Resources = memoryManager_allocate(sizeof(DeviceResource) * resourceCount);
+    device->ResourceCount = resourceCount;
 
     device->Resources[0].Type = DEVICE_RESOURCETYPE_MEM;
     device->Resources[0].StartAddress = bar0;
@@ -75,16 +81,16 @@ deviceTree_Entry* atiRage128_initialise(pciBus_Entry* pciDetails) {
     device->Resources[1].StartAddress = bar2;
     device->Resources[1].Length = 0x4000;  // 16KiB
 
+    if (irq > 0) {
+        device->Resources[2].Type = DEVICE_RESOURCETYPE_IRQ;
+        device->Resources[2].Flags = irq;
+    }
+
     deviceTree_Entry* monitor = deviceTree_createDevice("Generic Monitor", DEVICETREE_TYPE_OTHER, 0);
 
     deviceTree_addChild(device, monitor);
 
     atiRagePro_device = device;
-
-    debug(LOGLEVEL_DEBUG, "ATI CRTC_GEN_CTRL: %h", regs[ATIRAGE128_REGOFFSET_CRTC_GEN_CTRL]);
-
-    // Enable, 32bpp, extended.
-    regs[ATIRAGE128_REGOFFSET_CRTC_GEN_CTRL] = (6 << 8) | (1 << 24) | (25 << 1);
 
     // 1024x768
     regs[ATIRAGE128_REGOFFSET_CRTC_H_TOTAL_DISP] = 0xD0 | (0x7F << 16);
@@ -96,7 +102,7 @@ deviceTree_Entry* atiRage128_initialise(pciBus_Entry* pciDetails) {
     regs[ATIRAGE128_REGOFFSET_CRTC_PITCH] = 1024*4;
 
     // Enable, 32bpp, extended.
-    regs[ATIRAGE128_REGOFFSET_CRTC_GEN_CTRL / 4] = (6 << 8) | (1 << 24) | (1 << 25);
+    regs[ATIRAGE128_REGOFFSET_CRTC_GEN_CTRL] = (6 << 8) | (1 << 24) | (1 << 25);
 
     debug(LOGLEVEL_DEBUG, "ATI CRTC_GEN_CTRL ADDR: %h", &(regs[ATIRAGE128_REGOFFSET_CRTC_GEN_CTRL]));
     debug(LOGLEVEL_DEBUG, "ATI CRTC_GEN_CTRL: %h", regs[ATIRAGE128_REGOFFSET_CRTC_GEN_CTRL]);
