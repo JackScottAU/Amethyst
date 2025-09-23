@@ -14,6 +14,7 @@
 #include "pci/deviceNames.h"
 #include <debug.h>
 #include <Drivers/qemuVga.h>
+#include <Drivers/atiRage128.h>
 
 
 #define PCIBUS_IOPORT_REQUEST   0x0CF8
@@ -82,6 +83,10 @@ deviceTree_Entry* pci_addDevicesToTree(void) {
         } else if (pci_currentEntry->classID == 1 && pci_currentEntry->subClassID == 1) {
             // TODO(JackScottAU): make this whole device detection thing better.
             deviceTree_Entry* device = piixide_initialise(pci_currentEntry);
+
+            deviceTree_addChild(root, device);
+        } else if (pci_currentEntry->vendorID == 0x1002 && pci_currentEntry->deviceID == 0x5046) {
+            deviceTree_Entry* device = atiRage128_initialise(pci_currentEntry);
 
             deviceTree_addChild(root, device);
         } else {

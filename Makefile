@@ -32,10 +32,11 @@ qemu-x86_32: image-x86_32 cd-image
 		-no-reboot -no-shutdown \
 		--machine pc -cpu pentium -m 16  \
 		-cdrom Amethyst.iso \
-		-device bochs-display  \
 		-device ati-vga,model=rage128pro \
 		-serial stdio \
 		-device pvpanic
+		
+#		-device bochs-display  \
 
 cd-image: Build/kernel32 resources
 	-@grub-mkrescue -o Amethyst.iso Build -quiet
@@ -74,7 +75,7 @@ Build/kernel32: Source/arch/x86_32/entry.o Source/kernel.o Source/shell.o Source
 				Source/graphics.o Source/StandardIO.o Source/arch/x86_32/taskswitch.o Source/arch/x86_32/thread.o Source/library/memory.o Source/cpuid.o Source/debug.o Source/library/fifobuffer.o \
 	 			Source/arch/x86_32/rootDevice.o Source/stream.o Source/deviceTree.o Source/arch/x86_32/portIO.o Source/arch/x86_32/gdt.o \
 	  			Source/arch/x86_32/interrupts_setup.o Source/arch/x86_32/interrupts_handler.o Source/arch/x86_32/interrupts_stubs.o Source/Clock.o Source/memoryManager.o Source/library/string.o \
-				Source/drivers/pciBus.o Source/drivers/pci/deviceNames.o Source/drivers/ps2controller.o Source/drivers/keyboard.o Source/drivers/mouse.o Source/drivers/serial.o Source/drivers/piixide.o Source/drivers/qemu_display_driver.o \
+				Source/drivers/pciBus.o Source/drivers/pci/deviceNames.o Source/drivers/ps2controller.o Source/drivers/keyboard.o Source/drivers/mouse.o Source/drivers/serial.o Source/drivers/piixide.o Source/drivers/qemu_display_driver.o Source/drivers/atiRage128.o \
 				Source/GUI/Widget.o Source/GUI/Desktop.o Source/GUI/Window.o Source/GUI/TextConsole.o Source/GUI/TextLabel.o Source/GUI/TargaImage.o
 	-@mkdir -p Build
 	@$(LD) -T Resources/Linker-Script.ld -ffreestanding -nostdlib -lgcc -o $@ $^
