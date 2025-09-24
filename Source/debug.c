@@ -11,6 +11,8 @@
 #include <stream.h>
 #include <debug.h>
 
+void egaPutChar(char out);
+
 void debug(uint8 logLevel, const char* formatString, ...) {
     va_list args;
     va_start(args, formatString);
@@ -42,7 +44,27 @@ void debug(uint8 logLevel, const char* formatString, ...) {
     }
 
     stream_vprintf(DEBUG_DEVICE, formatString, args);
+    stream_vprintf(egaPutChar, formatString, args);
     stream_printf(DEBUG_DEVICE, "\n");
+    stream_printf(egaPutChar, "\n");
 
     va_end(args);
+}
+
+char* egaFB = (char*) 0xC00B8000;
+
+uint32 egaPos = 0;
+
+void egaPutChar(char out) {
+    if(out == '\n') {
+        egaPos = 0;
+    } else {
+        egaFB[egaPos] = out;
+        egaPos++;
+        egaFB[egaPos] = 0x0F;
+        egaPos++;
+    }
+
+
+    
 }

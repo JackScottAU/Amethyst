@@ -50,8 +50,8 @@ deviceTree_Entry* atiRage128_initialise(pciBus_Entry* pciDetails) {
     uint32 bar2 = pci_getBar(bus, slot, function, 2) & 0xFFFFFFFC;
     memoryManager_mapPhysicalMemoryPage(pg, (void*)0xFFC00000, (void*)bar0, 1024); // Framebuffer MM
     memoryManager_mapPhysicalMemoryPage(pg, (void*)0xFFBFC000, (void*)bar2, 4); // Register MMIO
-    debug(LOGLEVEL_INFO, "ATI RAGE PRO BAR0: %h", bar0);
-    debug(LOGLEVEL_INFO, "ATI RAGE PRO BAR2: %h", bar2);
+    debug(LOGLEVEL_INFO, "ATI RAGE 128 BAR0: %h", bar0);
+    debug(LOGLEVEL_INFO, "ATI RAGE 128 BAR2: %h", bar2);
 
     // BAR1: Reserved for 64-bit framebuffer addresses.
     // ROM:  Not needed.
@@ -63,7 +63,7 @@ deviceTree_Entry* atiRage128_initialise(pciBus_Entry* pciDetails) {
     uint32* regs = (uint32*) 0xFFBFC000;
 
 
-    deviceTree_Entry* device = deviceTree_createDevice("ATI Rage Pro DIsplay Adapter", DEVICETREE_TYPE_PCI, pciDetails);
+    deviceTree_Entry* device = deviceTree_createDevice("ATI Rage 128 Display Adapter", DEVICETREE_TYPE_PCI, pciDetails);
 
     uint32 irq = pci_readConfigurationRegister(pciDetails->bus, pciDetails->slot, pciDetails->function, 0x3C) & 0x000000FF;
 
@@ -93,10 +93,12 @@ deviceTree_Entry* atiRage128_initialise(pciBus_Entry* pciDetails) {
     atiRagePro_device = device;
 
     // 1024x768
-    regs[ATIRAGE128_REGOFFSET_CRTC_H_TOTAL_DISP] = 0xD0 | (0x7F << 16);
-    regs[ATIRAGE128_REGOFFSET_CRTC_H_SYNC_STRT_WID] = (0x82 << 2) | (0x31 << 16) | (1 << 23);
-    regs[ATIRAGE128_REGOFFSET_CRTC_V_TOTAL_DISP] = 0x325 | (0x2FF << 16);
-    regs[ATIRAGE128_REGOFFSET_CRTC_V_SYNC_STRT_WID] = (0x302) | (0x26 << 16) | (1 << 23);
+    regs[ATIRAGE128_REGOFFSET_CRTC_H_TOTAL_DISP] = 0xA8 | (0x7F << 16);
+
+    regs[ATIRAGE128_REGOFFSET_CRTC_H_SYNC_STRT_WID] = (0x83 << 3) | (0x17 << 16) | (1 << 23);
+
+    regs[ATIRAGE128_REGOFFSET_CRTC_V_TOTAL_DISP] = 0x326 | (0x2FF << 16);
+    regs[ATIRAGE128_REGOFFSET_CRTC_V_SYNC_STRT_WID] = (0x302) | (0x6 << 16) | (1 << 23);
 
     // Number of bytes we need per line.
     regs[ATIRAGE128_REGOFFSET_CRTC_PITCH] = 1024*4;
@@ -107,11 +109,7 @@ deviceTree_Entry* atiRage128_initialise(pciBus_Entry* pciDetails) {
     debug(LOGLEVEL_DEBUG, "ATI CRTC_GEN_CTRL ADDR: %h", &(regs[ATIRAGE128_REGOFFSET_CRTC_GEN_CTRL]));
     debug(LOGLEVEL_DEBUG, "ATI CRTC_GEN_CTRL: %h", regs[ATIRAGE128_REGOFFSET_CRTC_GEN_CTRL]);
 
-    // Put something on the screen so we can see if it worked.
-    uint32* fbmem = (uint32*) 0xFFC00000;
-    for(int i = 0; i < 100000; i++) {
-        fbmem[i] = 0x8888CCCC + i;
-    }
+    
 
     atiRagePro_width  =1024;
     atiRagePro_height = 768;

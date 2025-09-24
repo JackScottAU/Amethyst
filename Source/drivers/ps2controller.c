@@ -122,14 +122,15 @@ deviceTree_Entry* ps2controller_initialise(void) {
 
     if(channel2Status) {
         // Send identify command.
-        uint8 identification = ps2controller_getFirstIdentifyByte(1);
+        // Temporarily disable mouse so we can test on a computer that doesn't have a mouse!
+  /*      uint8 identification = ps2controller_getFirstIdentifyByte(1);
 
         debug(LOGLEVEL_DEBUG, "Channel 2 Identification: %h", identification);
         
         deviceTree_addChild(parent, mouse_initialise());
 
         parent->Resources[2].Type = DEVICE_RESOURCETYPE_IRQ;
-        parent->Resources[2].Flags = 12;
+        parent->Resources[2].Flags = 12;*/
     }
 
     ps2controller_enableInterrupts();

@@ -51,3 +51,7 @@ getFeatures() > FEATURE_CURSOR | FEATURE_DOUBLEBUFFERING| FEATURE_etc
 getModes() - list in order, most preferred first (so most software can just set the first mode)
 setMode(mode)
 getCanvas() -> object has links to methods to draw cursor, switch buffers, etc
+
+## PCI
+
+Create a sort-of hash table of drivers. Key is PCI class, sub key is subclass, then have a linked list of drivers by vendor/model IDs. The final driver in the list is a generic driver for that class/subclass of PCI device. If no drivers exist even generic one, then we fall back to an "Unknown PCI Device" driver.

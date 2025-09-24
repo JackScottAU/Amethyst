@@ -85,7 +85,7 @@ deviceTree_Entry* pci_addDevicesToTree(void) {
             deviceTree_Entry* device = piixide_initialise(pci_currentEntry);
 
             deviceTree_addChild(root, device);
-        } else if (pci_currentEntry->vendorID == 0x1002 && pci_currentEntry->deviceID == 0x5046) {
+        } else if (pci_currentEntry->vendorID == 0x1002 && (pci_currentEntry->deviceID == 0x5046 || pci_currentEntry->deviceID == 0x5446)) {
             deviceTree_Entry* device = atiRage128_initialise(pci_currentEntry);
 
             deviceTree_addChild(root, device);

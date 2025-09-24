@@ -13,6 +13,7 @@ Currently working on GUI events, ring 3, IDE.
 - Make the scheduler a bit smarter
 - Refactor scheduler into thread.c (arch) and scheduler.c (generic)
 - Seperate kernel clock mechanism from PIT.
+- Rename "portIO" to "hal"
 
 ### Drivers
 
@@ -24,6 +25,7 @@ Currently working on GUI events, ring 3, IDE.
 - Fix detection in ATA driver.
 - Rename QEMU VGA driver to something more generic and make the files nicer.
 - Refactor "vga_framebuffer" into canvas
+- Add 1280x720 mode to ATI driver for widescreens
 
 #### Driver Priorities
 
