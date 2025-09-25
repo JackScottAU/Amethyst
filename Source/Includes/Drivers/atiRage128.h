@@ -21,6 +21,8 @@ deviceTree_Entry* atiRage128_initialise(pciBus_Entry* pciDetails);
 
 Canvas* atiRage128_getCanvas();
 
+void atiRage128_dumpCursorPos();
+
 //void atiRagePro_setMode(uint16 width, uint16 height);
 
 

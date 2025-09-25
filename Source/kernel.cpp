@@ -234,6 +234,7 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
         debug(LOGLEVEL_TRACE, "System idle task running.");
 
     //    debug(LOGLEVEL_DEBUG, "CR3: %h\n", memoryManager_getCurrentPageDirectory());
+        atiRage128_dumpCursorPos();
 
         haltCPU();
     }
