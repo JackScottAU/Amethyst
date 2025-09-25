@@ -37,6 +37,39 @@ deviceTree_Entry* atiRagePro_device = NULL;
  */
 #define ATIRAGE128_REGOFFSET_CRTC_PITCH           0x022C / 4
 
+typedef struct {
+    uint16 hRes;
+    uint16 vRes;
+
+    uint16 hFront;
+    uint16 hSync;
+    uint16 hBack;
+
+    uint16 vFront;
+    uint16 vSync;
+    uint16 vBack;
+
+    /// @brief Pixel clock in Hz.
+    uint32 pixelClock;
+
+    /// @brief Number of bits per pixel.
+    uint8 depth;
+} VideoMode;
+
+const VideoMode videoMode1024x768 = {
+    1024, 768, 
+    24, 136, 160,
+    3, 6, 29,
+    65000000, 32
+};
+
+const VideoMode videoMode640x480 = {
+    640, 480,
+    16, 96, 48,
+    10, 2, 33,
+    25175000, 32
+};
+
 
 deviceTree_Entry* atiRage128_initialise(pciBus_Entry* pciDetails) {
     uint32 bus = pciDetails->bus;
@@ -92,27 +125,50 @@ deviceTree_Entry* atiRage128_initialise(pciBus_Entry* pciDetails) {
 
     atiRagePro_device = device;
 
-    // 1024x768
-    regs[ATIRAGE128_REGOFFSET_CRTC_H_TOTAL_DISP] = 0xA8 | (0x7F << 16);
+    // Pick our video mode.
+    VideoMode mode = videoMode640x480;
 
-    regs[ATIRAGE128_REGOFFSET_CRTC_H_SYNC_STRT_WID] = (0x83 << 3) | (0x17 << 16) | (1 << 23);
+    uint32 hSyncStart = (mode.hRes + mode.hFront) / 8;
+    uint32 hSyncWidth = mode.hSync / 8;
+    uint32 hTotal = (mode.hRes + mode.hFront + mode.hSync + mode.hBack) / 8;
+    uint32 hEnd = (mode.hRes / 8) -1;
+    
+    uint32 vSyncStart = (mode.vRes + mode.vFront);
+    uint32 vSyncWidth = mode.vSync;
+    uint32 vTotal = (mode.vRes + mode.vFront + mode.vSync + mode.vBack);
+    uint32 vEnd = (mode.vRes) -1;
 
-    regs[ATIRAGE128_REGOFFSET_CRTC_V_TOTAL_DISP] = 0x326 | (0x2FF << 16);
-    regs[ATIRAGE128_REGOFFSET_CRTC_V_SYNC_STRT_WID] = (0x302) | (0x6 << 16) | (1 << 23);
+    uint32 depth = 0;
 
-    // Number of bytes we need per line.
-    regs[ATIRAGE128_REGOFFSET_CRTC_PITCH] = 1024*4;
+    switch(mode.depth) {
+        case 32:
+        depth = 6;
+        break;
+
+        default:
+        depth = 6;
+    }
+
+    regs[ATIRAGE128_REGOFFSET_CRTC_H_TOTAL_DISP] = hTotal | (hEnd << 16);
+    regs[ATIRAGE128_REGOFFSET_CRTC_V_TOTAL_DISP] = vTotal | (vEnd << 16);
+
+    regs[ATIRAGE128_REGOFFSET_CRTC_H_SYNC_STRT_WID] = (hSyncStart << 3) | (hSyncWidth << 16) | (1 << 23);   // QEMU does not use this register at all.
+
+    regs[ATIRAGE128_REGOFFSET_CRTC_V_SYNC_STRT_WID] = (vSyncStart) | (vSyncWidth << 16) | (1 << 23);        // QEMU deso not use this register at all.
+
+    // Number of characters the screen is wide.
+    regs[ATIRAGE128_REGOFFSET_CRTC_PITCH] = (mode.hRes) / 8;
 
     // Enable, 32bpp, extended.
-    regs[ATIRAGE128_REGOFFSET_CRTC_GEN_CTRL] = (6 << 8) | (1 << 24) | (1 << 25);
+    regs[ATIRAGE128_REGOFFSET_CRTC_GEN_CTRL] = (depth << 8) | (1 << 24) | (1 << 25);
 
     debug(LOGLEVEL_DEBUG, "ATI CRTC_GEN_CTRL ADDR: %h", &(regs[ATIRAGE128_REGOFFSET_CRTC_GEN_CTRL]));
     debug(LOGLEVEL_DEBUG, "ATI CRTC_GEN_CTRL: %h", regs[ATIRAGE128_REGOFFSET_CRTC_GEN_CTRL]);
 
     
 
-    atiRagePro_width  =1024;
-    atiRagePro_height = 768;
+    atiRagePro_width  =mode.hRes;
+    atiRagePro_height = mode.vRes;
 
     return device;
 }
