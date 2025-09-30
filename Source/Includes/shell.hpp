@@ -17,14 +17,14 @@ extern "C" {
 #endif
 
 class ShellCommand {
-   public:
-      char* command;
-      uint32 (* callback)(StandardIO*);
+ public:
+  char* command;
+  uint32 (* callback)(StandardIO*);
 };
 
 class Shell {
  public:
-    Shell(StandardIO* stdio);
+    explicit Shell(StandardIO* stdio);
 
     /// @brief Main shell loop.
     void Main();

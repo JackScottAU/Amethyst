@@ -77,11 +77,9 @@ void Shell::ProcessLine() {
     }
 
     if (string_compare(line, "gfx-demo") == 0) {
-   //     Canvas* canvas = atiRage128_getCanvas();
-
         // Put something on the screen so we can see if it worked.
         uint32* fbmem = (uint32*) 0xFFC00000;
-        for(int i = 0; i < 1024 * 768; i++) {
+        for (int i = 0; i < 1024 * 768; i++) {
             fbmem[i] = 0x8888CCCC + i;
         }
         return;

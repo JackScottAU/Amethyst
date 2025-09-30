@@ -70,7 +70,7 @@ deviceTree_Entry* ps2controller_initialise(void) {
     channel2Status = configByte & PS2CONTROLLER_CONFIG_DISABLE_PORT2;
 
     // Step 4: Perform Interface Tests
-    if(channel1Status) {
+    if (channel1Status) {
         portIO_write8(PS2CONTROLLER_CONTROLPORT, 0xAB);
         ps2controller_waitForRead();
         if (portIO_read8(PS2CONTROLLER_DATAPORT) != 0x00) {
@@ -79,7 +79,7 @@ deviceTree_Entry* ps2controller_initialise(void) {
         }
     }
 
-    if(channel2Status) {
+    if (channel2Status) {
         portIO_write8(PS2CONTROLLER_CONTROLPORT, 0xA9);
         ps2controller_waitForRead();
         if (portIO_read8(PS2CONTROLLER_DATAPORT) != 0x00) {
@@ -90,10 +90,10 @@ deviceTree_Entry* ps2controller_initialise(void) {
 
     // Step 5: Enable Devices.
     ps2controller_disableInterrupts();
-    if(channel1Status) {
+    if (channel1Status) {
         portIO_write8(PS2CONTROLLER_CONTROLPORT, PS2CONTROLLER_COMMAND_ENABLE_PORT1);
     }
-    if(channel2Status) {
+    if (channel2Status) {
         portIO_write8(PS2CONTROLLER_CONTROLPORT, PS2CONTROLLER_COMMAND_ENABLE_PORT2);
     }
 
@@ -106,9 +106,9 @@ deviceTree_Entry* ps2controller_initialise(void) {
     parent->Resources[0].StartAddress = 0x60;
     parent->Resources[0].Length = 8;
 
-    // TODO: add code to detect what is plugged in where, so we could have two keyboards or two mice or mouse on channel 1 and keyboard on channel 2.
+    // TODO(JackScottAU): add code to detect what is plugged in where, so we could have two keyboards or two mice or mouse and keyboard swapped.
 
-    if(channel1Status) {
+    if (channel1Status) {
         // Send identify command.
         uint8 identification = ps2controller_getFirstIdentifyByte(1);
 
@@ -120,7 +120,7 @@ deviceTree_Entry* ps2controller_initialise(void) {
         parent->Resources[1].Flags = 1;
     }
 
-    if(channel2Status) {
+    if (channel2Status) {
         // Send identify command.
         // Temporarily disable mouse so we can test on a computer that doesn't have a mouse!
   /*      uint8 identification = ps2controller_getFirstIdentifyByte(1);
@@ -140,31 +140,30 @@ deviceTree_Entry* ps2controller_initialise(void) {
     return parent;
 }
 
-uint8 ps2controller_getFirstIdentifyByte(uint8 channel)
-{
-    //Send the Disable Scanning command 0xF5 to the device
-    ps2controller_sendByteToDevice(channel, 0xF5);
-    
-    //Wait for the device to send ACK back (0xFA)
-    ps2controller_waitForRead();
-    ps2controller_receiveByteFromDevice(channel);
-    
-    //Send the Identify command 0xF2 to the device
+uint8 ps2controller_getFirstIdentifyByte(uint8 channel) {
+    // Send the Disable Scanning command 0xF5 to the device
     ps2controller_sendByteToDevice(channel, 0xF5);
 
-    //Wait for the device to send ACK back (0xFA)
+    // Wait for the device to send ACK back (0xFA)
     ps2controller_waitForRead();
     ps2controller_receiveByteFromDevice(channel);
 
-    //Wait for the device to send up to 2 bytes of reply, with a time-out to determine when it's finished (e.g. in case it only sends 1 byte)
+    // Send the Identify command 0xF2 to the device
+    ps2controller_sendByteToDevice(channel, 0xF5);
+
+    // Wait for the device to send ACK back (0xFA)
+    ps2controller_waitForRead();
+    ps2controller_receiveByteFromDevice(channel);
+
+    // Wait for the device to send up to 2 bytes of reply, with a time-out to determine when it's finished (e.g. in case it only sends 1 byte)
     ps2controller_waitForRead();
     uint8 ident = ps2controller_receiveByteFromDevice(channel);
-    if(ident > 128) {
+    if (ident > 128) {
         ps2controller_waitForRead();
         ps2controller_receiveByteFromDevice(channel);
     }
 
-    //Send the Enable Scanning command 0xF4 to the device
+    // Send the Enable Scanning command 0xF4 to the device
     ps2controller_sendByteToDevice(channel, 0xF4);
     ps2controller_waitForRead();
     ps2controller_receiveByteFromDevice(channel);
@@ -176,7 +175,7 @@ void ps2controller_disableInterrupts() {
     uint8 configByte = ps2controller_getConfigurationByte();
 
     configByte = configByte & 0xF4;     // Disable interrupts on both devices.
-    
+
     ps2controller_setConfigurationByte(configByte);
 
     debug(LOGLEVEL_DEBUG, "PS/2 Controller: Disabled interrupts.");
@@ -186,9 +185,9 @@ void ps2controller_enableInterrupts() {
     debug(LOGLEVEL_DEBUG, "PS/2 Controller: Enabling interrupts...");
 
     uint8 configByte = ps2controller_getConfigurationByte();
-    
+
     configByte = configByte | 0x03;     // Enable interrupts on both devices.
-    
+
     ps2controller_setConfigurationByte(configByte);
 
     debug(LOGLEVEL_DEBUG, "PS/2 Controller: Enabled interrupts.");
@@ -213,9 +212,9 @@ void ps2controller_setConfigurationByte(uint8 configByte) {
 }
 
 void ps2controller_sendByteToDevice(uint8 channel, uint8 data) {
-    if(channel == 2) {
+    if (channel == 2) {
         ps2controller_waitForWrite();
-        portIO_write8(PS2CONTROLLER_CONTROLPORT, 0xD4); // next command to channel two.
+        portIO_write8(PS2CONTROLLER_CONTROLPORT, 0xD4);     // next command to channel two.
     }
 
     ps2controller_waitForWrite();

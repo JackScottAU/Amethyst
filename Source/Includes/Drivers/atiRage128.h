@@ -1,7 +1,11 @@
 /**
- *  Amethyst Operating System - Definitions for kernel device driver tree.
+ *  Amethyst Operating System - Driver for ATI Rage 128 Series Graphics Cards.
  *  Copyright 2024 Jack Scott <jack@jackscott.id.au>.
  *  Released under the terms of the ISC license.
+ * 
+ *  Capabilities:
+ *  [X] 2D Framebuffer (getCanvas())
+ *  [ ] Anything else
 */
 
 #include <Types.h>

@@ -39,23 +39,21 @@ void mouse_interruptHandler(uint32 eventData) {
     mouseBytes[currentMouseByte] = data;
     currentMouseByte++;
 
-    if(currentMouseByte >= numberOfMouseBytes) {
+    if (currentMouseByte >= numberOfMouseBytes) {
         currentMouseByte = 0;
     }
 
-    if(currentMouseByte == 0) {
+    if (currentMouseByte == 0) {
         // we have a full mouse packet in the array buffer.
-        if(mouseBytes[0] & 0x10) {
+        if (mouseBytes[0] & 0x10) {
             mouseEvent.x = mouseBytes[1] | 0xFF00;
-        }
-        else {
+        } else {
             mouseEvent.x = mouseBytes[1];
         }
 
-        if(mouseBytes[0] & 0x20) {
+        if (mouseBytes[0] & 0x20) {
             mouseEvent.y = mouseBytes[2] | 0xFF00;
-        }
-        else {
+        } else {
             mouseEvent.y = mouseBytes[2];
         }
 
@@ -66,12 +64,12 @@ void mouse_interruptHandler(uint32 eventData) {
 
         bool leftNewDown = mouseBytes[0] & 0x01;
 
-        if(leftDown && !leftNewDown) {
+        if (leftDown && !leftNewDown) {
             // Mouse up
             sortOfMouse_HandleClickEvent();
         }
 
-        if(!leftDown && leftNewDown) {
+        if (!leftDown && leftNewDown) {
             // mouse down
         }
 

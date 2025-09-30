@@ -22,7 +22,6 @@ extern "C" {
 
     uint32 string_length(const char* string);
 
-    // TODO:
     char** string_split(char* string, char splitter);
 
     /**
@@ -37,4 +36,3 @@ extern "C" {
 #endif
 
 #endif  // INCLUDES_STRING_H_
-

@@ -173,7 +173,7 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
     deviceTree_build();
 
     // We now have a QEMU display adapter somewhere in the device tree, and it knows where it is, so we can use it.
-   // qemuVga_setMode(1024, 768);
+    // qemuVga_setMode(1024, 768);
     Canvas* canvas = atiRage128_getCanvas();
 
     multiboot_moduleNode* modules = multibootData->modsAddr;

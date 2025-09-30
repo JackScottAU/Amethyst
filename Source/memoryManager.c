@@ -28,7 +28,9 @@ void memoryManager_mapPhysicalMemoryPage(PageDirectory* directory, void* startLo
 
         debug(LOGLEVEL_TRACE, "Indexes: %h, %h", pageDirectoryIndex, pageTableIndex);
 
-        pageDirectoryEntry* directoryEntry = &((pageDirectoryEntry*)((uint32)directory + 0xC0000000))[pageDirectoryIndex];
+        PageDirectory pageDirectory = (pageDirectoryEntry*)((uint32)directory + 0xC0000000);
+
+        pageDirectoryEntry* directoryEntry = &(pageDirectory[pageDirectoryIndex]);
 
         if (!directoryEntry->p) {
             // page table doesn't exist, we need to create one.

@@ -56,7 +56,7 @@ char* egaFB = (char*) 0xC00B8000;
 uint32 egaPos = 0;
 
 void egaPutChar(char out) {
-    if(out == '\n') {
+    if (out == '\n') {
         egaPos = 0;
     } else {
         egaFB[egaPos] = out;
@@ -64,7 +64,4 @@ void egaPutChar(char out) {
         egaFB[egaPos] = 0x0F;
         egaPos++;
     }
-
-
-    
 }

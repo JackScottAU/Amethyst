@@ -1,18 +1,16 @@
-// BAR0 : MEM_BASE
-// BAR1 : IO_BASE (mirror of first part of reg_base)
-// BAR2 : REG_BASE
-
 /**
- *  Amethyst Operating System - Driver for QEMU Standard Display Adapter.
+ *  Amethyst Operating System - Driver for ATI Rage 128 Series Graphics Cards.
  *  Copyright 2024 Jack Scott <jack@jackscott.id.au>.
  *  Released under the terms of the ISC license.
- * 
- *  This driver is also used by Bochs (where it originated).
  * 
  *  Capabilities:
  *  [X] 2D Framebuffer (getCanvas())
  *  [ ] Anything else
 */
+
+
+
+
 
 #include <memoryManager.h>
 #include <debug.h>
@@ -69,7 +67,7 @@ typedef struct {
 } VideoMode;
 
 const VideoMode videoMode1024x768 = {
-    1024, 768, 
+    1024, 768,
     24, 136, 160, 0,
     3, 6, 29, 0,
     65000000, 32
@@ -93,19 +91,17 @@ deviceTree_Entry* atiRage128_initialise(pciBus_Entry* pciDetails) {
     uint32 bar0size = pci_getBarSize(bus, slot, function, 0);
     // TODO(JackScottAU): check the size of the memory BAR and allocate more pages if needed.
     uint32 bar2 = pci_getBar(bus, slot, function, 2) & 0xFFFFFFFC;
-    memoryManager_mapPhysicalMemoryPage(pg, (void*)0xFFC00000, (void*)bar0, 1024); // Framebuffer MM
-    memoryManager_mapPhysicalMemoryPage(pg, (void*)0xFFBFC000, (void*)bar2, 4); // Register MMIO
+    memoryManager_mapPhysicalMemoryPage(pg, (void*)0xFFC00000, (void*)bar0, 1024);  // Framebuffer MM
+    memoryManager_mapPhysicalMemoryPage(pg, (void*)0xFFBFC000, (void*)bar2, 4);     // Register MMIO
     debug(LOGLEVEL_INFO, "ATI RAGE 128 BAR0: %h", bar0);
     debug(LOGLEVEL_INFO, "ATI RAGE 128 BAR2: %h", bar2);
 
-    // BAR1: Reserved for 64-bit framebuffer addresses.
-    // ROM:  Not needed.
-    // IRQ:  None.
-
-  //  memoryManager_printMemoryMap(pg);
+    // BAR0 : MEM_BASE
+    // BAR1 : IO_BASE (mirror of first part of reg_base)
+    // BAR2 : REG_BASE
 
     // can now read registers.
-    uint32* regs = (uint32*) 0xFFBFC000;
+    volatile uint32* regs = (uint32*) 0xFFBFC000;
 
 
     deviceTree_Entry* device = deviceTree_createDevice("ATI Rage 128 Display Adapter", DEVICETREE_TYPE_PCI, pciDetails);
@@ -114,7 +110,9 @@ deviceTree_Entry* atiRage128_initialise(pciBus_Entry* pciDetails) {
 
     int resourceCount = 2;
 
-    if(irq > 0) {resourceCount = 3;}
+    if (irq > 0) {
+        resourceCount = 3;
+    }
 
     device->Resources = memoryManager_allocate(sizeof(DeviceResource) * resourceCount);
     device->ResourceCount = resourceCount;
@@ -144,7 +142,7 @@ deviceTree_Entry* atiRage128_initialise(pciBus_Entry* pciDetails) {
     uint32 hSyncWidth = mode.hSync / 8;
     uint32 hTotal = (mode.hRes + mode.hFront + mode.hSync + mode.hBack) / 8;
     uint32 hEnd = (mode.hRes / 8) -1;
-    
+
     uint32 vSyncStart = (mode.vRes + mode.vFront);
     uint32 vSyncWidth = mode.vSync;
     uint32 vTotal = (mode.vRes + mode.vFront + mode.vSync + mode.vBack);
@@ -155,7 +153,7 @@ deviceTree_Entry* atiRage128_initialise(pciBus_Entry* pciDetails) {
 
     uint32 depth = 0;
 
-    switch(mode.depth) {
+    switch (mode.depth) {
         case 32:
         depth = 6;
         break;
@@ -175,26 +173,26 @@ deviceTree_Entry* atiRage128_initialise(pciBus_Entry* pciDetails) {
     regs[ATIRAGE128_REGOFFSET_CRTC_PITCH] = (mode.hRes) / 8;
 
     // Enable, 32bpp, extended.
-    regs[ATIRAGE128_REGOFFSET_CRTC_GEN_CTRL] = (depth << 8) | (1 << 24) | (1 << 25) | (1 << 16); // 16 = cursors
+    regs[ATIRAGE128_REGOFFSET_CRTC_GEN_CTRL] = (depth << 8) | (1 << 24) | (1 << 25) | (1 << 16);    // 16 = cursors
 
     debug(LOGLEVEL_DEBUG, "ATI CRTC_GEN_CTRL ADDR: %h", &(regs[ATIRAGE128_REGOFFSET_CRTC_GEN_CTRL]));
     debug(LOGLEVEL_DEBUG, "ATI CRTC_GEN_CTRL: %h", regs[ATIRAGE128_REGOFFSET_CRTC_GEN_CTRL]);
 
-    
+
     // fill cursor memnory with something, even if it makes no sense
-    uint32* fbmem = (uint32*) 0xFFF00000; // skip 3meg
-    for(int i = 0; i < 64 * 64; i++) {
+    uint32* fbmem = (uint32*) 0xFFF00000;   // skip 3meg
+    for (int i = 0; i < 64 * 64; i++) {
         fbmem[i] = 0x8888CCCC + i;
     }
 
-    
-    regs[ATIRAGE128_REGOFFSET_CUR_OFFSET] = 0x300000; // 3mb
-    regs[ATIRAGE128_REGOFFSET_CUR_HORZ_VERT_POSN] = 220 << 16 | 300; // pos
+
+    regs[ATIRAGE128_REGOFFSET_CUR_OFFSET] = 0x300000;   // 3mb
+    regs[ATIRAGE128_REGOFFSET_CUR_HORZ_VERT_POSN] = 220 << 16 | 300;    // pos
     regs[ATIRAGE128_REGOFFSET_CUR_CLR0] = 220 << 16 | 300 | 120 << 8;
     regs[ATIRAGE128_REGOFFSET_CUR_CLR1] = 120 << 16 | 200 | 80 << 8;
 
 
-    atiRagePro_width  =mode.hRes;
+    atiRagePro_width  = mode.hRes;
     atiRagePro_height = mode.vRes;
 
     return device;

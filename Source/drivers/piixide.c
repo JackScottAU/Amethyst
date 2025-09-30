@@ -1,3 +1,9 @@
+/**
+ *  Amethyst Operating System - Driver for PCI IDE Controllers.
+ *  Copyright 2024 Jack Scott <jack@jackscott.id.au>.
+ *  Released under the terms of the ISC license.
+*/
+
 #include <Drivers/piixide.h>
 #include <Drivers/pciBus.h>
 #include <memoryManager.h>
@@ -30,23 +36,23 @@ void piixide_waitForReady(deviceTree_Entry* channelDevice);
 deviceTree_Entry* piixide_decodeDriveSignature(uint32 cl, uint32 ch);
 
 deviceTree_Entry* piixide_decodeDriveSignature(uint32 cl, uint32 ch) {
-    if (cl==0x14 && ch==0xEB) {
+    if (cl == 0x14 && ch == 0xEB) {
         return deviceTree_createDevice("PATA CD-ROM Drive?!", DEVICETREE_TYPE_OTHER, NULL);
     }
-    
-	if (cl==0x69 && ch==0x96) {
+
+    if (cl == 0x69 && ch == 0x96) {
         return deviceTree_createDevice("SATA CD-ROM Drive?!", DEVICETREE_TYPE_OTHER, NULL);
     }
 
-	if (cl==0 && ch == 0) {
+    if (cl == 0 && ch == 0) {
         return deviceTree_createDevice("PATA HDD Drive?!", DEVICETREE_TYPE_OTHER, NULL);
     }
 
-	if (cl==0x3c && ch==0xc3) {
+    if (cl == 0x3c && ch == 0xc3) {
         return deviceTree_createDevice("SATA HDD Drive?!", DEVICETREE_TYPE_OTHER, NULL);
     }
 
-	return NULL;
+    return NULL;
 }
 
 deviceTree_Entry* piixide_initialise(pciBus_Entry* pciDetails) {
@@ -61,7 +67,7 @@ deviceTree_Entry* piixide_initialise(pciBus_Entry* pciDetails) {
     uint8 programmingInterface = (classLong > 8) & 0xFF;
 
     // check programming interface byte:
-    if(programmingInterface & 2) {
+    if (programmingInterface & 2) {
         // todo
     }
 
@@ -178,10 +184,9 @@ void piixide_waitForReady(deviceTree_Entry* channelDevice) {
         uint8 status = portIO_read8(ioBase + 7);
 
         // Check if BUSY is set.
-        if(status >> 7) {
+        if (status >> 7) {
 
-        }
-        else {
+        } else {
             notReady = false;
         }
     }
@@ -191,8 +196,8 @@ void piixide_selectDrive(deviceTree_Entry* channelDevice, uint8 driveNumber) {
     uint16 ioBase = channelDevice->Resources[0].StartAddress;
     uint16 controlBase = channelDevice->Resources[1].StartAddress;
 
-        /* waits until master drive is ready again */
-	portIO_write8(ioBase + ATA_REGISTEROFFSET_IO_DRIVE, 0xE0 | driveNumber);
+    /* waits until master drive is ready again */
+    portIO_write8(ioBase + ATA_REGISTEROFFSET_IO_DRIVE, 0xE0 | driveNumber);
     piixide_wait(channelDevice);
 }
 
@@ -200,25 +205,18 @@ void piixide_softwareReset(deviceTree_Entry* channelDevice) {
     uint16 controlBase = channelDevice->Resources[1].StartAddress;
 
     // reset
-    portIO_write8(controlBase + ATA_REGISTEROFFSET_CONTROL_STATUS, 4); // SRST
-	portIO_read8 (controlBase + ATA_REGISTEROFFSET_CONTROL_STATUS);			/* wait 400ns for drive select to work */
-	portIO_read8 (controlBase + ATA_REGISTEROFFSET_CONTROL_STATUS);
-	portIO_read8 (controlBase + ATA_REGISTEROFFSET_CONTROL_STATUS);
-	portIO_read8 (controlBase + ATA_REGISTEROFFSET_CONTROL_STATUS);
-    portIO_write8(controlBase + ATA_REGISTEROFFSET_CONTROL_STATUS, 0);
+    portIO_write8(controlBase + ATA_REGISTEROFFSET_CONTROL_STATUS, 4);  // SRST
     piixide_wait(channelDevice);
-	portIO_read8 (controlBase + ATA_REGISTEROFFSET_CONTROL_STATUS);			/* wait 400ns for drive select to work */
-	portIO_read8 (controlBase + ATA_REGISTEROFFSET_CONTROL_STATUS);
-	portIO_read8 (controlBase + ATA_REGISTEROFFSET_CONTROL_STATUS);
-	portIO_read8 (controlBase + ATA_REGISTEROFFSET_CONTROL_STATUS);
+    portIO_write8(controlBase + ATA_REGISTEROFFSET_CONTROL_STATUS, 0);  // No software reset
+    piixide_wait(channelDevice);
 }
 
 /// @brief We really only need to use this when selecting a drive, as the status update is immediate when not drive switching.
-/// @param channelDevice 
+/// @param channelDevice
 void piixide_wait(deviceTree_Entry* channelDevice) {
     uint16 controlBase = channelDevice->Resources[1].StartAddress;
 
-    for(int i = 0; i < 16; i++) {
-	    portIO_read8 (controlBase + ATA_REGISTEROFFSET_CONTROL_STATUS);
-    }    
+    for (int i = 0; i < 16; i++) {
+        portIO_read8(controlBase + ATA_REGISTEROFFSET_CONTROL_STATUS);
+    }
 }
