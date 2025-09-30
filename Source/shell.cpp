@@ -53,7 +53,7 @@ void Shell::ProcessLine() {
 
     debug(LOGLEVEL_DEBUG, "addr of line: %h", line);
 
-    if (*line == NULL) {
+    if (*line == 0) {
         debug(LOGLEVEL_WARNING, "No input to shell.");
         return;
     }

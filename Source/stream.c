@@ -108,7 +108,7 @@ void stream_vprintf(void (*putChar)(char), const char* formatString, va_list arg
 }
 
 void stream_putDecimal(void (*putChar)(char), sint32 arg) {
-    if (arg > 0x80000000) {
+    if (arg < 0) {
         putChar('-');
         arg = arg * -1;
     }

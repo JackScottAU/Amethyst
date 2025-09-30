@@ -194,7 +194,6 @@ void piixide_waitForReady(deviceTree_Entry* channelDevice) {
 
 void piixide_selectDrive(deviceTree_Entry* channelDevice, uint8 driveNumber) {
     uint16 ioBase = channelDevice->Resources[0].StartAddress;
-    uint16 controlBase = channelDevice->Resources[1].StartAddress;
 
     /* waits until master drive is ready again */
     portIO_write8(ioBase + ATA_REGISTEROFFSET_IO_DRIVE, 0xE0 | driveNumber);

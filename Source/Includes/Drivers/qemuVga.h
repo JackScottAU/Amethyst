@@ -1,7 +1,15 @@
 /**
- *  Amethyst Operating System - Definitions for kernel device driver tree.
+ *  Amethyst Operating System - Driver for QEMU Standard Display Adapter.
  *  Copyright 2024 Jack Scott <jack@jackscott.id.au>.
  *  Released under the terms of the ISC license.
+ * 
+ *  This driver is also used by Bochs (where it originated).
+ * 
+ *  2D Capabilities:
+ *  [X] 2D Framebuffer
+ *  [-] Double Buffering
+ *  [ ] Hardware Sprites (Cursor)
+ *  [ ] Hardware Copy and Fill (Blitting)
 */
 
 #include <Types.h>

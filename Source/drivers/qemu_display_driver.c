@@ -5,9 +5,11 @@
  * 
  *  This driver is also used by Bochs (where it originated).
  * 
- *  Capabilities:
- *  [X] 2D Framebuffer (getCanvas())
- *  [ ] Anything else
+ *  2D Capabilities:
+ *  [X] 2D Framebuffer
+ *  [-] Double Buffering
+ *  [ ] Hardware Sprites (Cursor)
+ *  [ ] Hardware Copy and Fill (Blitting)
 */
 
 #include <memoryManager.h>
