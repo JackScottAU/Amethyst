@@ -15,56 +15,34 @@
 #include <Drivers/pciBus.h>
 #include <Drivers/atiRage128.h>
 
-uint32 atiRagePro_width = 0;
-uint32 atiRagePro_height = 0;
+VideoMode* atiRage128_currentMode = NULL;
 
-deviceTree_Entry* atiRagePro_device = NULL;
-
-
-#define ATIRAGE128_REGOFFSET_CRTC_GEN_CTRL        0x0050 / 4
-
-#define ATIRAGE128_REGOFFSET_CRTC_H_TOTAL_DISP    0x0200 / 4
-#define ATIRAGE128_REGOFFSET_CRTC_H_SYNC_STRT_WID 0x0204 / 4
-#define ATIRAGE128_REGOFFSET_CRTC_V_TOTAL_DISP    0x0208 / 4
-#define ATIRAGE128_REGOFFSET_CRTC_V_SYNC_STRT_WID 0x020C / 4
+deviceTree_Entry* atiRage128_device = NULL;
 
 
-#define ATIRAGE128_REGOFFSET_CUR_OFFSET             0x260 / 4
-#define ATIRAGE128_REGOFFSET_CUR_HORZ_VERT_POSN     0x264 / 4
-#define ATIRAGE128_REGOFFSET_CUR_CLR0               0x26C / 4
-#define ATIRAGE128_REGOFFSET_CUR_CLR1               0x270 / 4
+#define ATIRAGE128_REGOFFSET_CRTC_GEN_CTRL        0x0050
+
+#define ATIRAGE128_REGOFFSET_CRTC_H_TOTAL_DISP    0x0200
+#define ATIRAGE128_REGOFFSET_CRTC_H_SYNC_STRT_WID 0x0204
+#define ATIRAGE128_REGOFFSET_CRTC_V_TOTAL_DISP    0x0208
+#define ATIRAGE128_REGOFFSET_CRTC_V_SYNC_STRT_WID 0x020C
+
+/// @brief Where in video memory the cursor can be found.
+#define ATIRAGE128_REGOFFSET_CUR_OFFSET             0x260
+
+#define ATIRAGE128_REGOFFSET_CUR_HORZ_VERT_POSN     0x264
+#define ATIRAGE128_REGOFFSET_CUR_CLR0               0x26C
+#define ATIRAGE128_REGOFFSET_CUR_CLR1               0x270
 
 /**
  * Register offset for CRTC_PITCH. Stores the number of bytes per display line.
  */
 #define ATIRAGE128_REGOFFSET_CRTC_PITCH           0x022C / 4
 
-typedef struct {
-    uint16 hRes;
-    uint16 vRes;
-
-    uint16 hFront;
-    uint16 hSync;
-    uint16 hBack;
-
-    /// @brief Horizontal Sync Polarity. 1 is positive.
-    bool hSyncPolarity;
-
-    uint16 vFront;
-    uint16 vSync;
-    uint16 vBack;
-
-    /// @brief Vertical sync polarity. 1 is positive.
-    bool vSyncPolarity;
-
-    /// @brief Pixel clock in Hz.
-    uint32 pixelClock;
-
-    /// @brief Number of bits per pixel.
-    uint8 depth;
-} VideoMode;
+void atiRage128_writeRegister(uint32 registerOffset, uint32 data);
 
 const VideoMode videoMode1024x768 = {
+    "1024x768 @ 60Hz, 32bpp",
     1024, 768,
     24, 136, 160, 0,
     3, 6, 29, 0,
@@ -72,12 +50,12 @@ const VideoMode videoMode1024x768 = {
 };
 
 const VideoMode videoMode640x480 = {
+    "640x480 @ 60Hz, 32bpp",
     640, 480,
     16, 96, 48, 0,
     10, 2, 33, 0,
     25175000, 32
 };
-
 
 deviceTree_Entry* atiRage128_initialise(pciBus_Entry* pciDetails) {
     uint32 bus = pciDetails->bus;
@@ -131,69 +109,84 @@ deviceTree_Entry* atiRage128_initialise(pciBus_Entry* pciDetails) {
 
     deviceTree_addChild(device, monitor);
 
-    atiRagePro_device = device;
+    atiRage128_device = device;
 
     // Pick our video mode.
-    VideoMode mode = videoMode1024x768;
+    VideoMode* mode = &videoMode1024x768;
 
-    uint32 hSyncStart = (mode.hRes + mode.hFront) / 8;
-    uint32 hSyncWidth = mode.hSync / 8;
-    uint32 hTotal = (mode.hRes + mode.hFront + mode.hSync + mode.hBack) / 8;
-    uint32 hEnd = (mode.hRes / 8) -1;
+    atiRage128_setMode(mode);
 
-    uint32 vSyncStart = (mode.vRes + mode.vFront);
-    uint32 vSyncWidth = mode.vSync;
-    uint32 vTotal = (mode.vRes + mode.vFront + mode.vSync + mode.vBack);
-    uint32 vEnd = (mode.vRes) -1;
-
-    uint8 hSyncPol = 1 - mode.hSyncPolarity;
-    uint8 vSyncPol = 1 - mode.vSyncPolarity;
-
-    uint32 depth = 0;
-
-    switch (mode.depth) {
-        case 32:
-        depth = 6;
-        break;
-
-        default:
-        depth = 6;
-    }
-
-    regs[ATIRAGE128_REGOFFSET_CRTC_H_TOTAL_DISP] = hTotal | (hEnd << 16);
-    regs[ATIRAGE128_REGOFFSET_CRTC_V_TOTAL_DISP] = vTotal | (vEnd << 16);
-
-    regs[ATIRAGE128_REGOFFSET_CRTC_H_SYNC_STRT_WID] = (hSyncStart << 3) | (hSyncWidth << 16) | (hSyncPol << 23);   // QEMU does not use this register at all.
-
-    regs[ATIRAGE128_REGOFFSET_CRTC_V_SYNC_STRT_WID] = (vSyncStart) | (vSyncWidth << 16) | (vSyncPol << 23);        // QEMU deso not use this register at all.
-
-    // Number of characters the screen is wide.
-    regs[ATIRAGE128_REGOFFSET_CRTC_PITCH] = (mode.hRes) / 8;
-
-    // Enable, 32bpp, extended.
-    regs[ATIRAGE128_REGOFFSET_CRTC_GEN_CTRL] = (depth << 8) | (1 << 24) | (1 << 25) | (1 << 16);    // 16 = cursors
-
-    debug(LOGLEVEL_DEBUG, "ATI CRTC_GEN_CTRL ADDR: %h", &(regs[ATIRAGE128_REGOFFSET_CRTC_GEN_CTRL]));
-    debug(LOGLEVEL_DEBUG, "ATI CRTC_GEN_CTRL: %h", regs[ATIRAGE128_REGOFFSET_CRTC_GEN_CTRL]);
-
-
+/*
     // fill cursor memnory with something, even if it makes no sense
     uint32* fbmem = (uint32*) 0xFFF00000;   // skip 3meg
     for (int i = 0; i < 64 * 64; i++) {
         fbmem[i] = 0x8888CCCC + i;
     }
 
-
     regs[ATIRAGE128_REGOFFSET_CUR_OFFSET] = 0x300000;   // 3mb
     regs[ATIRAGE128_REGOFFSET_CUR_HORZ_VERT_POSN] = 220 << 16 | 300;    // pos
     regs[ATIRAGE128_REGOFFSET_CUR_CLR0] = 220 << 16 | 300 | 120 << 8;
-    regs[ATIRAGE128_REGOFFSET_CUR_CLR1] = 120 << 16 | 200 | 80 << 8;
-
-
-    atiRagePro_width  = mode.hRes;
-    atiRagePro_height = mode.vRes;
+    regs[ATIRAGE128_REGOFFSET_CUR_CLR1] = 120 << 16 | 200 | 80 << 8;*/
 
     return device;
+}
+
+void atiRage128_setMode(VideoMode* mode) {
+
+    volatile uint32* regs = (uint32*) 0xFFBFC000;
+
+    uint32 hSyncStart = (mode->hRes + mode->hFront) / 8;
+    uint32 hSyncWidth = mode->hSync / 8;
+    uint32 hTotal = (mode->hRes + mode->hFront + mode->hSync + mode->hBack) / 8;
+    uint32 hEnd = (mode->hRes / 8) -1;
+
+    uint32 vSyncStart = (mode->vRes + mode->vFront);
+    uint32 vSyncWidth = mode->vSync;
+    uint32 vTotal = (mode->vRes + mode->vFront + mode->vSync + mode->vBack);
+    uint32 vEnd = (mode->vRes) -1;
+
+    uint8 hSyncPol = 1 - mode->hSyncPolarity;
+    uint8 vSyncPol = 1 - mode->vSyncPolarity;
+
+    uint32 depth = 0;
+
+    switch (mode->depth) {
+        case 15:
+            depth = 3;
+            break;
+
+        case 32:
+            depth = 6;
+            break;
+
+        default:
+            depth = 6;
+    }
+
+    atiRage128_writeRegister(ATIRAGE128_REGOFFSET_CRTC_H_TOTAL_DISP,    hTotal | (hEnd << 16));
+
+    atiRage128_writeRegister(ATIRAGE128_REGOFFSET_CRTC_V_TOTAL_DISP,    vTotal | (vEnd << 16));
+
+    atiRage128_writeRegister(ATIRAGE128_REGOFFSET_CRTC_H_SYNC_STRT_WID, (hSyncStart << 3) | (hSyncWidth << 16) | (hSyncPol << 23));   // QEMU does not use this register at all.
+
+    atiRage128_writeRegister(ATIRAGE128_REGOFFSET_CRTC_V_SYNC_STRT_WID, (vSyncStart) | (vSyncWidth << 16) | (vSyncPol << 23));        // QEMU deso not use this register at all.
+
+    // Number of characters the screen is wide.
+    atiRage128_writeRegister(ATIRAGE128_REGOFFSET_CRTC_PITCH,           (mode->hRes) / 8);
+
+    // Enable, 32bpp, extended.
+    atiRage128_writeRegister(ATIRAGE128_REGOFFSET_CRTC_GEN_CTRL,        (depth << 8) | (1 << 24) | (1 << 25));
+
+    // TODO(JackScottAU): pixel clock, memory clock
+
+    atiRage128_currentMode = mode;
+}
+
+void atiRage128_writeRegister(uint32 registerOffset, uint32 data) {
+    volatile uint32* regs = (uint32*) 0xFFBFC000;
+    debug(LOGLEVEL_DEBUG, "ATIRAGE128: Writing data %h to register %h.", data, registerOffset);
+
+    regs[registerOffset / 4] = data; // divide by 4 because a uint32 is 4 bytes.
 }
 
 void atiRage128_dumpCursorPos() {
@@ -203,15 +196,15 @@ void atiRage128_dumpCursorPos() {
 
 Canvas* atiRage128_getCanvas() {
     // Check to make sure a mode has been set.
-    if (atiRagePro_width == 0 || atiRagePro_height == 0) {
+    if (atiRage128_currentMode == NULL) {
         debug(LOGLEVEL_ERROR, "No video mode has been set, cannot create a canvas.");
         return NULL;
     }
 
     Canvas* canvas = (Canvas*)memoryManager_allocate(sizeof(Canvas));
     canvas->framebuffer = (void*)0xFFC00000;
-    canvas->height = atiRagePro_height;
-    canvas->width = atiRagePro_width;
+    canvas->height = atiRage128_currentMode->vRes;
+    canvas->width = atiRage128_currentMode->hRes;
 
     return canvas;
 }

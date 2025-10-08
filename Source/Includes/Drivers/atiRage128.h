@@ -25,6 +25,52 @@ extern "C" {
 
 deviceTree_Entry* atiRage128_initialise(pciBus_Entry* pciDetails);
 
+/**
+ * Contains all the information needed to set a video mode on most display adapters.
+ */
+typedef struct {
+    char* name;
+
+    /// @brief Number of horizontal pixels (columns) visible on the display.
+    uint16 hRes;
+
+    /// @brief Number of vertical pixels (rows/lines) visible on the display.
+    uint16 vRes;
+
+    /// @brief Number of pixels before the horizontal sync.
+    uint16 hFront;
+
+    /// @brief Pixel duration of the horizontal sync.
+    uint16 hSync;
+
+    /// @brief Number of pixels after the horizontal sync.
+    uint16 hBack;
+
+    /// @brief Horizontal Sync Polarity. 1 is positive.
+    bool hSyncPolarity;
+
+    /// @brief Number of lines before the vertical sync.
+    uint16 vFront;
+
+    /// @brief Duration of the vertical sync in lines.
+    uint16 vSync;
+
+    /// @brief Number of lines after the vertical sync.
+    uint16 vBack;
+
+    /// @brief Vertical sync polarity. 1 is positive.
+    bool vSyncPolarity;
+
+    /// @brief Pixel clock in Hz.
+    uint32 pixelClock;
+
+    /// @brief Number of bits per pixel.
+    /// Currently supported values are 15 (16-bit access, 5 bits each for RGB with top bit zero) and 32 (32-bit access, 8 bits each for RGB with top byte zero).
+    uint8 depth;
+} VideoMode;
+
+void atiRage128_setMode(VideoMode* mode);
+
 Canvas* atiRage128_getCanvas();
 
 void atiRage128_dumpCursorPos();

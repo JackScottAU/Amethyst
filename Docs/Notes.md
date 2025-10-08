@@ -18,7 +18,6 @@ Currently working on GUI events, ring 3, IDE.
 ### Drivers
 
 - Refactor device drivers into a nice C++ class sort of thing.
-- Make device tree support resources.
 - Sort out the mess that is the PCI IDE driver (turn things into functions and DEFINEs)
 - Split the IDE driver into three parts: PCI detection for two channels, then management of a channel and it's two drives, and then disk block access
 - Make the text console work with colours when scrolling (and faster)
@@ -74,17 +73,6 @@ Needs:
 - Ring 3
 - Basic system calls
 - Executable loading from file
-
-Milestone 2:
-Multiple instances of that program can be run simultaneously in terminal emulators in a graphical gui
-
-1. Serial communication. - done enough to work. Needs tidying up when we make full drivers.
-2. Interactive shell.
-3. ANSI Terminal Support for keyboard and VGA.
-4. Device tree.
-5. Expanding string and linked list/tree support functions.
-6. Multitasking
-7. Drivers for storage
 
 ## Ring 3
 
