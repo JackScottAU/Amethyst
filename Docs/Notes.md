@@ -150,6 +150,10 @@ Will need to write more drivers to support newer UEFI cards.
 
 We should implement the VGA fallback as a common driver based on PCI class/subclass etc. Basically sets a known video mode (800x600 w. 16 colours in a known palette) and gives a canvas (800x600 1bpp).
 
+### Boot Display Framebuffer
+
+On all platforms, we can use the bootloader to request a simple 2D framebuffer we can use to draw the loading screen whilst we load other drivers. For example, we can load a 800x600 framebuffer from GRUB with multiboot, and use this until we load a different mode from AMD or Nvidia.
+
 ## Executables
 
 Use 32-bit elf binaries.

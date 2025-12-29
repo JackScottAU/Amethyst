@@ -85,6 +85,11 @@ void Shell::ProcessLine() {
         return;
     }
 
+    if(string_compare(line, "ati-dump") == 0) {
+        atiRage128_dumpRegs(stdio->stdout);
+        return;
+    }
+
     if (string_compare(line, "get-cpuinformation") == 0) {
         CPUID cpuid = CPUID();
 

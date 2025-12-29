@@ -14,18 +14,19 @@
 #include <debug.h>
 #include <Drivers/pciBus.h>
 #include <Drivers/atiRage128.h>
+#include <stream.h>
 
 VideoMode* atiRage128_currentMode = NULL;
 
 deviceTree_Entry* atiRage128_device = NULL;
 
 
-#define ATIRAGE128_REGOFFSET_CRTC_GEN_CTRL        0x0050
+#define ATIRAGE128_REGOFFSET_CRTC_GEN_CTRL          0x0050
 
-#define ATIRAGE128_REGOFFSET_CRTC_H_TOTAL_DISP    0x0200
-#define ATIRAGE128_REGOFFSET_CRTC_H_SYNC_STRT_WID 0x0204
-#define ATIRAGE128_REGOFFSET_CRTC_V_TOTAL_DISP    0x0208
-#define ATIRAGE128_REGOFFSET_CRTC_V_SYNC_STRT_WID 0x020C
+#define ATIRAGE128_REGOFFSET_CRTC_H_TOTAL_DISP      0x0200
+#define ATIRAGE128_REGOFFSET_CRTC_H_SYNC_STRT_WID   0x0204
+#define ATIRAGE128_REGOFFSET_CRTC_V_TOTAL_DISP      0x0208
+#define ATIRAGE128_REGOFFSET_CRTC_V_SYNC_STRT_WID   0x020C
 
 /// @brief Where in video memory the cursor can be found.
 #define ATIRAGE128_REGOFFSET_CUR_OFFSET             0x260
@@ -40,6 +41,7 @@ deviceTree_Entry* atiRage128_device = NULL;
 #define ATIRAGE128_REGOFFSET_CRTC_PITCH           0x022C / 4
 
 void atiRage128_writeRegister(uint32 registerOffset, uint32 data);
+uint32 atiRage128_readRegister(uint32 registerOffset);
 
 const VideoMode videoMode1024x768 = {
     "1024x768 @ 60Hz, 32bpp",
@@ -114,7 +116,7 @@ deviceTree_Entry* atiRage128_initialise(pciBus_Entry* pciDetails) {
     // Pick our video mode.
     VideoMode* mode = &videoMode1024x768;
 
-    atiRage128_setMode(mode);
+  //  atiRage128_setMode(mode);
 
 /*
     // fill cursor memnory with something, even if it makes no sense
@@ -187,6 +189,27 @@ void atiRage128_writeRegister(uint32 registerOffset, uint32 data) {
     debug(LOGLEVEL_DEBUG, "ATIRAGE128: Writing data %h to register %h.", data, registerOffset);
 
     regs[registerOffset / 4] = data; // divide by 4 because a uint32 is 4 bytes.
+}
+
+uint32 atiRage128_readRegister(uint32 registerOffset) {
+    volatile uint32* regs = (uint32*) 0xFFBFC000;
+
+    uint32 data = regs[registerOffset / 4]; // divide by 4 because a uint32 is 4 bytes.
+    
+    debug(LOGLEVEL_DEBUG, "ATIRAGE128: Read data %h from register %h.", data, registerOffset);
+
+    return data;
+}
+
+void atiRage128_dumpRegs(void (*putChar)(char)) {
+    stream_printf(putChar, "ATI Dump Regs!\n");
+
+    stream_printf(putChar, "ATIRAGE128_REGOFFSET_CRTC_GEN_CTRL[%h]: %H\n", ATIRAGE128_REGOFFSET_CRTC_GEN_CTRL, atiRage128_readRegister(ATIRAGE128_REGOFFSET_CRTC_GEN_CTRL));
+    stream_printf(putChar, "ATIRAGE128_REGOFFSET_CRTC_PITCH[%h]: %H\n", ATIRAGE128_REGOFFSET_CRTC_PITCH, atiRage128_readRegister(ATIRAGE128_REGOFFSET_CRTC_PITCH));
+    stream_printf(putChar, "ATIRAGE128_REGOFFSET_CRTC_H_TOTAL_DISP[%h]: %H\n", ATIRAGE128_REGOFFSET_CRTC_H_TOTAL_DISP, atiRage128_readRegister(ATIRAGE128_REGOFFSET_CRTC_H_TOTAL_DISP));
+    stream_printf(putChar, "ATIRAGE128_REGOFFSET_CRTC_H_SYNC_STRT_WID[%h]: %H\n", ATIRAGE128_REGOFFSET_CRTC_H_SYNC_STRT_WID, atiRage128_readRegister(ATIRAGE128_REGOFFSET_CRTC_H_SYNC_STRT_WID));
+    stream_printf(putChar, "ATIRAGE128_REGOFFSET_CRTC_V_TOTAL_DISP[%h]: %H\n", ATIRAGE128_REGOFFSET_CRTC_V_TOTAL_DISP, atiRage128_readRegister(ATIRAGE128_REGOFFSET_CRTC_V_TOTAL_DISP));
+    stream_printf(putChar, "ATIRAGE128_REGOFFSET_CRTC_V_SYNC_STRT_WID[%h]: %H\n", ATIRAGE128_REGOFFSET_CRTC_V_SYNC_STRT_WID, atiRage128_readRegister(ATIRAGE128_REGOFFSET_CRTC_V_SYNC_STRT_WID));
 }
 
 void atiRage128_dumpCursorPos() {

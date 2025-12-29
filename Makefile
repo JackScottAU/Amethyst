@@ -71,7 +71,7 @@ resources:
 	@cp Resources/Images Build -r
 
 #Custom file build targets:
-Build/kernel32: Source/arch/x86_32/entry.o Source/kernel.o Source/shell.o Source/MouseMoveEvent.o Source/arch/x86_32/physicalMemory.o  \
+Build/kernel32: Source/arch/x86_32/multiboot_800x600.o Source/arch/x86_32/entry.o Source/kernel.o Source/shell.o Source/MouseMoveEvent.o Source/arch/x86_32/physicalMemory.o  \
 				Source/graphics.o Source/StandardIO.o Source/arch/x86_32/taskswitch.o Source/arch/x86_32/thread.o Source/library/memory.o Source/cpuid.o Source/debug.o Source/library/fifobuffer.o \
 	 			Source/arch/x86_32/rootDevice.o Source/stream.o Source/deviceTree.o Source/arch/x86_32/portIO.o Source/arch/x86_32/gdt.o \
 	  			Source/arch/x86_32/interrupts_setup.o Source/arch/x86_32/interrupts_handler.o Source/arch/x86_32/interrupts_stubs.o Source/Clock.o Source/memoryManager.o Source/library/string.o \
@@ -88,7 +88,7 @@ Build/kernel32: Source/arch/x86_32/entry.o Source/kernel.o Source/shell.o Source
 	@$(CC) $(CPPFLAGS) -c $< -o $@
 
 %.o: %.S
-	@$(AS) $(CFLAGS) -c $< -o $@
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 %.o: %.asm
 	@nasm -felf32 $< -o $@

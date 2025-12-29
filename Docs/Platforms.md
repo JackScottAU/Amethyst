@@ -48,4 +48,4 @@ Booting is always done via multiboot. This gives us several options:
 
 ## Intel64
 
-uefi pc (noting a gap in systems that are 64-bit but not uefi, this is a hole we can afford to lose, it's about 5 years from 2010 to 2015)
+uefi pc (noting a gap in systems that are 64-bit but not uefi, this is a hole we can afford to lose, it's about 5 years from 2010 to 2015, which are still supported by 32-bit)

@@ -75,6 +75,8 @@ Canvas* atiRage128_getCanvas();
 
 void atiRage128_dumpCursorPos();
 
+void atiRage128_dumpRegs(void (*putChar)(char));
+
 //void atiRagePro_setMode(uint16 width, uint16 height);
 
 

@@ -53,6 +53,18 @@ TextConsole* stdioTextBox;
 
 Widget* rootWidget;
 
+Canvas* getMultibootCanvas(multiboot_info* info) {
+        debug(LOGLEVEL_INFO, "Here");
+    Canvas* canvas = (Canvas*) memoryManager_allocate(sizeof(Canvas));
+
+    canvas->framebuffer = info->framebuffer_addr;
+    canvas->width = info->framebuffer_width;
+    canvas->height = info->framebuffer_height;
+        debug(LOGLEVEL_INFO, "Here 2");
+
+    return canvas;
+}
+
 void textBoxPutChar(char c) {
     stdioTextBox->PutChar(c);
 }
@@ -100,6 +112,8 @@ struct multiboot_info* multiboot_correctDataStructureAddresses(struct multiboot_
         data->modsAddr[i].end = (void*)((uint32)data->modsAddr[i].end + 0xC0000000);
         data->modsAddr[i].fileName = (char*)((uint32)data->modsAddr[i].fileName + 0xC0000000);
     }
+
+   // data->framebuffer_addr = (void*)((uint32)(data->framebuffer_addr) + (uint32)0xC0000000);
 
     return data;
 }
@@ -174,7 +188,13 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 
     // We now have a QEMU display adapter somewhere in the device tree, and it knows where it is, so we can use it.
     // qemuVga_setMode(1024, 768);
-    Canvas* canvas = atiRage128_getCanvas();
+  //  Canvas* canvas = atiRage128_getCanvas();
+  Canvas* canvas = getMultibootCanvas(multibootData);
+
+        // Identity map the multiboot framebuffer into memory.
+    memoryManager_mapPhysicalMemoryPage(pg, (void*)canvas->framebuffer, (void*)canvas->framebuffer, 1024);  // Framebuffer MM
+
+        debug(LOGLEVEL_INFO, "Canvas address: %h", canvas->framebuffer);
 
     multiboot_moduleNode* modules = multibootData->modsAddr;
 
