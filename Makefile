@@ -36,6 +36,7 @@ qemu-x86_32: image-x86_32 cd-image
 		-serial stdio \
 		-device pvpanic
 		
+#		-hda my_virtual_disk.qcow2 \
 #		-device bochs-display  \
 
 cd-image: Build/kernel32 resources

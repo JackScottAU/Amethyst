@@ -141,6 +141,10 @@ Get rid of EGA text mode from the kernel, it's obsolete even in 1995. Instead, w
 2. Standard VGA framebuffer (emulated in QEMU)
 3. Cirrus Logic 5400 Series (emulated in QEMU)
 4. ATI Rage 128 Pro (in QEMU, also have a physical card for Gresley)
+5. Intel Xe Driver (physical hardware only, but good documentation)
+6. VMware svga-ii  (emulated in QEMU, VMWare, VirtualBox)
+
+The idea is we can get a framebuffer with double buffering, 2D blitting (acceleration) and hardware cursor support.
 
 By doing that we can support pretty much any emulated system, as well as most graphics card pre-UEFI (when new video cards stopped supporting VGA APIs).
 

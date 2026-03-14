@@ -48,6 +48,7 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
 struct multiboot_info* multiboot_correctDataStructureAddresses(struct multiboot_info* data);
 void kernel_printBanner(void (*putChar)(char));
 uint32 memoryManager_printPhysicalMemoryMap(StandardIO* stdio);
+void testImage(Window* window, Canvas* canvas, multiboot_moduleNode* modules);
 
 TextConsole* stdioTextBox;
 
@@ -206,27 +207,21 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
     font2->header = (ScreenFontHeader*)(modules[2].start);
     font2->characterData = (uint8*)(font2->header) + font2->header->headerSize;
 
-    uint32 length = (uint32)modules[1].end - (uint32)modules[1].start;
-    debug(LOGLEVEL_CRITICAL, "LENGTH: %h", length);
 
-    TargaImage* image = new TargaImage((uint8*)modules[1].start, length, 200, 300, canvas);
 
     Desktop* desktop = new Desktop(canvas);
     rootWidget = desktop;
 
-    Window* window = new Window(font2, 0, 0, 1024, 768, canvas, "Amethyst OS");
+    Window* window = new Window(font2, 0, 0, canvas->width, canvas->height, canvas, "Amethyst OS");
 
     desktop->AddChild(window);
 
-    stdioTextBox = new TextConsole(canvas, font, 0, 32, 46, 128);
+    stdioTextBox = new TextConsole(canvas, font, 0, 32, ((canvas->height - 32) / font->header->height), (canvas->width / font->header->width));
 
     window->AddChild(stdioTextBox);
-    //   window->AddChild(image);
 
-    for (int i = 0; i < 1000; i++) {
-        image->SetPosition(i, 100);
-    //  image->Redraw();
-    }
+    // Test loading an image from a multiboot module and displaying it on the screen.
+//    testImage(window, canvas, modules); 
 
     //  uint32 pageaddress = memoryManager_getPhysicalAddressOfFreePhysicalPage();
     //  debug(LOGLEVEL_ERROR, "page address: %h", pageaddress);
@@ -256,6 +251,19 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
     //    debug(LOGLEVEL_DEBUG, "CR3: %h\n", memoryManager_getCurrentPageDirectory());
 
         haltCPU();
+    }
+}
+
+void testImage(Window* window, Canvas* canvas, multiboot_moduleNode* modules) {
+    uint32 length = (uint32)modules[1].end - (uint32)modules[1].start;
+    debug(LOGLEVEL_CRITICAL, "LENGTH: %h", length);
+    TargaImage* image = new TargaImage((uint8*)modules[1].start, length, 200, 300, canvas);
+
+       window->AddChild(image);
+
+    for (int i = 0; i < 1000; i++) {
+        image->SetPosition(i, 100);
+      image->Redraw();
     }
 }
 
