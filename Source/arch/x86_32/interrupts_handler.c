@@ -62,6 +62,7 @@ void interrupts_handler(struct Registers_S *Registers) {
         portIO_write8(0x20, 0x20);
     }
 
+    // For now, we execute the scheduler on every interrupt, but this will be changed later to only execute it on timer interrupts or the yield syscall.
     scheduler();
 }
 

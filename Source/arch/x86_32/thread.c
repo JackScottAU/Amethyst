@@ -8,6 +8,8 @@ extern void* boot_page_directory;
 // Current TCB for this CPU.
 thread_control_block* current_task_TCB;
 
+scheduler_entry* scheduler_head;
+
 // TODO: make this thread-safe.
 bool schedulerEnabled = false;
 
@@ -30,6 +32,14 @@ thread_control_block* new_task(void (* callback)(), thread_control_block* curren
     tcb->kernel_stack_top = (void*)(stack + 1019);
     tcb->cr3 = currentTask->cr3;
 
+    // Add to the scheduler queue.
+    scheduler_entry* entry = (scheduler_entry*)memoryManager_allocate(sizeof(scheduler_entry));
+    entry->thread = tcb;
+    entry->prev = scheduler_head;
+    entry->next = scheduler_head->next;
+    scheduler_head->next->prev = entry;
+    scheduler_head->next = entry;
+
     return tcb;
 }
 
@@ -39,7 +49,11 @@ thread_control_block* initialise_multitasking() {
     current_task_TCB->cr3 = (uint32) &boot_page_directory - 0xC0000000;
     current_task_TCB->process_control_block = NULL;
 
-    // TODO(JackScottAU): set up the linked lists for thread control block storage.
+    // Set up the linked list for thread control block storage.
+    scheduler_head = memoryManager_allocate(sizeof(scheduler_entry));
+    scheduler_head->thread = current_task_TCB;
+    scheduler_head->prev = scheduler_head;
+    scheduler_head->next = scheduler_head;
 
     return current_task_TCB;
 }
@@ -54,7 +68,9 @@ void thread_stopScheduler() {
 
 void scheduler() {
     if(schedulerEnabled) {
-        thread_control_block* nextThread = current_task_TCB->nextThread;
+       // thread_control_block* nextThread = current_task_TCB->nextThread;
+        thread_control_block* nextThread = scheduler_head->next->thread;
+        scheduler_head = scheduler_head->next;
 
         if(nextThread != NULL) {
         //    debug(LOGLEVEL_DEBUG, "We would switch task here...");

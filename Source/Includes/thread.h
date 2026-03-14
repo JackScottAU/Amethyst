@@ -46,6 +46,12 @@ typedef struct thread_control_block_S {
  //   char threadName[16]; // 16 characters to store the threads name in?
 } thread_control_block;
 
+typedef struct scheduler_entry_S {
+    thread_control_block* thread;
+    struct scheduler_entry_S* prev;
+    struct scheduler_entry_S* next;
+} scheduler_entry;
+
 thread_control_block* initialise_multitasking(); // current task ends up current_task_tcb
 void switch_to_task(thread_control_block* next_thread);
 thread_control_block* new_task(void (* callback)(), thread_control_block* currentTask);

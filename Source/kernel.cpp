@@ -233,11 +233,6 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
     thread_control_block* task2 = new_task(startShell, task1);
 //  thread_control_block* task3 = new_task(startSerialShell, task1);
 
-    // Because our scheduler is very stupid, we do this.
-    task1->nextThread = task2;
-    task2->nextThread = task1;
-//  task3->nextThread = task1;
-
     thread_startScheduler();
 
     debug(LOGLEVEL_INFO, "Got here");
