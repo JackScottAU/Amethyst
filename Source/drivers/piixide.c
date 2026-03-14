@@ -84,7 +84,7 @@ deviceTree_Entry* piixide_initialise(pciBus_Entry* pciDetails) {
     channel1->Resources[0].Type = DEVICE_RESOURCETYPE_IO;
     channel1->Resources[0].StartAddress = 0x1F0;
     channel1->Resources[0].Length = 8;
-    
+
     channel1->Resources[1].Type = DEVICE_RESOURCETYPE_IO;
     channel1->Resources[1].StartAddress = 0x3F6;
     channel1->Resources[1].Length = 2;
@@ -103,7 +103,7 @@ deviceTree_Entry* piixide_initialise(pciBus_Entry* pciDetails) {
     channel2->Resources[0].Type = DEVICE_RESOURCETYPE_IO;
     channel2->Resources[0].StartAddress = 0x170;
     channel2->Resources[0].Length = 8;
-    
+
     channel2->Resources[1].Type = DEVICE_RESOURCETYPE_IO;
     channel2->Resources[1].StartAddress = 0x376;
     channel2->Resources[1].Length = 2;
@@ -115,8 +115,8 @@ deviceTree_Entry* piixide_initialise(pciBus_Entry* pciDetails) {
     channel2->Resources[3].Type = DEVICE_RESOURCETYPE_IRQ;
     channel2->Resources[3].Flags = 15;
 
- //   (ports 0x1F0-0x1F7, 0x3F6-0x3F7, IRQ14).
- //   (ports 0x170-0x177, 0x376-0x377, IRQ15).
+    //   (ports 0x1F0-0x1F7, 0x3F6-0x3F7, IRQ14).
+    //   (ports 0x170-0x177, 0x376-0x377, IRQ15).
 /*
  channels[ATA_PRIMARY  ].base  = (BAR0 & 0xFFFFFFFC) + 0x1F0 * (!BAR0);
    channels[ATA_PRIMARY  ].ctrl  = (BAR1 & 0xFFFFFFFC) + 0x3F6 * (!BAR1);
@@ -125,13 +125,13 @@ deviceTree_Entry* piixide_initialise(pciBus_Entry* pciDetails) {
    channels[ATA_PRIMARY  ].bmide = (BAR4 & 0xFFFFFFFC) + 0; // Bus Master IDE
    channels[ATA_SECONDARY].bmide = (BAR4 & 0xFFFFFFFC) + 8; // Bus Master IDE*/
 
-   /* on Primary bus: ctrl->base =0x1F0, ctrl->dev_ctl =0x3F6. REG_CYL_LO=4, REG_CYL_HI=5, REG_DEVSEL=6 */
+/* on Primary bus: ctrl->base =0x1F0, ctrl->dev_ctl =0x3F6. REG_CYL_LO=4, REG_CYL_HI=5, REG_DEVSEL=6 */
 
     piixide_probeChannel(channel1);
 
     piixide_probeChannel(channel2);
 
-   return device;
+    return device;
 }
 
 void piixide_probeChannel(deviceTree_Entry* channelDevice) {
@@ -140,14 +140,14 @@ void piixide_probeChannel(deviceTree_Entry* channelDevice) {
     piixide_softwareReset(channelDevice);
 
     piixide_selectDrive(channelDevice, ATA_DRIVE_MASTER);
-	
+
     uint8 status = portIO_read8(ioBase + 7);
 
-    if(status != 0xFF && status != 0x00) {
+    if (status != 0xFF && status != 0x00) {
         piixide_waitForReady(channelDevice);
 
-        unsigned cl=portIO_read8(ioBase + 4);	/* get the "signature bytes" */
-        unsigned ch=portIO_read8(ioBase + 5);
+        unsigned cl = portIO_read8(ioBase + 4);   /* get the "signature bytes" */
+        unsigned ch = portIO_read8(ioBase + 5);
 
         deviceTree_addChild(channelDevice, piixide_decodeDriveSignature(cl, ch));
 
@@ -155,16 +155,14 @@ void piixide_probeChannel(deviceTree_Entry* channelDevice) {
         debug(LOGLEVEL_DEBUG, "ATA Master: %h %h", cl, ch);
     }
 
-	
-
     piixide_selectDrive(channelDevice, ATA_DRIVE_SLAVE);
 
     status = portIO_read8(ioBase + 7);
 
-    if(status != 0xFF && status != 0x00) {
+    if (status != 0xFF && status != 0x00) {
         piixide_waitForReady(channelDevice);
-        uint8 cl=portIO_read8(ioBase + 4);	/* get the "signature bytes" */
-        uint8 ch=portIO_read8(ioBase + 5);
+        uint8 cl = portIO_read8(ioBase + 4);   /* get the "signature bytes" */
+        uint8 ch = portIO_read8(ioBase + 5);
 
         debug(LOGLEVEL_DEBUG, "ATA Slave Status: %h", status);
         debug(LOGLEVEL_DEBUG, "ATA Slave: %h %h", cl, ch);
@@ -174,18 +172,18 @@ void piixide_probeChannel(deviceTree_Entry* channelDevice) {
 }
 
 void piixide_waitForReady(deviceTree_Entry* channelDevice) {
-    // Read the Regular Status port until bit 7 (BSY, value = 0x80) clears, and bit 3 (DRQ, value = 8) sets -- or until bit 0 (ERR, value = 1) or bit 5 (DF, value = 0x20) sets. If neither error bit is set, the device is ready right then.
+    // Read the Regular Status port until bit 7 (BSY, value = 0x80) clears, and bit 3 (DRQ, value = 8) sets --
+    // or until bit 0 (ERR, value = 1) or bit 5 (DF, value = 0x20) sets. If neither error bit is set, the device is ready right then.
     bool notReady = true;
     uint16 ioBase = channelDevice->Resources[0].StartAddress;
 
     // 0xDO = 11010000 = BSY | RDY | SRV
 
-    while(notReady) {
+    while (notReady) {
         uint8 status = portIO_read8(ioBase + 7);
 
         // Check if BUSY is set.
         if (status >> 7) {
-
         } else {
             notReady = false;
         }

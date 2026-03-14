@@ -85,7 +85,7 @@ void Shell::ProcessLine() {
         return;
     }
 
-    if(string_compare(line, "ati-dump") == 0) {
+    if (string_compare(line, "ati-dump") == 0) {
         atiRage128_dumpRegs(stdio->stdout);
         return;
     }

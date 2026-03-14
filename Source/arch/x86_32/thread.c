@@ -39,7 +39,7 @@ thread_control_block* initialise_multitasking() {
     current_task_TCB->cr3 = (uint32) &boot_page_directory - 0xC0000000;
     current_task_TCB->process_control_block = NULL;
 
-    // TODO: set up the linked lists for thread control block storage.
+    // TODO(JackScottAU): set up the linked lists for thread control block storage.
 
     return current_task_TCB;
 }

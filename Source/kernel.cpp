@@ -114,7 +114,7 @@ struct multiboot_info* multiboot_correctDataStructureAddresses(struct multiboot_
         data->modsAddr[i].fileName = (char*)((uint32)data->modsAddr[i].fileName + 0xC0000000);
     }
 
-   // data->framebuffer_addr = (void*)((uint32)(data->framebuffer_addr) + (uint32)0xC0000000);
+    // data->framebuffer_addr = (void*)((uint32)(data->framebuffer_addr) + (uint32)0xC0000000);
 
     return data;
 }
@@ -221,7 +221,7 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
     window->AddChild(stdioTextBox);
 
     // Test loading an image from a multiboot module and displaying it on the screen.
-//    testImage(window, canvas, modules); 
+//    testImage(window, canvas, modules);
 
     //  uint32 pageaddress = memoryManager_getPhysicalAddressOfFreePhysicalPage();
     //  debug(LOGLEVEL_ERROR, "page address: %h", pageaddress);
