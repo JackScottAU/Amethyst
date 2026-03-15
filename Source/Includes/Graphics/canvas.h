@@ -17,7 +17,7 @@ typedef struct {
     void* framebuffer;
     uint32 width;
     uint32 height;
-    // TODO: if we include bytes per line in here, we can make sub-canvas that can be given to widget children.
+    // TODO(JackScottAU): if we include bytes per line in here, we can make sub-canvas that can be given to widget children.
 } Canvas;
 
 void canvas_putPixel(Canvas* canvas, uint32 x, uint32 y, uint32 colour);

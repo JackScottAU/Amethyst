@@ -7,7 +7,7 @@
  * Uses a screenfont to display text.
  */
 class TextLabel : public Widget {
-  public:
+ public:
     TextLabel(ScreenFont* font, uint32 x, uint32 y, Canvas* canvas, char* text, uint32 colour);
 
     void Redraw();
@@ -18,7 +18,7 @@ class TextLabel : public Widget {
 
     using Widget::SetPosition;
 
-  private:
+ private:
     ScreenFont* font;
     char* text;
     uint32 colour;

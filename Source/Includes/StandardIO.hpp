@@ -23,14 +23,13 @@ class StandardIO {
     StandardIO(void (*stdout)(char), char (*stdin)(void));
 
     /// @brief Formatted printing.
-    /// @param formatString 
-    /// @param  
+    /// @param formatString The format string, using the same format specifiers as printf.
     void Print(const char* formatString, ...);
 
     char* ReadLine(bool echo);
-    
+
     void (*stdout)(char);
-    
+
  private:
     char (*stdin)(void);
 };

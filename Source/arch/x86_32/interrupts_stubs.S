@@ -414,8 +414,7 @@ interrupts_ISR_3F:
 	push $0x3F
 	jmp interrupts_ISR_Stub
 
-# We call a C function in here. We need to let the assembler know
-# that '_fault_handler' exists in another file
+# The actual handler code is in C, but we need to declare it here so we can call it from the assembly stub.
 .extern interrupts_handler
 
 # This is our common ISR stub. It saves the processor state, sets

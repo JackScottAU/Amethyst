@@ -12,8 +12,8 @@
 
 #include <Types.h>
 
-#ifndef INCLUDES_ATIRAGE128_H_
-#define INCLUDES_ATIRAGE128_H_
+#ifndef INCLUDES_DRIVERS_ATIRAGE128_H_
+#define INCLUDES_DRIVERS_ATIRAGE128_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -84,4 +84,4 @@ void atiRage128_dumpRegs(void (*putChar)(char));
 }
 #endif
 
-#endif  // INCLUDES_ATIRAGE128_H_
+#endif  // INCLUDES_DRIVERS_ATIRAGE128_H_

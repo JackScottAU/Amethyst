@@ -1,3 +1,9 @@
+/**
+ *  Amethyst Operating System - Physical memory allocation functions.
+ *  Copyright 2026 Jack Scott <jack@jackscott.id.au>.
+ *  Released under the terms of the ISC license.
+*/
+
 #include <physicalMemory.h>
 #include <memory.h>
 
@@ -34,18 +40,18 @@ void physicalMemory_initialise(struct multiboot_info* multibootData) {
     memzero(PHYSICALMEMORY_BITMAPADDRESS, PHYSICALMEMORY_BITMAPSIZE);
 
     // Mark all available RAM as free.
-    for(uint32 i = 0; i < (multibootData->memoryMapLength / 20) - 1; i++) {
+    for (uint32 i = 0; i < (multibootData->memoryMapLength / 20) - 1; i++) {
         struct multiboot_memoryMapNode mem = (multibootData->memoryMapAddress[i]);
 
         // uint64 end = mem.addr + mem.len - 1;
 
-        if(mem.type == 1) {
+        if (mem.type == 1) {
             // mark free.
 
             uint32 pages = mem.len >> 12;
 
             // TODO(JackScottAU): Make this something other than the least efficient way possible of doing this.
-            for(uint32 j = 0; j < pages; j++) {
+            for (uint32 j = 0; j < pages; j++) {
                 physicalMemory_free((void*)mem.addr);
             }
         }
@@ -53,11 +59,11 @@ void physicalMemory_initialise(struct multiboot_info* multibootData) {
 
     // Mark all RAM below end of kernel/modules as allocated.
     uint32 end = physicalMemory_findEndOfReservedMemory(multibootData->modsAddr, multibootData->modsCount);
-    
+
     uint32 mpages = end >> 12;
 
     // TODO(JackScottAU): Make this something other than the least efficient way possible of doing this.
-    for(uint32 j = 0; j < mpages; j++) {
+    for (uint32 j = 0; j < mpages; j++) {
         physicalMemory_markAllocated((void*)(j << 12));
     }
 }
@@ -65,15 +71,14 @@ void physicalMemory_initialise(struct multiboot_info* multibootData) {
 void* physicalMemory_allocate() {
     uint8* bitmap = (uint8*)PHYSICALMEMORY_BITMAPADDRESS;
 
-    // TODO: hold a persistent index to the first byte with free memory to speed up this search.
+    // TODO(JackScottAU): hold a persistent index to the first byte with free memory to speed up this search.
 
-    for(uint32 i = 0; i < PHYSICALMEMORY_BITMAPSIZE; i++) { // iterate through 128K of memory.
-   //     debug(LOGLEVEL_TRACE, "Index %d: %h", i, bitmap[i]);
+    for (uint32 i = 0; i < PHYSICALMEMORY_BITMAPSIZE; i++) {    // iterate through 128K of memory.
+    //     debug(LOGLEVEL_TRACE, "Index %d: %h", i, bitmap[i]);
 
-        if(bitmap[i] != 0x00) {
-
-            for(uint8 b = 0; b < 8; b++) {
-                if((bitmap[i] >> b) & 0x01) {
+        if (bitmap[i] != 0x00) {
+            for (uint8 b = 0; b < 8; b++) {
+                if ((bitmap[i] >> b) & 0x01) {
                     // the b-th bit of this index is free, we can return that.
                     uint8 mask = 0x01 << b;
                     bitmap[i] = bitmap[i] & !mask;
@@ -86,7 +91,7 @@ void* physicalMemory_allocate() {
         }
     }
 
-    return (void*)0xFFFFFFFF; // no memory found.
+    return (void*)0xFFFFFFFF;  // no memory found.
 }
 
 // not sure this is actually needed?
@@ -109,5 +114,5 @@ void physicalMemory_free(void* address) {
 
     uint8 mask = 0x01 << bit;
 
-    bitmap[index] = bitmap[index] | mask;   
+    bitmap[index] = bitmap[index] | mask;
 }

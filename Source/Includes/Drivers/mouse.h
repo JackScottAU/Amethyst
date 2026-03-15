@@ -4,8 +4,8 @@
  *  Released under the terms of the ISC license.
 */
 
-#ifndef INCLUDES_MOUSE_H_
-#define INCLUDES_MOUSE_H_
+#ifndef INCLUDES_DRIVERS_MOUSE_H_
+#define INCLUDES_DRIVERS_MOUSE_H_
 
 #include <deviceTree.h>
 #include <Types.h>
@@ -25,4 +25,4 @@ void sortOfMouse_HandleClickEvent();
 }
 #endif
 
-#endif  // INCLUDES_MOUSE_H_
+#endif  // INCLUDES_DRIVERS_MOUSE_H_

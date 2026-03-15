@@ -1,3 +1,9 @@
+/**
+ *  Amethyst Operating System - Stream I/O.
+ *  Copyright 2024 Jack Scott <jack@jackscott.id.au>.
+ *  Released under the terms of the ISC license.
+*/
+
 #include <StandardIO.hpp>
 #include <stream.h>
 

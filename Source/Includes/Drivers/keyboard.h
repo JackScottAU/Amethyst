@@ -4,8 +4,8 @@
  *  Released under the terms of the ISC license.
 */
 
-#ifndef INCLUDES_KEYBOARD_H_
-#define INCLUDES_KEYBOARD_H_
+#ifndef INCLUDES_DRIVERS_KEYBOARD_H_
+#define INCLUDES_DRIVERS_KEYBOARD_H_
 
 #include <deviceTree.h>
 #include <Types.h>
@@ -22,4 +22,4 @@ char keyboard_readChar(void);
 }
 #endif
 
-#endif  // INCLUDES_KEYBOARD_H_
+#endif  // INCLUDES_DRIVERS_KEYBOARD_H_

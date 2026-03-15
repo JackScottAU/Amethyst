@@ -60,7 +60,7 @@ struct multiboot_info {
     uint8 framebuffer_bpp;
 
     multiboot_framebufferType framebuffer_type;
-    //uint8 framebuffer_type;     // 0 = indexed colour, 1 = direct colour, 2 = ega text
+    // uint8 framebuffer_type;     // 0 = indexed colour, 1 = direct colour, 2 = ega text
 
     uint8 framebuffer_red_field_position;
     uint8 framebuffer_red_mask_size;

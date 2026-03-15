@@ -1,8 +1,14 @@
+/**
+ *  Amethyst Operating System - Paging structures.
+ *  Copyright 2026 Jack Scott <jack@jackscott.id.au>.
+ *  Released under the terms of the ISC license.
+*/
+
 #include <Types.h>
 
 
-#ifndef INCLUDES_PAGING_H_
-#define INCLUDES_PAGING_H_
+#ifndef ARCH_X86_32_PAGING_H_
+#define ARCH_X86_32_PAGING_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -42,4 +48,4 @@ typedef pageDirectoryEntry* PageDirectory;
 }
 #endif
 
-#endif  // INCLUDES_PAGING_H_
+#endif  // ARCH_X86_32_PAGING_H_
