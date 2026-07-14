@@ -32,10 +32,11 @@ qemu-x86_32: image-x86_32 cd-image
 		-no-reboot -no-shutdown \
 		--machine pc -cpu pentium -m 16  \
 		-cdrom Amethyst.iso \
-		-device ati-vga,model=rage128pro \
+		-device VGA \
 		-serial stdio \
 		-device pvpanic
 		
+#		-device ati-vga,model=rage128pro \
 #		-hda my_virtual_disk.qcow2 \
 #		-device bochs-display  \
 
@@ -72,11 +73,11 @@ resources:
 	@cp Resources/Images Build -r
 
 #Custom file build targets:
-Build/kernel32: Source/arch/x86_32/multiboot_800x600.o Source/arch/x86_32/entry.o Source/kernel.o Source/shell.o Source/MouseMoveEvent.o Source/arch/x86_32/physicalMemory.o  \
+Build/kernel32: Source/arch/x86_32/multiboot.o Source/arch/x86_32/entry.o Source/kernel.o Source/shell.o Source/MouseMoveEvent.o Source/arch/x86_32/physicalMemory.o  \
 				Source/graphics.o Source/StandardIO.o Source/arch/x86_32/taskswitch.o Source/arch/x86_32/thread.o Source/library/memory.o Source/cpuid.o Source/debug.o Source/library/fifobuffer.o \
 	 			Source/arch/x86_32/rootDevice.o Source/stream.o Source/deviceTree.o Source/arch/x86_32/portIO.o Source/arch/x86_32/gdt.o \
 	  			Source/arch/x86_32/interrupts_setup.o Source/arch/x86_32/interrupts_handler.o Source/arch/x86_32/interrupts_stubs.o Source/Clock.o Source/memoryManager.o Source/library/string.o \
-				Source/drivers/pciBus.o Source/drivers/pci/deviceNames.o Source/drivers/ps2controller.o Source/drivers/keyboard.o Source/drivers/mouse.o Source/drivers/serial.o Source/drivers/piixide.o Source/drivers/qemu_display_driver.o Source/drivers/atiRage128.o \
+				Source/drivers/pciBus.o Source/drivers/pci/deviceNames.o Source/drivers/ps2controller.o Source/drivers/keyboard.o Source/drivers/mouse.o Source/drivers/serial.o Source/drivers/piixide.o Source/drivers/gfx-virtual-bochs.o Source/drivers/gfx-ati-r128.o \
 				Source/GUI/Widget.o Source/GUI/Desktop.o Source/GUI/Window.o Source/GUI/TextConsole.o Source/GUI/TextLabel.o Source/GUI/TargaImage.o
 	-@mkdir -p Build
 	@$(LD) -T Resources/Linker-Script.ld -ffreestanding -nostdlib -lgcc -o $@ $^

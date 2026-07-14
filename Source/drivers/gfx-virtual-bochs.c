@@ -15,7 +15,7 @@
 #include <memoryManager.h>
 #include <debug.h>
 #include <Drivers/pciBus.h>
-#include <Drivers/qemuVga.h>
+#include <Drivers/gfx-virtual-bochs.h>
 
 uint32 qemuVga_width = 0;
 uint32 qemuVga_height = 0;

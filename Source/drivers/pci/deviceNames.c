@@ -7,7 +7,7 @@
 #include "deviceNames.h"
 #include <deviceTree.h>
 #include <Drivers/pciBus.h>
-#include <Drivers/qemuVga.h>
+#include <Drivers/gfx-virtual-bochs.h>
 
 struct pci_deviceName {
     uint16 vendor;

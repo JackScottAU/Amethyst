@@ -15,7 +15,7 @@
 #include <Drivers/pciBus.h>
 #include <GDT.h>
 #include <debug.h>
-#include <Drivers/atiRage128.h>
+#include <Drivers/gfx-ati-r128.h>
 
 Shell::Shell(StandardIO* stdio) {
     this->stdio = stdio;

@@ -14,7 +14,6 @@
 #include <Drivers/ps2controller.h>
 #include <Drivers/mouse.h>
 #include <Graphics/canvas.h>
-#include <Drivers/qemuVga.h>
 
 typedef struct {
     sint16 x;

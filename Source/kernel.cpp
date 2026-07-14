@@ -19,13 +19,13 @@
 #include <amethyst.h>
 #include <thread.h>
 
-#include <Drivers/qemuVga.h>
 #include <Drivers/serial.h>
 #include <Drivers/ps2controller.h>
 #include <Drivers/pciBus.h>
 #include <Drivers/keyboard.h>
 #include <Drivers/mouse.h>
-#include <Drivers/atiRage128.h>
+#include <Drivers/gfx-ati-r128.h>
+#include <Drivers/gfx-virtual-bochs.h>
 
 #include <Graphics/canvas.h>
 #include <Graphics/TextConsole.hpp>
@@ -188,14 +188,15 @@ void kernel_initialise(uint32 magicNumber, struct multiboot_info* multibootData)
     deviceTree_build();
 
     // We now have a QEMU display adapter somewhere in the device tree, and it knows where it is, so we can use it.
-    // qemuVga_setMode(1024, 768);
+     qemuVga_setMode(1024, 768);
   //  Canvas* canvas = atiRage128_getCanvas();
-  Canvas* canvas = getMultibootCanvas(multibootData);
+    Canvas* canvas = qemuVga_getCanvas();
+  //Canvas* canvas = getMultibootCanvas(multibootData);
 
         // Identity map the multiboot framebuffer into memory.
-    memoryManager_mapPhysicalMemoryPage(pg, (void*)canvas->framebuffer, (void*)canvas->framebuffer, 1024);  // Framebuffer MM
+ //   memoryManager_mapPhysicalMemoryPage(pg, (void*)canvas->framebuffer, (void*)canvas->framebuffer, 1024);  // Framebuffer MM
 
-        debug(LOGLEVEL_INFO, "Canvas address: %h", canvas->framebuffer);
+   //     debug(LOGLEVEL_INFO, "Canvas address: %h", canvas->framebuffer);
 
     multiboot_moduleNode* modules = multibootData->modsAddr;
 

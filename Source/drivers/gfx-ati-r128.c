@@ -13,7 +13,7 @@
 #include <memoryManager.h>
 #include <debug.h>
 #include <Drivers/pciBus.h>
-#include <Drivers/atiRage128.h>
+#include <Drivers/gfx-ati-r128.h>
 #include <stream.h>
 
 VideoMode* atiRage128_currentMode = NULL;

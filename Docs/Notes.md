@@ -118,45 +118,91 @@ Thread.h contains stuff for creating, destroying and switching threads, and is p
 
 Scheduler.h contains the main scheduler, and can have threads added and removed, and is processor agnostic.
 
-## Colour
+## Video Cards and Drivers
 
-For each bit depth, multiply by 3 for each channel and then find next largest power of two, and then use the rest of the bits for opacity.
+### General Principles
 
-4, 8, and 12 bit bit depths will be most useful. 5 bit and 10 bits might get used.
+-  Card-specific video drivers should support double buffering, 2D blitting, and a hardware cursor. Where not supported
+   in hardware, these functions should be implemented in software.
+-  Card-specific video drivers must not use BIOS-level functionality (such as EFI or VBE). Raw register programming is 
+   preferred even when development time would be much slower.
+-  The names of video drivers should be `gfx-{vendor}-{model}`. Where the targetted device is a virtual-only device 
+   (such as the Bochs display adapter), or a common standard (such as VGA), the vendor should be `virtual`.
+-  The kernel does not require a video output to function, so no support for video is required from our bootloader.
+-  The root platform device for each platform is responsible for prioritising display drivers correctly. For example,
+   the ATI Rage 128 could be supported by either the `gfx-ati-r128` or the `gfx-virtual-vga` drivers, logically the
+   device-specific driver should be prioritised. For any platform supporting PCI, this simply means matching drivers 
+   based first on their vendor and device IDs before matching on class and subclass.
 
-Bit depths:
-Argb32 (rgb24 with top 8 bits ones)
+### Colour Depths
 
-Then argb64 and rgb30 are also useful
+Internally the system will use either ARGB32 or ARGB64 for pixel data. 
 
-And rgb15 with top bit for opacity (if zero, pixel is transparent)
+It may be quantised for output within the video driver.
 
-## Video Cards
+### Driver Development Goals and Timeline
 
-We aren't going to use EFI or VBE to set video modes.
+Aim to develop full-featured drivers for the following cards:
 
-Get rid of EGA text mode from the kernel, it's obsolete even in 1995. Instead, write drivers for the following cards:
+0. Multiboot framebuffer (`gfx-virtual-multiboot`)
+1. QEMU/Bochs Display Adapter (`gfx-virtual-bochs`) - Note this device only provides a raw framebuffer.
+2. Cirrus Logic 5400 Series (`gfx-cirrus-5400`)
+22. Virtio GPU (`gfx-virtual-virtio`)
+3. ATI/AMD Rage 128 (`gfx-ati-r128`)
+4. Intel Graphics (`gfx-intel-xxx`) - Will require multiple drivers for the entire range I suspect?
+5. VGA (`gfx-virtual-vga`) - the ultimate fallback.
 
-1. QEMU/Bochs Display Adapter
-2. Standard VGA framebuffer (emulated in QEMU)
-3. Cirrus Logic 5400 Series (emulated in QEMU)
-4. ATI Rage 128 Pro (in QEMU, also have a physical card for Gresley)
-5. Intel Xe Driver (physical hardware only, but good documentation)
-6. VMware svga-ii  (emulated in QEMU, VMWare, VirtualBox)
+The reasons for choosing these devices are:
 
-The idea is we can get a framebuffer with double buffering, 2D blitting (acceleration) and hardware cursor support.
+-  Each device supports something better than 800x600x16.
+-  Each device is testable either virtually or physically (or ideally both).
+-  Each device can provide double buffering which is a huge improvement.
 
-By doing that we can support pretty much any emulated system, as well as most graphics card pre-UEFI (when new video cards stopped supporting VGA APIs).
+### Cirrus Logic 5400 Series
 
-Will need to write more drivers to support newer UEFI cards.
+Have not even started this driver yet - probably needs to take precedence over the ATI card as I think we could actually do something with it.
 
-### VGA Fallback
+Device supports:
+-  Double buffering
+-  Blitting
+-  Hardware cursor
 
-We should implement the VGA fallback as a common driver based on PCI class/subclass etc. Basically sets a known video mode (800x600 w. 16 colours in a known palette) and gives a canvas (800x600 1bpp).
+???
 
-### Boot Display Framebuffer
+One tricky bit is that this device uses additional resources, including the VGA area at 0xA0000 and 0xB8000 etc. The blit engine is kept at 0xB8000 etc. in revision A.
 
-On all platforms, we can use the bootloader to request a simple 2D framebuffer we can use to draw the loading screen whilst we load other drivers. For example, we can load a 800x600 framebuffer from GRUB with multiboot, and use this until we load a different mode from AMD or Nvidia.
+https://theretroweb.com/chip/documentation/cl-gd5446technical-6456556f945a1573066314.pdf
+
+### ATI Rage 128 (`gfx-ati-r128`)
+
+There isn't really a huge benefit to writing this driver: the QEMU emulation of it is very bad and doesn't support mouse pointers or 2D acceleration. The only way to make this worthwhile is to actually work on improving the QEMU driver (which is currently orphaned).
+
+Although it does support better resolutions than the Cirrus card, which would be the main claim to fame.
+
+Conceptually similar to the early Radeons. R100 and R200 series would feel vaguely familiar.
+
+R300 onwards is basically an entirely different GPU architecture.
+
+#### PLL Clock
+
+reference clock is the crystal on the board. Mine says "29.4-0210", I suspect this is a 29.5MHz crystal like the linux driver says it could be. 29.5 times 4 is 118 so this makes perfect sense.
+
+Can get reference clock info from the BIOS on the board.
+
+29.5 times 11 divide 5 is 64.9 which is very close to the number we need. Equals refresh rate of 59.9Hz which is something the monitor can do?
+
+We need to set memory parameters before we can display a picture.
+Need to dump PLL registers via serial so we can confirm PLL settings and get reference clock.
+Then we can rebuild PLL settings from that, for the display mode we choose.
+And based on the pixel clock, we can determine the memory clock? Getting reference clock is the key.
+
+#### Programming
+- Get hardware parameters from BIOS.
+- Compute mode parameters and PLL parameters.
+- Disable VGA CCComptability, Display output, etcc.
+- Set VCLK somehow.
+- Set CRTC.
+- Enable things again.
 
 ## Executables
 

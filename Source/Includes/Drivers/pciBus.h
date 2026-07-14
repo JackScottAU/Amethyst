@@ -50,6 +50,7 @@ typedef struct pciBus_Entry_s {
     uint16 deviceID;
     uint8 classID;
     uint8 subClassID;
+    uint8 revision;
     struct pciBus_Entry_s* next;
 } pciBus_Entry;
 

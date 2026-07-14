@@ -13,8 +13,8 @@
 #include <deviceTree.h>
 #include "pci/deviceNames.h"
 #include <debug.h>
-#include <Drivers/qemuVga.h>
-#include <Drivers/atiRage128.h>
+#include <Drivers/gfx-ati-r128.h>
+#include <Drivers/gfx-virtual-bochs.h>
 
 
 #define PCIBUS_IOPORT_REQUEST   0x0CF8
@@ -116,6 +116,10 @@ deviceTree_Entry* pci_addDevicesToTree(void) {
                         device->Resources[i].Type = DEVICE_RESOURCETYPE_IO;
                         val--;
                     }
+                    else {
+                        // memory bar
+                        val = val & 0xFFFFFFF0;
+                    }
 
                     device->Resources[i].StartAddress = val;
                     device->Resources[i].Length = pci_getBarSize(pci_currentEntry->bus, pci_currentEntry->slot, pci_currentEntry->function, bar);
@@ -143,6 +147,7 @@ void pciBus_printDeviceInformation(void (*putChar)(char), pciBus_Entry* device, 
 
     stream_printf(putChar, "Vendor ID: %h | ", device->vendorID);
     stream_printf(putChar, "Model ID: %h | ", device->deviceID);
+    stream_printf(putChar, "Revision: %h | ", device->revision);
 
     stream_printf(putChar, "Class: %d:%d\n", device->classID, device->subClassID, classNames[device->classID]);
 }
@@ -219,6 +224,7 @@ void pci_checkSlot(uint8 bus, uint8 slot) {
         uint32 classRegister = pci_readConfigurationRegister(bus, slot, function, PCIBUS_REGISTER_CLASSCODES);
         uint8 class = (uint8)(classRegister >> 24);
         uint8 subclass = (uint8)(classRegister >> 16) & 0xFF;
+        uint8 revision = (uint8)(classRegister & 0xFF);
 
         pci_currentEntry->bus = bus;
         pci_currentEntry->slot = slot;
@@ -227,6 +233,7 @@ void pci_checkSlot(uint8 bus, uint8 slot) {
         pci_currentEntry->deviceID = deviceAndVendor >> 16;
         pci_currentEntry->classID = class;
         pci_currentEntry->subClassID = subclass;
+        pci_currentEntry->revision = revision;
 
         // Make new entry.
         pci_currentEntry->next = memoryManager_allocate(sizeof(pciBus_Entry));
